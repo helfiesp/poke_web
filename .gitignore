@@ -1,0 +1,10 @@
+secrets.py
+*.log
+*.pyc
+*.pyc
+product_images/
+category_images/
+static/admin/
+settings.py
+migrations/
+/files
