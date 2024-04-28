@@ -1166,7 +1166,6 @@ def klarna_checkout(request):
                 },
                 {
                     "name": "Faktura", 
-                    "redirect_url": "https://testing.pokelageret.no/checkout",
                     "description": "Betales med faktura etter avtale. Ta kontakt med support@pokelageret.no for å bruke dette valget."
                 },
             ], 
