@@ -1181,6 +1181,7 @@ def klarna_checkout(request):
 
             # Update the redirect URL for the "Faktura" option with the new order_id
             for payment_method in data['external_payment_methods']:
+                print(payment_method)
                 if payment_method['name'].lower() == 'Faktura':
                     payment_method['redirect_url'] = f"https://testing.pokelageret.no/order_success/{order_id}/"
 
