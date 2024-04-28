@@ -1,0 +1,173 @@
+.top-bar-products {
+  width: 100%;
+}
+.filter-bar {
+    padding: 10px 20px; /* Padding to give some space inside the bar */
+    border-bottom: 1px solid #e1e1e1; /* A subtle border to separate from the product list */
+    display: flex; /* Use flexbox to align child elements */
+    justify-content: flex-end; /* Align the select box to the end (right side) */
+    align-items: center; /* Center items vertically */
+}
+
+.filter-select {
+    font-size: 1rem; /* Match the font size from the dropdown image */
+    color: #333; /* Dark grey for text to maintain readability */
+    background-color: #ffffff; /* White background for the dropdown */
+    border: 1px solid #ccc; /* Subtle border for the select box */
+    border-radius: 5px; /* Rounded corners to match the modern design */
+    padding: 10px 30px; /* Padding inside the select box, adjust as needed */
+    padding-left: 10px;
+    cursor: pointer; /* Change the cursor to indicate this is a dropdown */
+    appearance: none; /* Remove default styling to apply custom styles */
+    display: inline-block; /* Needed for custom width and center alignment */
+    position: relative; /* Positioning context for pseudo-elements */
+    margin-left:auto;
+    /* Use a background image for the dropdown arrow */
+    background-image: url('/media/icons/icons8-arrow-down-50.png');    
+    background-position: right 7px center; /* Position the arrow inside the right padding area */
+    background-size: 14px; /* Size of the arrow */
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    margin-right:5%;
+}
+
+/* Custom arrow using a pseudo-element */
+.filter-select::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: 0; 
+    height: 0; 
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #333; /* Arrow color */
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent the arrow from being clickable */
+}
+
+/* Focus styles for accessibility */
+.filter-select:focus {
+    outline: none; /* Removes the default outline */
+    border-color: #007bff; /* Focus color */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Mimics a focus ring */
+}
+
+.per-page-selector {
+  list-style-type: none; /* Remove default list styling */
+  padding: 0; /* Remove default padding */
+  display: flex; /* Use flexbox for horizontal layout */
+  gap: 10px; /* Space between items */
+}
+
+.per-page-selector li {
+  display: flex; /* Align the number within the grid item */
+}
+
+.per-page-selector a {
+  text-decoration: none; /* Remove underline from links */
+  color: black; /* Number color */
+  padding: 10px 20px; /* Padding for aesthetics */
+  border-radius: 5px; /* Rounded corners for the grid item */
+  display: block; /* Ensure the padding and border are applied correctly */
+}
+
+.per-page-selector a.active {
+  background-color: #346482; /* Active item background color */
+  color: white; /* Active item number color */
+  border-color: #346482; /* Active item border color */
+}
+/* Include this in your products.css file */
+.page-container-products {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  align-items: flex-start; /* Align items to the start of the cross axis */
+}
+
+.products-container {
+  display: flex;
+  align-items: flex-start; /* Align items to the start if .products-container is also a flex container */
+  width: 100%; /* Adjust as necessary */
+  /* Add additional styling here */
+}
+
+.sidebar-container-products {
+  margin-top:0px;
+  width: 20%;
+  box-sizing: border-box;
+}
+
+.filter-group {
+  margin-bottom: 40px;
+
+}
+
+.filter-title {
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+}
+
+
+.filter-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filter-options li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.filter-options a {
+  text-decoration: none;
+  color: #000;
+  font-size: 1em;
+}
+
+.item-count {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  padding: 2px 10px;
+  font-size: 0.8em;
+  margin-left: 5px;
+}
+
+.recent-product-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.recent-product-image {
+  width: 80px;
+  height: 80px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.recent-product-details {
+  flex-grow: 1;
+}
+
+.recent-product-title {
+  margin: 0;
+  font-size: 1em;
+}
+
+.recent-product-price {
+  margin: 0;
+  color: #666;
+  font-size: 0.9em;
+}
+
+/* Styles for the main product section (not shown in the provided image) */
+.product-section {
+  width: 80%;
+  /* other styles */
+}
+
+/* Additional styles and media queries may be required for a responsive design */

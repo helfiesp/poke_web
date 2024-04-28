@@ -1,0 +1,20 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+.main-container {
+	text-align: center;
+}
+a {
+	color:black;
+}
+</style>
+
+<div class="main-container">
+	<h1>Error 404</h1>
+	<p>Uffda, her var det ingenting...<br>
+	Kanskje du vil gå <a href="{% url 'hjem' %}">hjem?</a></p>
+</div>
+{% include 'base/footer.html' %}
+{% endblock %}

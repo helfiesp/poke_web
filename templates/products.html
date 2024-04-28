@@ -1,0 +1,172 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load form_tags %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/products_mainpage.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}">
+    <title>{% if category %}{{ category.name|title }} Produkter{% else %}Alle produkter {% endif %} - Pokelageret</title>
+    <meta name="description" content="{% if category %}Se vårt utvalg av {{ category.name|title }}{% else %}Se alle produkter{% endif %} Tilgjengelig hos PG Møbler">
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="page-container-products">
+
+  <aside class="sidebar-container-products">
+    <!-- Filter Groups -->
+         <div class="filter-group">
+    {% for category in all_categories %}
+        {% if not category.parent %}
+            <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
+            <h4 class="filter-title">{{ category.name|title }}</h4></a>
+            {% if category.subcategories.all %}
+                <ul class="filter-options">
+                    {% for subcategory in category.subcategories.all %}
+                        <li>
+                            <a href="{% url 'category_search' subcategory.name %}">{{ subcategory.name|title }}
+                            <!-- Check if subcategory itself has subcategories -->
+                            {% if subcategory.subcategories.all %}
+                                <span class="item-count">{{ subcategory.subcategories.count }}</span>
+                                <!-- Display sub-subcategories -->
+                                <ul>
+                                    {% for subsubcategory in subcategory.subcategories.all %}
+                                        <li>
+                                            <a href="{% url 'category_search' subsubcategory.name %}">{{ subsubcategory.name|title }}<span class="item-count">{{ subsubcategory.name|get_category_count }}</span></a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <span class="item-count">{{ subcategory.name|get_category_count }}</span>
+                            {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    </div>
+    <!-- Additional filter groups for Bathroom, Kitchen, etc. -->
+
+    <!-- Recent Products -->
+    <div class="filter-group">
+      <h4 class="filter-title">Nye produkter</h4>
+        {% for product in all_products %}
+            {% if product.enabled %}
+              {% if forloop.counter <= 5 %}
+                <div class="recent-product-item">
+                  <a href="{% url 'product_page' product.string_id %}">
+                  <img src="{{ product.images.all.0.image.url }}" alt="{{ product.title }}" class="recent-product-image"></a>
+
+                  <div class="recent-product-details">
+                    <h5 class="recent-product-title">{{ product.title }}</h5>
+                    {% if product.sale_price %}
+                        <p class="product-price">{{ product.sale_price }} kr</p>
+                    {% else %}
+                        <p class="product-price">{{ product.price }} kr</p>
+                    {% endif %} 
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
+  </aside>
+  <div class="products-container">
+
+<div class="top-bar-products">
+  <form method="get" action="{% if request.path == '/search/' %}{% url 'general_search' %}{% else %}{% url 'products' %}{% endif %}">
+
+    <!-- Maintain the search query across requests -->
+    <input type="hidden" name="query" value="{{ request.GET.query }}">
+    <!-- Preserve the per_page setting when sorting changes -->
+    
+    <input type="hidden" name="per_page" value="{{ request.GET.per_page }}">
+
+    <div class="page-layout-section">
+        <div class="filter-bar">
+        <ul class="per-page-selector">
+          <li>
+            <a href="?per_page=2&query={{ request.GET.query }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="{% if request.GET.per_page == "2" %}active{% endif %}">2</a>
+          </li>
+          <li>
+            <a href="?per_page=3&query={{ request.GET.query }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="{% if request.GET.per_page == "3" %}active{% endif %}">3</a>
+          </li>
+          <li>
+<a href="?per_page=4&query={{ request.GET.query }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="{% if request.GET.per_page == "4" or request.GET.per_page == "" or request.GET.per_page is none %}active{% endif %}">4</a>
+
+          </li>
+        </ul>
+
+
+
+        <!-- Dropdown for sorting products, ensuring the form submission includes query and per_page -->
+        <select class="filter-select" name="sort" id="sort" onchange="this.form.submit()">
+          <option value="newly_added" {% if request.GET.sort == "newly_added" %}selected{% endif %}>Nyheter</option>
+          <option value="price_low_high" {% if request.GET.sort == "price_low_high" %}selected{% endif %}>Pris lav-høy</option>
+          <option value="price_high_low" {% if request.GET.sort == "price_high_low" %}selected{% endif %}>Pris høy-lav</option>
+          <option value="name_a_z" {% if request.GET.sort == "name_a_z" %}selected{% endif %}>Navn A-Z</option>
+          <option value="name_z_a" {% if request.GET.sort == "name_z_a" %}selected{% endif %}>Navn Z-A</option>
+          <option value="most_discounted" {% if request.GET.sort == "most_discounted" %}selected{% endif %}>Tilbud</option>
+        </select>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="product-cards-section">
+
+  {% if category|tostring  == "hyttemøbler" %}
+    {% include 'product/hyttemobler.html' %}
+  {% else %}
+    {% include 'product/single_product.html' %}
+  {% endif %}
+
+</div>
+</div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let done = false;
+    let nextPage = 2;  // Start from the second page
+
+    function loadMoreProducts() {
+        if (done) return;
+        done = true;
+
+        fetch(`/products/?page=${nextPage}`)
+            .then(response => response.text())
+            .then(html => {
+                const container = document.createElement('div');
+                container.innerHTML = html;
+                
+                // Assuming products are listed within a container with id 'products-list'
+                document.getElementById('products-list').appendChild(container);
+                
+                nextPage++;
+                done = false;  // Ready to load more
+            })
+            .catch(error => {
+                console.error('Error loading more products:', error);
+                done = false;  // Attempt to load more products in case of error
+            });
+    }
+
+    window.addEventListener('scroll', function() {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+        if (clientHeight + scrollTop >= scrollHeight - 500 && !done) {  // Adjust threshold as needed
+            loadMoreProducts();
+        }
+    });
+});
+</script>
+
+
+{% include 'base/footer.html' %}
+{% endblock %}

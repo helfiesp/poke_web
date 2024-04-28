@@ -1,0 +1,417 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
+
+.main-container {
+  width: 80%;
+  margin:auto;
+  justify-content: center;
+
+}
+
+
+/* Main header & slideshow */
+
+.main-header {
+  background-size: cover;
+  background-position: center;
+  height: 800px; /* Adjust the height as needed */
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: #000; /* Assuming the text color is black based on the image */
+}
+
+.header-content {
+  max-width: 800px; /* Adjust the width as needed */
+  width: 100%;
+  padding-left: 120px; /* Adjust the padding to align the text as in the image */
+  box-sizing: border-box;
+}
+
+.header-title {
+  font-size: 3em; /* Adjust the size as needed */
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.header-subtitle {
+  font-size: 1.2em; /* Adjust the size as needed */
+  letter-spacing: 2px; /* Gives a spaced uppercase effect */
+  text-transform: uppercase; /* Makes the text uppercase */
+  margin-bottom: 1em;
+}
+
+.explore-button {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #000; /* Assuming the button has a black border */
+  text-decoration: none;
+  color: #000; /* Button text color */
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 0.3s ease; /* For a smooth transition on hover */
+}
+
+.explore-button:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Navigation & header */
+
+body, h1, a {
+  padding: 0;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+header {
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+  color: #fff;
+}
+.mobile-menu {
+  display: none;
+}
+.mobile-menu-icon {
+  display: none;
+}
+nav {
+  position: relative; /* Added for absolute positioning of the logo */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+}
+
+.nav-list li {
+  padding: 0 20px;
+}
+
+.nav-list a {
+  text-decoration: none;
+  color: #000;
+
+}
+
+.nav-icons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav-icons a {
+  padding: 0 10px;
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+
+.nav-logo {
+  position: absolute; /* Absolute positioning */
+  left: 50%; /* Center horizontally */
+  top: 50%; /* Center vertically */
+  transform: translate(-50%, -50%); /* Offset by half the width and height of the logo */
+}
+
+.menu-icon{
+  display: none ;
+}
+.search-icon {
+  display: none;
+}
+.nav-logo a img {
+  max-width: 250px;
+  height: auto;
+}
+.header-content {
+  text-align: center;
+}
+
+.header-content h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  text-shadow: 5;
+}
+
+.nav-search {
+  display: flex;
+  justify-content: flex-end;
+}
+.nav-search form {
+  display: flex;
+}
+
+.nav-search input[type="text"] {
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 5px;
+  width:300px;
+}
+
+.nav-search button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-left:-40px;
+}
+.nav-icon {
+
+}
+
+.shop-now-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 20px;
+}
+
+/* Products & categories on main page*/
+
+
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 40px;
+  padding: 0 20px;
+}
+
+.product-item {
+  width: calc(25% - 40px);
+  margin: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.product-categories {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  padding: 0 10px; /* Reduced padding for less space between items */
+}
+
+.category-item {
+  width: calc(33.333% - 20px); /* Adjusted for 3 items per row */
+  margin: 10px; /* Reduced margin for less space between items */
+  text-align: center;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.category-image {
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.category-item:hover .category-image {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.product-count {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+.category-item h3 {
+  margin-top: 10px;
+  font-size: 1.5em;
+  color: black;
+  text-decoration: none;
+}
+
+/* Recent purchases section */
+
+.recent-products-section h2 {
+  font-size: 2em;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.recent-products-section p {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 1em;
+  color: #666;
+}
+
+
+
+/* Featured products section */
+
+.featured-product-item {
+  width: 22%;
+  margin: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  background-color: #fff;
+  position: relative;
+  display: block; /* To make the anchor block-level */
+  text-decoration: none; /* Remove underline from links */
+}
+
+
+
+
+
+/* ADD ITEM */
+
+    .add-item-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+    margin-bottom: 1.5rem;
+}
+
+.form-section h2 {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.form-section label {
+    font-size: 1rem;
+    color: #333;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-section input[type="text"],
+.form-section select,
+.form-section textarea,
+.form-section input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-section textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #0074D9;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* ADD ITEM IMAGE PREVIEW */
+
+
+/* NAV SEARCH AREA PHONE */
+/* The Modal (background) */
+#mainContent {
+  z-index: 1;
+}
+
+.search-modal {
+  display: none; /* Ensure this is hidden by default */
+  position: fixed; 
+  z-index: 1000; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+}
+
+.search-content {
+  width:90%;
+  margin: 0 auto;
+  margin-left:5px;
+}
+/* Style the form and input for a full-width modern look */
+.search-content form {
+  width: 90%; /* Default width for larger devices */
+  margin: 0 auto; /* Center the form */
+  max-width: 800px; /* Maximum width */
+
+}
+
+.search-content input[type="text"] {
+  width: 100%; /* Make the input extend full-width of its container */
+  padding: 15px; /* Add some padding inside the input */
+  font-size: 20px; /* Increase font size for better readability */
+  border: 2px solid #ddd; /* Add a border to the input */
+  border-radius: 25px; /* Rounded corners for the input */
+  box-shadow: none; /* Remove any box shadows */
+}
+
+.search-content input[type="text"]:focus {
+  outline: none; /* Remove the outline on focus for a clean look */
+  border-color: #aaa; /* Change border color when focused */
+}
+
+/* Hide the submit button but keep it in the document flow for accessibility */
+.search-content button[type="submit"] {
+  position: absolute;
+  left: -9999px; /* Move it off the screen */
+  width: 1px; /* Minimal width */
+  height: 1px; /* Minimal height */
+  overflow: hidden; /* Hide any overflowing content */
+}
+
+/* The Close Button (not added, but you can add one) */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Add this to blur the background when the modal is displayed */
+body.modal-open {
+  overflow: hidden;
+  filter: blur(5px);
+}
+
+
+
+@media only screen and (max-width: 768px) {
+
+.header-content h1 {
+    font-size: 1.5em;
+}
+}

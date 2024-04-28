@@ -1,0 +1,56 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.login-wrapper {
+    width: 100%; /* Default to 100% for mobile and smaller screens */
+    margin: auto;
+    padding: 10px;
+    margin-top: 2%;
+}
+@media (min-width: 768px) {
+    .login-wrapper {
+        width: 15%; /* Only on screens wider than 768px, reduce width to 15% */
+    }
+}
+
+.login-container {
+text-align: center;
+background-color: lightgray;
+padding:10px;
+    border-radius: 10px;
+}
+.btn-login {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+
+</style>
+<div class="login-wrapper">
+    <div class="login-container">
+        <h2 class="login-title">Logg inn</h2>
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Brukernavn</label><br>
+                {{ form.username }}
+            </div><br>
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Passord</label><br>
+                {{ form.password }}
+            </div>
+            <br>
+            <div class="form-group form-group-actions">
+                <button type="submit" class="btn-login">Logg på</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% include 'base/footer.html' %}
+{% endblock %}

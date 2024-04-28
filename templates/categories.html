@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/categories.css' %}">
+
+{% endblock %}
+{% block content %}
+<div class="main-container">
+    <div class="product-categories">
+      {% for category in all_categories %}
+          <div class="category-item">
+            <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
+            <img src="{{ MEDIA_URL }}{{ category.image }}" alt="{{ category.name }}" class="category-image">
+            <h3>{{ category.name }}</h3></a>
+          </div>
+      {% endfor %}
+    </div>
+</div>
+{% include 'base/footer.html' %}
+{% endblock %}

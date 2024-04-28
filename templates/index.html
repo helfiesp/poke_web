@@ -1,0 +1,103 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Pokelageret.no{% endblock %}
+{% block meta_description %}Din leverandør av utenlandske samlekort. Størst og billigst utvalg av japansk Pokemon!{% endblock %}
+
+
+{% load form_tags %}
+{% block extra_head %}
+<style>
+@media only screen and (max-width: 768px) {
+  .header-title h1{
+    font-size:10px;
+  }
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<style>
+
+.main-header {
+  position: relative;
+  z-index: 1;
+  overflow: hidden; /* This will hide any overflow such as pseudo elements that are bigger than the container */
+}
+
+.main-header::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background: url('{{ MEDIA_URL }}header.jpg'); no-repeat center center; /* Change to the correct path */
+  background-size: cover;
+  opacity: 0.7; /* Set the opacity of the background image */
+
+  z-index: -1; /* Ensure the background image is behind the content */
+  transform-origin: center; 
+}
+
+.header-content {
+  position: relative;
+  z-index: 2; /* Ensure the content is above the pseudo-element */
+}
+
+</style>
+
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+<header class="main-header">
+  <div class="header-content">
+    <h1 class="header-title">{{ text_areas_all.front_page_header }}</h1>
+    <p class="header-subtitle">{{ text_areas_all.front_page_subtitle }}</p>
+    <a href="#" class="explore-button">{{ text_areas_all.front_page_button_text }}</a>
+  </div>
+</header>
+
+<div class="main-container">
+    <div class="product-categories">
+      {% for category in all_categories %}
+        {% if not category.parent and category|tostring != "hyttemøbler" %}
+          <div class="category-item">
+            <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
+            <img src="{{ MEDIA_URL }}{{ category.image }}" alt="{{ category.name }}" class="category-image">
+            <h3>{{ category.name|title }}</h3></a>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+      {% if bestsellers %}
+    <div class="recent-products-section">
+      <h2>{{ text_areas_all.bestseller_header }}</h2>
+      <p>{{ text_areas_all.bestseller_text }}</p>
+    </div>
+    <div class="product-cards-section" style="justify-content: center;">
+        {% for product in bestsellers %}
+          {% include 'product/single_product_code.html' %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+    <div class="recent-products-section">
+      <h2>{{ text_areas_all.recent_product_header }}</h2>
+      <p>{{ text_areas_all.recent_product_text }}</p>
+    </div>
+    <div class="product-cards-section" style="justify-content: center;">
+        {% for product in recent_products %}
+          {% include 'product/single_product_code.html' %}
+        {% endfor %}
+    </div>
+    
+
+</div>
+
+
+
+{% include 'base/footer.html' %}
+{% endblock %}

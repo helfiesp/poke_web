@@ -1,0 +1,283 @@
+
+
+.product-page-container {
+    display: flex;
+    max-width: 100vw;
+    position: relative; /* Needed for absolute positioning of thumbnails */
+    margin-top:50px;
+}
+
+.product-image-section {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Establish a positioning context for thumbnails */
+}
+
+.main-product-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    max-width:1000px;
+    max-height:700px;
+}
+
+.product-thumbnails-section {
+    position: absolute; /* Position thumbnails absolutely */
+    left: 50%; /* Start at the middle of the container */
+    top: 50%;
+    transform: translate(-50%, -50%); /* Center the thumbnails vertically and horizontally */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 5px; /* Padding around thumbnails */
+    background: white; /* White background for border effect */
+    border: 2px solid white; /* White border */
+    max-width:125px;
+}
+
+.product-thumbnail {
+    width: calc(100% - 10px); /* Thumbnails take full width minus padding and border */
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.product-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.product-details-section {
+    width: calc(50% - 100px); /* Adjust width to account for the thumbnails */
+    margin-left: 100px; /* Adjust this value as needed to move the text away from the thumbnails */
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative; /* To ensure it's positioned in relation to its parent */
+    z-index: 10; /* Make sure it sits above the thumbnails */
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.star-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.star {
+    color: #f8ce0b;
+    margin-right: 5px;
+}
+
+.reviews-count {
+    font-size: 1rem;
+    color: #333;
+    margin-left: 10px;
+}
+
+.product-description {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.product-price {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.purchase-options {
+    margin-top:10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+}
+
+.quantity-minus, .quantity-plus {
+    border: 1px solid #ccc;
+    background: none;
+    padding: 5px 10px;
+}
+
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    margin: 0 5px;
+}
+
+.add-to-cart-btn, .buy-now-btn {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.buy-now-btn {
+    background-color: #c59d5f; /* Different color for 'Buy it Now' */
+}
+
+.additional-links {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wishlist-link, .compare-link, .size-guide-link {
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+/* Add any necessary hover effects and responsive adjustments */
+
+.product-info-section {
+    margin-top:35px;
+    text-align: center; /* Center-align the text */
+    padding: 20px;
+
+}
+
+.product-tabs {
+    list-style-type: none;
+    padding: 0;
+    display: inline-flex; /* Use inline-flex to center the list */
+    justify-content: center; /* Center the tabs */
+    margin-bottom: 20px;
+}
+
+.tab-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 1.6rem; /* Larger font size for the tabs */
+    color: #ccc; /* Start with a greyed out color */
+    transition: color 0.3s; /* Smooth transition for color change */
+}
+
+.tab-item.active {
+    color: #000;
+}
+
+
+.tab-content p {
+    font-size: 1.05rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.product-meta {
+    font-size: 0.9rem;
+    color: #666;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px; /* Spacing between meta items */
+}
+
+.related-products-header {
+    text-align: center;
+    margin-top:50px;
+    margin-bottom: 20px;
+}
+
+/* Add more styling as needed */
+
+.description-section {
+  max-width: 1200px; /* Adjust based on your layout width */
+  margin: 0 auto;
+}
+
+.description-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px; /* Spacing between rows */
+}
+
+.description-column {
+  flex: 1; /* Each column takes up equal space */
+  padding: 0 10px; /* Spacing inside each column */
+}
+
+.description-column h4 {
+  margin-bottom: 10px; /* Spacing under headings */
+  font-size: 1rem; /* Adjust as needed */
+  color: #333;
+}
+
+.description-column p {
+  font-size: 0.9rem;
+  color: #666;
+}
+/* CSS for smooth transition */
+.main-product-image {
+    transition: opacity 0.6s ease-in-out;
+}
+
+
+@media screen and (max-width: 768px) {
+    .product-page-container {
+        flex-direction: column;
+        margin-top: 25px;
+        width: 100%;
+        align-items: center; /* Center items horizontally */
+    }
+
+    .product-image-section {
+        width: 100%;
+        margin-left: 15px;
+        margin-right: 5px;
+    }
+
+    .product-thumbnails-section {
+        position: static; /* Reset the positioning */
+        width: 100%; /* Thumbnails take the full width of the container */
+        margin: auto;
+        transform: none; /* Reset the transform */
+        flex-direction: row; /* Change the direction to row */
+        margin-top: 20px; /* Add some space between the main image and thumbnails */
+        max-width: 500px;
+        justify-content: center; /* Center items horizontally */
+    }
+
+    .product-details-section {
+        width: 100%; /* Full width */
+        margin-left: 0; /* Reset margin */
+        text-align: center;
+    }
+
+    .product-thumbnail {
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .product-tabs {
+        display: flex; /* Use flex to allow flex-direction to take effect */
+        flex-direction: column; /* Stack the items vertically */
+        align-items: center; /* Center-align the items */
+        padding: 0;
+        margin-bottom: 20px;
+    }
+
+    .tab-item {
+        margin-right: 0; /* Reset the right margin for stacked items */
+        margin-bottom: 10px; /* Add space between the items */
+        width: 100%; /* Optional: Make each tab item take full width */
+    }
+}

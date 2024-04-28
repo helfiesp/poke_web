@@ -1,0 +1,281 @@
+
+.image-preview:hover {
+    transform: scale(1.05); /* Subtle lift effect on hover */
+}
+
+.image-preview {
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    margin: 5px;
+    overflow: hidden; /* Ensure that the button doesn't overflow the image container */
+    border-radius: 15px;
+}
+
+.image-preview img {
+    display: block;
+    max-width: 160px; /* Increased maximum width */
+    max-height: 160px; /* Maximum height to match the width */
+    object-fit: cover;
+    border: 1px solid #ddd;
+
+}
+
+.image-preview:first-of-type img {
+    max-width: 100%;
+    max-height: 500px;
+    width: 100%;
+    border: none;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.overlay-left {
+    left: 0;
+}
+
+.overlay-right {
+    right: 0;
+}
+
+.remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #ffffff; /* White background for a clean look */
+    color: #ff0000; /* Red X for visibility and contrast */
+    border-radius: 50%;
+    padding: 4px; /* Slightly larger padding for a rounder button */
+    padding-left:7px;
+    padding-right:7px;
+    font-size: 12px; /* Larger font size for the X */
+    cursor: pointer;
+    border: none; /* Removing the border for a cleaner design */
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: all 0.2s ease;
+    opacity: 0; /* Start with the button invisible */
+    visibility: hidden; /* Button is not visible by default */
+}
+
+/* When hovering over the image-preview, the remove-image button becomes visible */
+.image-preview:hover .remove-image {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Hover effect on the button itself for a visual feedback */
+.remove-image:hover {
+    background-color: #ff0000; /* Change background to red on hover */
+    color: #ffffff; /* Change X color to white on hover */
+    transform: scale(1.1); /* Enlarge button on hover for effect */
+}
+
+.image-preview:first-of-type .remove-image {
+    font-size: 25px;
+    padding:10px;
+    padding-left:12px;
+    padding-right:12px;
+    width: 48px; /* Width to match the remove button */
+    height: 48px; /* Height to match the remove button */
+}
+
+/* Edit text button */
+.edit-text {
+    top: 5px;
+    left: 5px;
+    z-index: 10;
+    position: absolute;
+    background-color: #ffffff; /* White background for consistency */
+    color: #000000; /* Black or any color for the edit icon */
+    border-radius: 50%; /* Circular shape */
+    padding-top:0px;
+    padding-left: 5px; /* Adjust left padding for icon alignment */
+    padding-right: 5px; /* Adjust right padding for icon alignment */
+    font-size: 14px; /* Adjust font size for the icon */
+    cursor: pointer;
+    border: none; /* Removing the border for a cleaner design */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: all 0.2s ease;
+    display: inline-block; /* Ensure proper spacing */
+    width: 24px; /* Width to match the remove button */
+    height: 24px; /* Height to match the remove button */
+    line-height: 24px; /* Center the text/icon vertically */
+    text-align: center; /* Center the text/icon horizontally */
+    visibility: hidden;
+    opacity: 0;
+}
+
+.edit-text:hover {
+    background-color: #e8e8e8; /* Light grey background on hover for feedback */
+}
+
+.image-preview:hover .edit-text{
+    opacity: 1;
+    visibility: visible;
+}
+
+.image-preview:first-of-type .edit-text {
+    font-size: 25px;
+    padding:10px;
+    padding-left:12px;
+    padding-right:12px;
+    width: 48px; /* Width to match the remove button */
+    height: 48px; /* Height to match the remove button */
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  align-items: center; /* Align the content vertically */
+  justify-content: center; /* Align the content horizontally */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Box shadow for depth */
+  max-width: 600px; /* Maximum width */
+  width: 90%; /* Responsive width */
+  box-sizing: border-box; /* Include padding and border in the element's width and height */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  margin-left: 20px; /* Space between the text and the close button */
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The Save Button */
+#saveImageText {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s; /* Smooth transition for hover effect */
+  cursor: pointer;
+}
+
+#saveImageText:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+/* Input field styling */
+#imageEditText {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Include padding and border */
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 20px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #0056b3;
+}
+
+/* Hide the checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Style the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}

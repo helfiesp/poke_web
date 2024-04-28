@@ -1,0 +1,63 @@
+{% load static %}
+{% load form_tags %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+    
+    {% for product in products %}
+
+        {% if product.enabled %}
+
+        {% if request.GET.per_page == "1" %}
+            <div class="product-card per-page-1">
+        {% elif request.GET.per_page == "2" %}
+            <div class="product-card per-page-2">
+        {% elif request.GET.per_page == "3" %}
+            <div class="product-card per-page-3">
+        {% else %}
+            <div class="product-card">
+        {% endif %}
+
+            <a href="{% url 'product_page' product.string_id %}" title="Se detaljer for {{ product.title }}" class="product-link">
+
+            <div class="product-image-container">
+                {% if product.images.all.0.image.url %}
+                    <img src="{{ product.images.all.0.image.url }}" alt="Primary image of {{ product.title }}" class="product-image">
+                    {% if product.images.all.1.image.url %}
+                        <img src="{{ product.images.all.1.image.url }}" alt="Secondary image of {{ product.title }}" class="product-image second-image">
+                    {% endif %}
+                {% else %}
+                    <img src="{{ MEDIA_URL }}default_image.png" alt="{{ product.title }}" class="product-image">
+                {% endif %}
+                {% if product.sale_price %}
+                    {% with difference=product.price|floatformat:"-2"|subtract:product.sale_price|floatformat:"-2" %}
+                     <div class="price-overlay">Spar {{ difference }}kr</div>
+                     {% endwith %}
+                {% endif %}
+            </div>
+
+                <div class="product-details">
+                    <h2 class="product-name">{{ product.title }}</h2>
+                    {% if product.sale_price %}
+                        <p class="product-price">{{ product.sale_price }} kr</p>
+                    {% else %}
+                        <p class="product-price">{{ product.price }} kr</p>
+                    {% endif %}
+                </div>
+            </a>
+                {% if product.sale_price %}
+
+                    <div style="margin-top:-8px" class="product-details">
+                        <a style="text-decoration: none;" href="{% url 'category_search' product.category %}">
+                            <p class="product-category">{{ product.category|upper }}</p>
+                        </a>
+                            <p class="product-price-dashed">{{ product.price }} kr</p>
+                    </div>
+                {% else %}
+                    <a style="text-decoration: none;" href="{% url 'category_search' product.category %}">
+                        <p class="product-category">{{ product.category|upper }}</p>
+                    </a>
+                {% endif %}
+            </a>
+        </div>
+        {% endif %}
+    {% endfor %}
+

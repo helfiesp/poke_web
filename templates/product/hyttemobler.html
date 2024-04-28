@@ -1,0 +1,38 @@
+{% load static %}
+{% load form_tags %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+<link rel="stylesheet" href="{% static 'css/hytte.css' %}">
+
+<div class="parent">
+  <!-- div1 - Product 1 -->
+  {% if products|length >= 1 %}
+  <div class="div1">
+    <a href="{% url 'product_page' products.0.id %}">
+      <img src="{{ products.0.images.all.0.image.url }}" alt="{{ products.0.title }}" class="hytte_product_img_small">
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- div2 - Product 2 -->
+  {% if products|length >= 2 %}
+  <div class="div2">
+    <a href="{% url 'product_page' products.1.id %}">
+      <img src="{{ products.1.images.all.0.image.url }}" alt="{{ products.1.title }}" class="hytte_product_img_small">
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- div3 - Featured or Category Product -->
+  {% if products|length >= 3 %}
+  <div class="div3">
+    <a href="{% url 'product_page' products.2.id %}">
+      <img src="{{ products.2.images.all.0.image.url }}" alt="{{ products.2.title }}" class="hytte_product_img_big">
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- div4 - Inspiration/Banner Image -->
+  <div class="div4">
+    <img src="{{ MEDIA_URL }}banner1.jpg" alt="Inspiration Banner" class="inspiration-image">
+  </div>
+</div>

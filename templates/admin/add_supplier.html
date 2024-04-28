@@ -1,0 +1,29 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+
+<div class="add-item-container">
+
+    <form action="{% url 'add_supplier' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Supplier Name Section -->
+        <div class="form-section">
+            <h2>Ny leverandør</h2>
+            <label for="id_name">Leverandør navn</label>
+            <input type="text" id="id_name" name="name" placeholder="Leverandør navn" required>
+        </div>
+
+            <!-- Supplier Image Section -->
+        <div class="form-section">
+            <label for="supplier_image">Leverandør bilde</label>
+            <p>Bilde må ikke legges inn</p>
+            <input type="file" id="supplier_image" name="supplier_image" accept="image/*">
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">Legg til leverandør</button>
+    </form>
+</div>
+
+{% endblock %}

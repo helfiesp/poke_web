@@ -1,0 +1,140 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/image_preview.css' %}">
+<script type="text/javascript">
+    // This script will add the 'multiple' attribute to all image input fields
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select all file input elements that contain 'image' in their name attribute
+        var imageInputs = document.querySelectorAll('input[type="file"][name^="image"]');
+        imageInputs.forEach(function(input) {
+            input.setAttribute('multiple', 'multiple');
+        });
+    });
+
+
+</script>
+
+<script src="{% static 'js/image_preview.js' %}"></script>
+
+<div class="add-item-container">
+    <form id="product-form" action="{% url 'add_product' %}" method="POST" enctype="multipart/form-data" class="form-style">
+            {% csrf_token %}
+            <div class="form-section">
+                <h2>Nytt produkt</h2>
+                {% if errors %}
+                    {{ errors }}
+                {% endif %}
+                <p>Tittel</p>
+                {{ form.title }}
+                <p>Undertittel</p>
+                {{ form.subtitle }}
+                
+
+                <p>Beskrivelse</p>
+                {{ form.description }}
+                {% if categories %}
+                <div class="form-section">
+                    <label for="name">Velg kategori</label>
+                        <select name="category">
+                            {% for category in all_categories %}
+                                {% if category.id == product.category.id %}
+                                    <option value="{{ category.id }}" selected>{{ category.name }}</option>
+                                {% else %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                </div>
+                {% endif %}
+
+                <p>Pris</p>
+                {{ form.price }}
+                <p>Salgspris</p>
+                {{ form.sale_price }}
+                <p>Materiale</p>
+                {{ form.material }}
+                <p>Farge</p>
+                {{ form.color }}
+                <p>Høyde</p>
+                {{ form.height }}
+                <p>Bredde</p>
+                {{ form.width }}
+                <p>Dybde</p>
+                {{ form.depth }}
+                <p>Lengde</p>
+                {{ form.length }}
+                <p>På lager</p>
+                {{ form.instock }}
+                <p>Mer informasjon</p>
+                {{ form.more_information }}
+
+                 <!-- Custom styled checkbox for Enabled -->
+                <div class="checkbox-section" style="margin-top: 10px;">
+                    <p>Vil du at produktet skal vises på nettsiden?</p>
+                    <label class="switch">
+                        {{ form.enabled }}
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Custom styled checkbox for Bestseller -->
+                <div class="checkbox-section" style="margin-top: 10px;">
+                    <p>Vil du markere produktet som en bestselger?</p>
+                    <label class="switch">
+                        {{ form.bestseller }}
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                {% if suppliers %}
+                <div class="form-section">
+                    <label for="name">Velg leverandør</label>
+                    <select name="supplier" id="supplier">
+                        {% for supplier in suppliers %}
+                            <option value="{{ supplier.name }}">{{ supplier.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+           
+            </div>
+
+
+    <div class="form-section image-upload-section" style="margin-top:20px">
+        <h3>Bilder</h3>
+        <p>Legg til bilder til annonsen din, flere bilder kan gjøre at du får mer interesse</p>
+        <div style="display: flex; align-items: center;">
+            <!-- The label here is styled to look like a button and when clicked will open the file dialog -->
+            <label for="id_images" class="custom-file-upload" style="color:white">
+                Legg til bilder
+            </label>
+        </div>
+            
+            <input type="file" name="images" multiple id="id_images" style="display: none;"> <!-- Hide the original input -->
+
+            {{ formset.management_form }}
+
+            <div id="image-preview-container" style="justify-content: center; align-items: center; display: flex; flex-wrap: wrap;">
+            {% for image in product.images.all %}
+                <div class="image-preview" data-image-id="{{ image.id }}">
+                    <img src="{{ image.image.url }}" data-filename="{{ image.image.name }}">
+                </div>
+            {% endfor %}
+            </div> <!-- Container for image previews -->
+        </div>
+
+
+
+        <div class="form-buttons">
+        <button type="submit" class="submit-btn">Legg ut produkt</button>
+</div>
+
+</form>
+
+{% endblock %}

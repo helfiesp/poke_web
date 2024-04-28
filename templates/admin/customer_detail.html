@@ -1,0 +1,161 @@
+<!-- website_app/templates/website_app/customer_detail.html -->
+
+{% extends 'base/base.html' %}  <!-- Adjust this path to your actual base template -->
+
+{% block content %}
+
+<style>
+/* You can reuse the same styles as in the order detail page or adjust as needed */
+.customer-details {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.customer-details h2, .customer-details label {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.customer-details input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.customer-details .save-button {
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    width: 100%;
+}
+
+.customer-details .save-button:hover {
+    background-color: #4cae4c;
+}
+.orders-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 0 20px 20px; /* Adjust padding to match the header's horizontal padding */
+}
+.order-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.card-content {
+    padding: 20px;
+}
+.card-actions {
+    background: #f2f2f2;
+    padding: 10px;
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+.btn-edit {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 15px;
+    text-decoration: none;
+    border-radius: 3px;
+    text-align: center;
+}
+.btn-edit:hover {
+    background-color: #0056b3;
+}
+
+
+/* Orders section header */
+.orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 20px 20px; /* Adjust padding as needed */
+}
+
+.btn-new-order {
+    background-color: #5cb85c;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block; /* Allows the use of margin and padding */
+}
+
+.btn-new-order:hover {
+    background-color: #4cae4c;
+}
+
+</style>
+
+
+
+<form class="customer-details" method="post" action="{% url 'customer_detail' customer.id %}">
+    {% csrf_token %}
+    <h2>{{ customer.name }}</h2>
+    
+    <label for="name">Navn:</label>
+    <input type="text" id="name" name="name" value="{{ customer.name }}" />
+
+    <label for="phone_number">Telefon:</label>
+    <input type="text" id="phone_number" name="phone_number" value="{{ customer.phone_number }}" />
+
+    <label for="email">E-Post:</label>
+    <input type="text" id="email" name="email" value="{{ customer.email }}" />
+
+
+    <label for="zip_code">Postnummer:</label>
+    <input type="text" id="zip_code" name="zip_code" value="{{ customer.zip_code }}" />
+
+    <label for="street_address">Gateadresse:</label>
+    <input type="text" id="street_address" name="street_address" value="{{ customer.street_address }}" />
+
+
+
+    <button type="submit" class="save-button">Lagre endringer</button>
+</form>
+
+
+{% if orders %}
+<div class="customer-details">
+    <div class="orders-header">
+        <h3>Ordre for {{ customer.name }}</h3>
+        <a href="{% url 'add_order' customer.id %}" class="btn-new-order">Ny ordre</a>
+    </div>
+    <div class="orders-cards">
+        {% for order in orders %}
+            <div class="order-card">
+                <div class="card-content">
+                    <p><strong>Ordre:</strong> {{ order.order_number }}<br>
+                    <strong>Dato:</strong> {{ order.date_added|date:"Y-m-d" }}</p>
+                </div>
+                <div class="card-actions">
+                    <a href="{% url 'order_detail' order.order_number %}" class="btn-edit">Se ordre</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p style="text-align: center;">
+        Ingen ordre funnet for denne kunden.<br><br>
+        <a href="{% url 'add_order' customer.id %}" class="btn-new-order">Ny ordre</a>
+    </p>
+{% endif %}
+</div>
+
+{% endblock %}

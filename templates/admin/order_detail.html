@@ -1,0 +1,425 @@
+{% extends 'base/base.html' %}  <!-- Adjust this path to your actual base template -->
+{% load form_tags %}
+{% block content %}
+
+<style>
+/* General styling for the form and its components */
+form.order-details {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: auto;
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.back-button-container {
+    margin-bottom: 20px;
+}
+
+.back-button,
+.save-button,
+.print-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover,
+.save-button:hover,
+.print-button:hover {
+    background-color: #45a049;
+}
+
+.order-header h2 {
+    color: #333;
+}
+
+.button-row {
+    text-align: right;
+}
+
+/* Toggle buttons for order status */
+.toggle-buttons-container {
+    margin: 20px 0;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.toggle-button {
+    margin-top: 5px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+.label-text {
+    margin-left: 10px;
+    font-weight: normal;
+}
+
+/* Customer details and other labels and fields */
+label {
+    display: block;
+    margin: 15px 0 5px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Styling for cart items */
+.cart-item {
+    background: #ffffff;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-image img {
+    height: 100px;
+    width: 100px;
+    border-radius: 5px;
+}
+
+.cart-item-details,
+.cart-item-quantity {
+    margin-left: 20px;
+}
+
+.price-input,
+.quantity-input {
+    padding: 5px;
+    margin: 5px 0;
+    width: auto;
+}
+
+/* Disabling and styling disabled fields */
+input:disabled {
+    background-color: #eee;
+}
+
+</style>        
+
+  
+
+<form class="order-details" method="post" action="{% url 'update_order' order.order_number %}">
+    {% csrf_token %}
+    <div class="back-button-container">
+        <button type="button" onclick="history.back()" class="back-button">Tilbake</button>
+    </div>
+    <div class="order-header">
+        <h2>Rediger ordre: {{ order.order_number }}</h2>
+        <div class="button-row">
+            <!-- Check if PDF exists and adjust the button display accordingly -->
+            <button type="button" onclick="window.location.href='{% url 'order_confirmation' order.order_number %}'" class="print-button">
+                {% if pdf_exists %}
+                    Generer ny ordrebekreftelse
+                {% else %}
+                    Generer ordrebekreftelse
+                {% endif %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Status Toggle -->
+    <div class="toggle-buttons-container">
+        {% for status, name in order.status_choices %}
+            <div class="toggle-button">
+                <label class="switch">
+                    <input type="radio" name="status" value="{{ status }}" {% if order.status == status %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+                <span class="label-text">{{ name }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Customer Details -->
+    <label for="customer_name">Kunde:</label>
+    <p><a href="{% url 'customer_detail' order.customer.id %}">{{ order.customer.first_name }} {{ order.customer.last_name }}</a></p>
+
+    <!-- Delivery Info -->
+    <label for="delivery_info">Leveringsinfo:</label>
+    {% for entry in delivery_info %}
+        {{ entry }}
+    {% endfor %}
+    <textarea id="delivery_info" name="delivery_info">{{ delivery_info }}</textarea>
+
+    <!-- Additional Order Details -->
+    <label for="delivery_price">Leveringspris:</label>
+    <input type="text" id="delivery_price" name="delivery_price" value="{{ order.delivery_price }}">
+
+    <label for="extra_info">Ekstra info:</label>
+    <input type="text" id="extra_info" name="extra_info" value="{{ order.extra_info }}">
+
+    <label for="total_price">Totalpris:</label>
+    <input type="text" id="total_price" name="total_price" value="{{ order.price }}">
+
+    <label for="paid">Betalt:</label>
+    <input type="text" id="paid" name="paid" value="{{ order.paid }}">
+
+    <label for="remaining">Resterende:</label>
+    <input type="text" id="remaining" name="remaining" value="{{ order.remaining }}" disabled>
+
+    <!-- Items Display and Edit -->
+    <h3>Items</h3>
+       {% for item in items %}
+<div class="cart-item" data-product-id="{{ item.id }}">
+    <div class="cart-item-image">
+        <img src="{{ item.id|fetch_item_image }}" alt="{{ item.title }}" class="item-image">
+    </div>
+    <div class="cart-item-details">
+        <p class="cart-item-title">{{ item.title }}</p>
+            {% if item.purchase_price %}
+            <label for="purchase_price_{{ item.id }}">Kjøpspris:</label>
+            <input type="text" id="purchase_price_{{ item.id }}" name="purchase_price_{{ item.id }}" value="{{ item.purchase_price|floatformat:2 }}" class="price-input" />
+            {% endif %}
+        </div>
+
+        <div class="cart-item-quantity">
+            <label for="quantity_{{ item.id }}">Quantity:</label>
+            <input type="number" id="quantity_{{ item.id }}" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="0" class="quantity-input" />
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+    <!-- Date Added -->
+    <label for="date_added">Dato lagt til:</label>
+    <input type="text" id="date_added" name="date_added" value="{{ order.date_added|date:"Y-m-d H:i:s" }}" disabled />
+
+    <div class="form-actions">
+        <button type="submit" class="save-button">Oppdater ordre</button>
+    </div>
+</form>
+
+<script>
+document.getElementById('removeCurrentProduct').addEventListener('click', function() {
+    var activeButton = document.querySelector('.item-nav-button.active');
+    if (!activeButton) {
+        alert('Ingen produkt er valgt for fjerning.');
+        return;
+    }
+
+    var itemId = activeButton.getAttribute('data-item-id');
+    var itemToRemove = document.getElementById(itemId);
+
+    if (itemToRemove) {
+        // Remove the item
+        itemToRemove.parentNode.removeChild(itemToRemove);
+        // Remove the button
+        activeButton.parentNode.removeChild(activeButton);
+    } else {
+        console.error('The associated item could not be found.');
+        return;
+    }
+
+    // No need to update IDs or data attributes; focus on what to show next
+    var items = document.getElementsByClassName('item');
+    var buttons = document.getElementsByClassName('item-nav-button');
+    if (items.length > 0) {
+        // Reset active state for buttons
+        Array.from(buttons).forEach(button => button.classList.remove('active'));
+        // Arbitrarily show the first item; adjust based on your UX needs
+        var id_check = parseInt(itemId.replace("item", ""))
+        if (id_check > 1){
+            var next_item = id_check - 1
+            showItem(next_item);
+            buttons[next_item].classList.add('active');
+        } else {
+            showItem(0);
+            buttons[0].classList.add('active');
+        }
+
+    } else {
+        // Handle case where no items are left
+        // Possibly clear or hide the container or show a placeholder
+    }
+});
+
+
+
+document.getElementById('addNewProduct').addEventListener('click', function() {
+    var itemCount = document.getElementsByClassName('item').length;
+
+    // Create new nav button for the item
+    var newNavButton = document.createElement('button');
+    newNavButton.setAttribute('type', 'button');
+    newNavButton.classList.add('item-nav-button');
+    newNavButton.setAttribute('onclick', 'showItem(' + itemCount + ')');
+    newNavButton.id = 'nav-button' + itemCount;
+    newNavButton.textContent = itemCount + 1;
+    document.querySelector('.item-navigation').appendChild(newNavButton);
+
+    // Create new item div
+    var newItem = document.createElement('div');
+    newItem.classList.add('item');
+    newItem.id = 'item' + itemCount;
+    newItem.style.display = 'none';
+    var fields = ['product', 'info', 'amount', 'legs', 'fabric', 'price'];
+    var labels = ['Produkt:', 'Produktinfo:', 'Antall:', 'Ben:', 'Stoff & farge:', 'Produktpris:'];
+    fields.forEach(function(field, index) {
+        var label = document.createElement('label');
+        label.textContent = labels[index];
+        newItem.appendChild(label);
+
+        var input = document.createElement('input');
+        input.type = (field === 'amount') ? 'number' : 'text';
+        input.name = field + '_' + (itemCount + 1);
+
+        // Set the default values for amount and price
+        if (field === 'amount') {
+            input.defaultValue = '1';
+        } else if (field === 'price') {
+            input.defaultValue = '0';
+        }
+
+        newItem.appendChild(input);
+
+
+    });
+    document.getElementById('itemsContainer').appendChild(newItem);
+
+    // Automatically select the new item
+    // This involves showing the new item and updating the active class on buttons
+    showItem(itemCount);
+
+    // Update all buttons to ensure only the new button has the active class
+    var buttons = document.getElementsByClassName('item-nav-button');
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove('active');
+    }
+    newNavButton.setAttribute('data-item-id', 'item' + itemCount); // Associate button with item
+    newNavButton.classList.add('active');
+});
+
+// JavaScript function to show an item and hide others
+function showItem(index) {
+    var items = document.getElementsByClassName('item');
+    var buttons = document.getElementsByClassName('item-nav-button');
+
+    // If no items exist, do nothing
+    if (items.length === 0) {
+        return;
+    }
+for (var i = 0; i < items.length; i++) {
+    items[i].style.display = 'none';
+    buttons[i].classList.remove('active');
+}
+
+// Show the selected item and add active class to the button
+document.getElementById('item' + index).style.display = 'block';
+document.getElementById('nav-button' + index).classList.add('active');
+}
+
+// Initialize the view by showing the first item and marking the first button as active
+document.addEventListener('DOMContentLoaded', function() {
+showItem(0);
+});
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// Event listener for the back button
+document.getElementById('backButton').addEventListener('click', function() {
+    var form = document.querySelector('.order-details'); // Get the form
+    var formData = new FormData(form); // Create a FormData object from the form
+    var actionUrl = form.getAttribute('action'); // Get the action URL of the form
+
+    // AJAX request to submit the form data
+    fetch(actionUrl, {
+        method: 'POST',
+        body: formData,
+        headers: {'X-CSRFToken': csrftoken}, // Pass the CSRF token in the header
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.text();
+    })
+    .then(data => {
+        // Handle success - navigate back to the orders list
+        window.location.href = "{% url 'all_orders' %}";
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+});
+</script>
+
+{% endblock %}

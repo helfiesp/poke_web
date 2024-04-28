@@ -1,0 +1,106 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+}
+.container-img {
+	height:100%;
+	max-width:75%;
+}
+.image-wrapper {
+    flex: 1;
+}
+
+.contact-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.contact-info {
+    flex: 1;
+    max-width: 400px; /* adjust as needed */
+    padding: 20px;
+    margin-left:70px;
+
+}
+
+.contact-info h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.contact-info address,
+.contact-info p,
+.social-media {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.social-media {
+    list-style-type: none;
+    padding: 0;
+}
+
+.social-media li {
+    display: inline;
+    margin-right: 10px;
+}
+
+.social-media a {
+    text-decoration: none;
+    color: #333;
+}
+
+/* Add responsive design for smaller screens */
+@media (max-width: 768px) {
+
+	.container {
+		margin-top:20px;
+	}
+    .image-wrapper,
+    .contact-info {
+        max-width: 100%;
+    }
+    .container-img {
+	height:100%;
+	max-width:100%;
+}
+}
+    </style>
+
+<div class="container">
+    <img class="container-img" src="{{ MEDIA_URL }}contact.png" alt="Interior"> <!-- Placeholder for your image -->
+    <div class="contact-info">
+        <p style="font-size:40px">Kontakt oss</p>
+        <p style="font-size:20px;">
+            <strong>Adresse</strong><br>
+            {{ business_information.street_address }}<br>
+            {{ business_information.zip_code }} {{ business_information.zip_code_area }}
+        </p>
+
+        <p style="font-size:20px; margin-top:20px">
+            <strong>E-post</strong><br>
+            <a href="mailto:info@barberry.com">{{ business_information.main_email }}</a>
+        </p>
+        <p style="font-size:20px; margin-top:30px">
+            <strong>Telefon</strong><br>
+            <a href="tel:+330131305210">{{ business_information.main_phone }}</a><br>
+        </p>
+        <ul class="social-media">
+            <li><a href="https://www.facebook.com/www.pgmobler.no" target="_blank">Facebook</a></li>
+            <li><a href="https://www.instagram.com/pgmobler/" target="_blank">Instagram</a></li>
+        </ul>
+    </div>
+</div>
+
+{% include 'base/footer.html' %}
+{% endblock %}

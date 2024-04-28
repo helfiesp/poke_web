@@ -1,0 +1,208 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load form_tags %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/update_products.css' %}">
+    <h1>Tekstoversikt</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Front Page Header</th>
+                <th>Front Page Subtitle</th>
+                <th>Front Page Button Text</th>
+                <th>Recent Product Header</th>
+                <th>Recent Product Text</th>
+                <th>Bestselger overskrift</th>
+                <th>Bestselger undertekst</th>
+                <th>Nav Item 1</th>
+                <th>Nav Item 2</th>
+                <th>Nav Item 3</th>
+                <th>Nav Item 4</th>
+                <th>Purchase Button 1</th>
+                <th>Purchase Button 2</th>
+                <th>Product Desc Item 1</th>
+                <th>Product Desc Item 2</th>
+                <th>Product Desc Item 3</th>
+                <th>Salgskatalog</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for text_area in text_areas %}
+            <tr>
+                <form method="post" action="{% url 'update_text_areas_id' text_area.id %}">
+                    {% csrf_token %}
+                        <td><input type="text" name="front_page_header" value="{{ text_area.front_page_header }}"></td>
+                        <td><input type="text" name="front_page_subtitle" value="{{ text_area.front_page_subtitle }}"></td>
+                        <td><input type="text" name="front_page_button_text" value="{{ text_area.front_page_button_text }}"></td>
+                        <td><input type="text" name="recent_product_header" value="{{ text_area.recent_product_header }}"></td>
+                        <td><input type="text" name="recent_product_text" value="{{ text_area.recent_product_text }}"></td>
+                        <td><input type="text" name="bestseller_header" value="{{ text_area.bestseller_header }}"></td>
+                        <td><input type="text" name="bestseller_text" value="{{ text_area.bestseller_text }}"></td>
+                        <td><input type="text" name="nav_item_1" value="{{ text_area.nav_item_1 }}"></td>
+                        <td><input type="text" name="nav_item_2" value="{{ text_area.nav_item_2 }}"></td>
+                        <td><input type="text" name="nav_item_3" value="{{ text_area.nav_item_3 }}"></td>
+                        <td><input type="text" name="nav_item_4" value="{{ text_area.nav_item_4 }}"></td>
+                        <td><input type="text" name="purchase_button_1" value="{{ text_area.purchase_button_1 }}"></td>
+                        <td><input type="text" name="purchase_button_2" value="{{ text_area.purchase_button_2 }}"></td>
+                        <td><input type="text" name="product_desc_item_1" value="{{ text_area.product_desc_item_1 }}"></td>
+                        <td><input type="text" name="product_desc_item_2" value="{{ text_area.product_desc_item_2 }}"></td>
+                        <td><input type="text" name="product_desc_item_3" value="{{ text_area.product_desc_item_3 }}"></td>
+                        <td><input type="text" name="sale_catalogue" value="{{ text_area.sale_catalogue }}"></td>
+
+                        <td><button type="submit">Update Text Area</button></td>
+                </form>
+            </tr>
+            {% endfor %}
+
+            {% if not text_areas %}
+            <tr>
+                <form method="post" action="{% url 'create_text_area' %}">
+                    {% csrf_token %}
+                        <td><input type="text" name="front_page_header" value="{{ text_area.front_page_header }}"></td>
+                        <td><input type="text" name="front_page_subtitle" value="{{ text_area.front_page_subtitle }}"></td>
+                        <td><input type="text" name="front_page_button_text" value="{{ text_area.front_page_button_text }}"></td>
+                        <td><input type="text" name="recent_product_header" value="{{ text_area.recent_product_header }}"></td>
+                        <td><input type="text" name="recent_product_text" value="{{ text_area.recent_product_text }}"></td>
+                        <td><input type="text" name="bestseller_header" value="{{ text_area.bestseller_header }}"></td>
+                        <td><input type="text" name="bestseller_text" value="{{ text_area.bestseller_text }}"></td>
+                        <td><input type="text" name="nav_item_1" value="{{ text_area.nav_item_1 }}"></td>
+                        <td><input type="text" name="nav_item_2" value="{{ text_area.nav_item_2 }}"></td>
+                        <td><input type="text" name="nav_item_3" value="{{ text_area.nav_item_3 }}"></td>
+                        <td><input type="text" name="nav_item_4" value="{{ text_area.nav_item_4 }}"></td>
+                        <td><input type="text" name="purchase_button_1" value="{{ text_area.purchase_button_1 }}"></td>
+                        <td><input type="text" name="purchase_button_2" value="{{ text_area.purchase_button_2 }}"></td>
+                        <td><input type="text" name="product_desc_item_1" value="{{ text_area.product_desc_item_1 }}"></td>
+                        <td><input type="text" name="product_desc_item_2" value="{{ text_area.product_desc_item_2 }}"></td>
+                        <td><input type="text" name="product_desc_item_3" value="{{ text_area.product_desc_item_3 }}"></td>
+                        <td><button type="submit">Add New Text Area</button></td>
+                </form>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <h2>Footer Text Areas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Footer Header 1</th>
+                <th>Footer Header 1 Subtitle</th>
+                <th>Footer Header 2</th>
+                <th>Footer Header 3</th>
+                <th>Footer Header 3 Subtitle 1</th>
+                <th>Footer Header 3 Subtitle 2</th>
+                <th>Footer Header 4</th>
+                <th>Footer Header 4 Subtitle 1</th>
+                <th>Footer Header 4 Subtitle 2</th>
+                <th>Footer Header 5</th>
+                <th>Footer Header 5 Subtitle 1</th>
+                <th>Footer Header 5 Subtitle 2</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for footer_area in footer_text_areas %}
+            <tr>
+                <form method="post" action="{% url 'update_footer_textareas_id' footer_area.id %}">
+                    {% csrf_token %}
+                    <td><input type="text" name="footer_header_1" value="{{ footer_area.footer_header_1 }}" placeholder="Footer Header 1"></td>
+                    <td><input type="text" name="footer_header_1_subtitle" value="{{ footer_area.footer_header_1_subtitle }}" placeholder="Footer Header 1 Subtitle"></td>
+                    <td><input type="text" name="footer_header_2" value="{{ footer_area.footer_header_2 }}" placeholder="Footer Header 2"></td>
+                    <td><input type="text" name="footer_header_3" value="{{ footer_area.footer_header_3 }}" placeholder="Footer Header 3"></td>
+                    <td><input type="text" name="footer_header_3_subtitle_1" value="{{ footer_area.footer_header_3_subtitle_1 }}" placeholder="Footer Header 3 Subtitle 1"></td>
+                    <td><input type="text" name="footer_header_3_subtitle_2" value="{{ footer_area.footer_header_3_subtitle_2 }}" placeholder="Footer Header 3 Subtitle 2"></td>
+                    <td><input type="text" name="footer_header_4" value="{{ footer_area.footer_header_4 }}" placeholder="Footer Header 4"></td>
+                    <td><input type="text" name="footer_header_4_subtitle_1" value="{{ footer_area.footer_header_4_subtitle_1 }}" placeholder="Footer Header 4 Subtitle 1"></td>
+                    <td><input type="text" name="footer_header_4_subtitle_2" value="{{ footer_area.footer_header_4_subtitle_2 }}" placeholder="Footer Header 4 Subtitle 2"></td>
+                    <td><input type="text" name="footer_header_5" value="{{ footer_area.footer_header_5 }}" placeholder="Footer Header 5"></td>
+                    <td><input type="text" name="footer_header_5_subtitle_1" value="{{ footer_area.footer_header_5_subtitle_1 }}" placeholder="Footer Header 5 Subtitle 1"></td>
+                    <td><input type="text" name="footer_header_5_subtitle_2" value="{{ footer_area.footer_header_5_subtitle_2 }}" placeholder="Footer Header 5 Subtitle 2"></td>
+                    <td><button type="submit">Update Footer Area</button></td>
+                </form>
+
+            </tr>
+            {% endfor %}
+
+            {% if not footer_text_areas %}
+                <tr>
+                <form method="post" action="{% url 'create_footer_text_area' %}" name="create_footer_text_area">
+                    {% csrf_token %}
+                    <td><input type="text" name="footer_header_1" value="{{ footer_area.footer_header_1 }}" placeholder="Footer Header 1"></td>
+                    <td><input type="text" name="footer_header_1_subtitle" value="{{ footer_area.footer_header_1_subtitle }}" placeholder="Footer Header 1 Subtitle"></td>
+                    <td><input type="text" name="footer_header_2" value="{{ footer_area.footer_header_2 }}" placeholder="Footer Header 2"></td>
+                    <td><input type="text" name="footer_header_3" value="{{ footer_area.footer_header_3 }}" placeholder="Footer Header 3"></td>
+                    <td><input type="text" name="footer_header_3_subtitle_1" value="{{ footer_area.footer_header_3_subtitle_1 }}" placeholder="Footer Header 3 Subtitle 1"></td>
+                    <td><input type="text" name="footer_header_3_subtitle_2" value="{{ footer_area.footer_header_3_subtitle_2 }}" placeholder="Footer Header 3 Subtitle 2"></td>
+                    <td><input type="text" name="footer_header_4" value="{{ footer_area.footer_header_4 }}" placeholder="Footer Header 4"></td>
+                    <td><input type="text" name="footer_header_4_subtitle_1" value="{{ footer_area.footer_header_4_subtitle_1 }}" placeholder="Footer Header 4 Subtitle 1"></td>
+                    <td><input type="text" name="footer_header_4_subtitle_2" value="{{ footer_area.footer_header_4_subtitle_2 }}" placeholder="Footer Header 4 Subtitle 2"></td>
+                    <td><input type="text" name="footer_header_5" value="{{ footer_area.footer_header_5 }}" placeholder="Footer Header 5"></td>
+                    <td><input type="text" name="footer_header_5_subtitle_1" value="{{ footer_area.footer_header_5_subtitle_1 }}" placeholder="Footer Header 5 Subtitle 1"></td>
+                    <td><input type="text" name="footer_header_5_subtitle_2" value="{{ footer_area.footer_header_5_subtitle_2 }}" placeholder="Footer Header 5 Subtitle 2"></td>
+                    <td><button type="submit">Add New Text Area</button></td>
+                </form>
+            </tr>
+
+
+            {% endif %}
+        </tbody>
+    </table>
+
+    
+<h2>Business Information</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Street Address</th>
+            <th>Zip Code</th>
+            <th>Zip Code Area</th>
+            <th>Main Email</th>
+            <th>Secondary Email</th>
+            <th>Main Phone</th>
+            <th>Secondary Phone</th>
+            <th colspan="2">Update</th> <!-- Adjust colspan according to the number of columns to span -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for business_info in business_information %}
+        <tr>
+            <form method="post" action="{% url 'update_business_information' business_info.id %}">
+                {% csrf_token %}
+                <td><input type="text" name="street_address" value="{{ business_info.street_address }}"></td>
+                <td><input type="text" name="zip_code" value="{{ business_info.zip_code }}"></td>
+                <td><input type="text" name="zip_code_area" value="{{ business_info.zip_code_area }}"></td>
+                <td><input type="email" name="main_email" value="{{ business_info.main_email }}"></td>
+                <td><input type="email" name="secondary_email" value="{{ business_info.secondary_email }}"></td>
+                <td><input type="text" name="main_phone" value="{{ business_info.main_phone }}"></td>
+                <td><input type="text" name="secondary_phone" value="{{ business_info.secondary_phone }}"></td>
+                <td colspan="2"><button type="submit">Update Business Info</button></td>
+        </tr>
+        <tr>
+            <td colspan="8"> <!-- Adjust colspan to match total number of columns -->
+                <textarea name="about_us_text" rows="15" style="width: 100%;">{{ business_info.about_us_text }}</textarea>
+            </td>
+            </form>
+        </tr>
+            {% empty %}
+            <tr>
+                <form method="post" action="{% url 'create_business_information' %}">
+                    {% csrf_token %}
+                    <td><input type="text" name="street_address" placeholder="Street Address"></td>
+                    <td><input type="text" name="zip_code" placeholder="Zip Code"></td>
+                    <td><input type="text" name="zip_code_area" placeholder="Zip Code Area"></td>
+                    <td><input type="email" name="main_email" placeholder="Main Email"></td>
+                    <td><input type="email" name="secondary_email" placeholder="Secondary Email"></td>
+                    <td><input type="text" name="main_phone" placeholder="Main Phone"></td>
+                    <td><input type="text" name="secondary_phone" placeholder="Secondary Phone"></td>
+                    <td><input type="textarea" name="about_us_text" placeholder="About us"></td>
+                    <td><button type="submit">Add Business Info</button></td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

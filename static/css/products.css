@@ -1,0 +1,189 @@
+.products-container {
+    display: flex; /* Establishes a flex container */
+    flex-direction: column; /* Stacks children vertically */
+    width: 100%; /* Takes full width of the parent */
+}
+
+/* This ensures the form and the product cards section are stacked vertically */
+.top-bar-products, .product-cards-section {
+    width: 100%; /* Each takes full width */
+}
+
+.product-cards-section {
+    display: flex; /* Establishes a flex container */
+    flex-wrap: wrap; /* Allows flex items to wrap */
+    gap: 10px; /* Space between the product cards */
+    justify-content: flex-start; /* Aligns items to the start of the container */
+}
+
+.product-card {
+    display: flex; /* Use flex to position title and price */
+    flex-direction: column; /* Stack children vertically */
+    align-items: flex-start; /* Align children to the start */
+    width: 22%; /* Adjust the width as necessary, accounting for the gap */
+    margin: 10px; /* Margin around the card */
+    box-sizing: border-box; /* Include padding and border in the width calculation */
+}
+.product-card.per-page-1 {
+    width: 100% !important;
+}
+.product-card.per-page-2 {
+    width: 46% !important;
+}
+.product-card.per-page-3 {
+    width: 30% !important;
+}
+
+.product-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-image-container {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    position: relative;
+    transition: opacity 0.8s ease;
+    max-height:700px;
+    max-width:1000px;
+}
+.price-overlay {
+    position: absolute;
+    top: 10px; /* Positioning it towards the bottom of the container */
+    right: 10px; /* Positioning it towards the right of the container */
+    background-color: #5D6D7E; /* A soft, muted blue-grey that complements the design */
+    color: #ffffff; /* Keeping the text color white for contrast */
+    font-size: 0.9em; /* Slightly smaller font size to match the design's elegance */
+    padding: 8px 16px; /* Adequate padding for aesthetic spacing */
+    font-weight: 500; /* Medium font weight to blend in with the page's text styling */
+    border-radius: 5px; /* Soft, rounded corners for a modern look */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* A subtle shadow for depth */
+    z-index: 10; /* Ensures it's above the image */
+    transition: all 0.3s ease; /* Smooth transition for any hover effects */
+    display: flex; /* To center the text inside the box */
+    justify-content: center; /* Center the text horizontally */
+    align-items: center; /* Center the text vertically */
+
+    letter-spacing: 1px; /* Increase letter spacing for a touch of sophistication */
+
+    /* Optional: Add a hover effect for interactivity */
+    cursor: pointer;
+}
+.price-overlay:hover {
+    background-color: #6E7B8B; /* A slightly lighter shade on hover for subtle feedback */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* A more pronounced shadow on hover */
+}
+
+.product-image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity 0.8s ease;
+     object-fit: cover;
+}
+
+.product-details {
+    display: flex; /* Use flexbox for positioning title and price */
+    justify-content: space-between; /* Space title on the left, price on the right */
+    align-items: baseline; /* Align items on their baseline for a uniform look */
+    width: 100%; /* Full width to allow flex spacing to work */
+    margin-top:5px;
+
+}
+
+.product-name {
+    font-size: 1.05rem; /* Standard size for the product name */
+    font-weight: 700; /* Regular font weight */
+    color: #333; /* Dark color for text */
+    margin: px 0; /* Spacing above and below the title */
+}
+
+.product-category {
+    margin-top:0px;
+    font-size: 0.75rem; /* Smaller size for the category */
+    text-transform: uppercase; /* Capitalize the category text */
+    color: #999; /* Slightly grey color for the category */
+    font-weight: 400; /* Regular font weight */
+}
+
+.product-price {
+    font-size: 1.05rem; /* Standard size for the price */
+    font-weight: 500; /* Regular font weight */
+    color: #333; /* Dark color for text */
+    margin: 4px 0; /* Spacing above and below the price */
+}
+
+.product-price-dashed {
+    font-size: 1rem; /* Standard size for the price */
+    color: #999; /* Slightly grey color for the category */
+    font-weight: 400; /* Regular font weight */
+    margin: 4px 0; /* Spacing above and below the price */
+    position: relative; /* Required for positioning the pseudo-element */
+    display: inline-block; /* Ensures the pseudo-element aligns correctly */
+
+}
+
+.product-price-dashed::after {
+    content: ""; /* Necessary for a pseudo-element */
+    position: absolute; /* Positions the pseudo-element in relation to its parent */
+    left: 0; /* Aligns the start of the line with the left edge of the price tag */
+    top: 50%; /* Positions the line in the middle of the price tag vertically */
+    width: 95%; /* Ensures the line stretches across the entire price */
+    height: 1px; /* Sets the thickness of the line */
+    background-color: #333; /* Color of the dash, matching the text */
+    transform: rotate(-10deg); /* Optional: tilts the line for a more dynamic effect */
+}
+/* Initial state for the second image */
+.product-image-container .second-image {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* What happens on hover */
+.product-image-container:hover .product-image {
+    opacity: 1; /* First image disappears */
+}
+
+.product-image-container:hover .second-image {
+    opacity: 1; /* Second image appears */
+    display: block; /* Override the inline 'display: none' */
+}
+
+
+@media only screen and (max-width: 768px) {
+    .products-container {
+        justify-content: center; /* Center the product cards */
+        gap: 10px; /* Smaller gap between products for mobile */
+        margin-top:20px;
+        width:100%;
+    }
+    .page-container-products {
+        width:90%;
+    }
+    .product-card {
+        width: 90%; /* Make product card take up 90% of the screen width */
+        max-height: none; /* Remove max-height restriction */
+        margin: 10px; /* Smaller margin for mobile */
+    }
+
+    /* Adjustments for hover effects on mobile */
+    /* Since hover effects don't work the same on touch screens,
+       you might want to disable them or find a touch-friendly alternative. */
+    .product-image-container:hover .product-image,
+    .product-image-container:hover .second-image {
+        opacity: 1; /* Make sure images are visible */
+    }
+    .product-card.per-page-2 {
+    width: 42% !important;
+    }
+}
+
+/* This is to ensure that the image container does not become too tall on mobile */
+@media only screen and (max-height: 800px) {
+    .product-image-container {
+        max-height: 30vh; /* Use viewport height units */
+    }
+}

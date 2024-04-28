@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+
+{% load static i18n %}
+{% load form_tags %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/confirmation.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="confirmation-page">
+    <div class="confirmation-header">
+        <h1>{% trans "Takk for bestillingen!" %}</h1>
+        <p>{% trans "Ordren din vil bli sendt i løpet av én arbeidsdag. Du vil få en bekreftelse på e-post når varen din er sendt." %}</p>
+    </div>
+    <div class="content-wrapper">
+    <div class="billing-address">
+        <h2>{% trans "Kundeinformasjon" %}</h2>
+        <p><strong>{% trans "Navn" %}:</strong> {{ order.customer }}</p>
+        <p><strong>{% trans "Adresse" %}:</strong> {{ order.customer.address }}</p>
+        <p><strong>{% trans "Telefon" %}:</strong> {{ order.customer.phone_number }}</p>
+        <p><strong>{% trans "E-post" %}:</strong> {{ order.customer.email }}</p>
+    </div>
+
+    <div class="order-summary">
+        <h2>{% trans "Ordreinformasjon" %}</h2>
+            <p><strong>{% trans "Dato" %}:</strong> {{ order.date_added|date:"d M Y" }}</p>
+            <p><strong>{% trans "Ordrenummer" %}:</strong> {{ order.order_number }}</p>
+            <p><strong>{% trans "Betalingsmetode" %}:</strong> {{ payment_details.payment_method|title }}</p>
+    </div>
+</div>
+        <div class="order-summary">
+        <div class="itemized-summary">
+            <!-- Assuming order.items is a JSON field containing product details -->
+            {% for item in items %}
+                <div class="product-summary">
+                    <img src="{{ item.id|fetch_item_image }}" alt="{{ item.title }}">
+                    <div class="product-details">
+                        <p class="product-title">{{ item.id|fetch_item_name }}</p>
+                        <p class="product-price">NOK kr {{ item.purchase_price }}</p>
+                        <p class="product-quantity">{% trans "Antall:" %} {{ item.quantity }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="totals">
+            <p><strong>{% trans "" %}:</strong> NOK kr {{ order.subtotal }}</p>
+            {% if order.delivery_price %}
+                <p><strong>{% trans "Frakt" %}:</strong>{{ order.delivery_price }} kr</p>
+            {% else %}
+                <p><strong>{% trans "Frakt" %}:</strong>GRATIS</p>
+            {% endif %}
+            <p><strong>{% trans "Ordre total" %}:</strong>{{ order.price }} kr</p>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="{% url 'hjem' %}" class="button">{% trans "Til forsiden" %}</a>
+    </div>
+</div>
+{% endblock %}

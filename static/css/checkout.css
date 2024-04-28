@@ -1,0 +1,256 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.section-header {
+    font-weight: bold;
+    font-size: 14px;
+}
+.checkout-wrapper {
+    display: flex;
+    width: 100%;
+    margin: 20px auto;
+    font-size: 14px;
+    min-height: 100vh; /* Sets minimum height to full viewport height */
+}
+
+.left-column, .right-column {
+    width: 50%;
+    padding: 10px;
+    border-top: 1px solid #D3D3D3;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures columns take up at least the viewport height */
+}
+
+.right-column {
+    background-color: #F5F5F5;
+    border-left: 1px solid #D3D3D3;
+}
+
+.left-column-content, .right-column-content {
+    max-width: 512px;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensures content uses available height */
+}
+
+.left-column-content {
+    width: 512px;
+    margin-left: auto; /* Aligns content to the right within the column */
+}
+
+.right-column-content {
+    margin-right: auto; /* Aligns content to the left within the column */
+}
+
+/* RIGHT SECTION */
+.product-item-checkout {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.summary-totals .subtotal, .summary-totals .shipping, .summary-totals .total {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.summary-totals .total {
+    font-weight: bold;
+}
+
+.summary-totals {
+    border-top: 1px solid #D3D3D3;
+    padding: 10px;
+}
+.checkout-header {
+    text-align: center;
+}
+.nav-logo a img {
+    margin-top: 0px;
+    magin-bottom: -10px;
+    max-width: 250px;
+    height: auto;
+}
+
+/* LEFT SECTION */
+
+.address-fields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    grid-gap: 10px; /* Adjust grid gap as needed */
+}
+
+/* For the inputs that should be full width */
+.address-fields .grid-item.full-width {
+    grid-column: span 2; /* Make these items take up two columns */
+}
+
+/* For the inputs that should take up half the width */
+.address-fields .grid-item.half-width {
+    grid-column: span 1; /* Make these items take up one column */
+}
+
+/* For the inputs that should be on their own but in the grid */
+.address-fields .grid-item.single {
+    grid-column: span 2; /* Make these items take up two columns */
+}
+
+/* Style adjustments for the input elements */
+.address-fields input[type=text], .address-fields input[type=tel] {
+    /* Existing input styles */
+}
+
+/* Responsive adjustments if necessary */
+@media (max-width: 768px) {
+    .address-fields {
+        grid-template-columns: 1fr; /* One column on smaller screens */
+    }
+    .address-fields .grid-item {
+        grid-column: span 1; /* Make all items take full width on smaller screens */
+    }
+}
+
+
+input[type=email], input[type=text], input[type=tel], select, input[type="radio"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Generic radio buttons styling, adapted from previous shipping-options-radio */
+/* Hide the actual radio button input */
+input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
+
+input[type="radio"] + label {
+    padding: 12px 15px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Add this line */
+    text-align: left;
+    color: #3C454C;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    transition: color 200ms ease-in;
+    overflow: hidden;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.radio-button-logo {
+    height: auto; /* or your preferred height */
+    width: 25px; /* or your preferred width */
+    object-fit: contain;
+}
+.radio-label-text {
+    margin-left: auto; /* Push the text to the right */
+    padding-left: 12px; /* Spacing between the label text and the "GRATIS" text */
+    font-weight: bold; /* Optional: makes "GRATIS" stand out */
+}
+
+
+input[type="radio"] + label:before {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    content: '';
+    background-color: #419cd6;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale3d(1, 1, 1);
+    transition: all 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    opacity: 0;
+    z-index: -1;
+}
+
+
+input[type="radio"]:checked + label {
+    color: #fff;
+}
+
+input[type="radio"]:checked + label:before {
+    transform: translate(-50%, -50%) scale3d(56, 56, 1);
+    opacity: 1;
+}
+
+input[type="radio"]:checked + label:after {
+    background-color: #54E0C7;
+    border-color: #54E0C7;
+}
+input[type="radio"] {
+    width: auto;
+}
+
+/* Adjust the radio button containers within delivery options */
+.delivery-options > .checkout-radio:first-child label {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: none; /* Remove bottom border */
+
+}
+
+.delivery-options > .checkout-radio:last-child label {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* Remove border-radius from sides that should not be rounded */
+.delivery-options > .checkout-radio label {
+    border-radius: 0;
+}
+
+/* Reapply border-radius to the appropriate corners of each label */
+.delivery-options > .checkout-radio:first-child label {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.delivery-options > .checkout-radio:last-child label {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+/* Checkbox group styling */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+
+.address-fields {
+    margin-top: 15px;
+}
+/* Heading styling */
+h2 {
+    font-size: 18px; /* Slightly larger heading for better visibility */
+    color: #000; /* Assuming black for headings */
+    padding-bottom: 10px; /* Increase padding for aesthetic spacing */
+    margin-bottom: 20px; /* Increase margin to separate sections */
+}
+
+.complete-order {
+    margin-top: 20px;
+}
+.complete-order button {
+    background-color: #419cd6;
+    border-radius: 5px;
+}

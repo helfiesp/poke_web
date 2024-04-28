@@ -1,0 +1,33 @@
+.bottom-nav {
+  display: none;
+}
+/* Media query for smaller screens */
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    padding: 10px 0;
+    height: 35px; /* Adjusted for better visibility */
+    z-index: 1000; /* High z-index to ensure it's above other elements */
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .nav-item img {
+    width: 25px; /* Adjust based on your icon size */
+    height: 25px; /* Adjust based on your icon size */
+    filter: brightness(0) invert(1); /* Makes the icons white */
+  }
+}

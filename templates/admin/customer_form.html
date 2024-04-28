@@ -1,0 +1,176 @@
+{y% extends "base/base.html" %}
+
+
+
+{% block content %}
+
+<style>
+
+input[type="text"], select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+#add-customer-form, #customer-info {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+#add-order-button-container {
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#add-order-button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+#add-order-button:hover {
+    background-color: #0056b3;
+}
+
+h2, h3 {
+    color: #333;
+}
+</style>
+<script type="application/json" id="customers-data">
+    {{ customers_json|safe }}
+</script>
+
+<div style="max-width: 600px; margin: 20px auto;">
+    <h2>Søk etter kunde</h2>
+    <input type="text" id="customer-search" placeholder="Type to search...">
+
+    <h2>Velg en eksisterende kunde</h2>
+    <select id="customer-select" name="customer">
+        <option value="">--- Velg en kunde ---</option>
+        {% for customer in all_customers %}
+            <option value="{{ customer.id }}" {% if customer.id|stringformat:"s" == selected_customer %}selected{% endif %}>{{ customer.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div id="add-customer-form" {% if not display_form %}style="display:none;"{% endif %}>
+    <h2>Ny kunde</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<div id="customer-info" style="display: none;">
+    <h3>Kundeinformasjon</h3>
+    <a href="#" id="customer-detail-link" style="text-decoration: none; color:black;"><p>Navn: <span id="customer-name"></span></p></a>
+    <p>Postkode: <span id="customer-zip-code"></span></p>
+    <p>Gateadresse: <span id="customer-street-address"></span></p>
+    <p>E-post: <span id="customer-email"></span></p>
+    <p>Telefonnummer: <span id="customer-phone-number"></span></p>
+</div>
+
+<div id="add-order-button-container" style="display: none;">
+    <a href="#" id="add-order-button" class="btn btn-primary">Lag ny ordre for</a> 
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    const customerSelect = document.getElementById('customer-select');
+    const customerSearch = document.getElementById('customer-search');
+    const addCustomerForm = document.getElementById('add-customer-form');
+    const customerInfoDiv = document.getElementById('customer-info');
+    const customersDict = JSON.parse(document.getElementById('customers-data').textContent);
+    
+    // Function to update select options based on search
+    function updateSelectOptions() {
+        const searchValue = customerSearch.value.toLowerCase();
+        // Clear current options
+        customerSelect.innerHTML = '<option value="">--- Velg en kunde ---</option>';
+        
+        // Filter and append options that match the search term
+        Object.keys(customersDict).forEach(function(key) {
+            const name = customersDict[key].name;
+            if (name.toLowerCase().includes(searchValue)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = name;
+                customerSelect.appendChild(option);
+            }
+        });
+    }
+
+function toggleFormDisplayAndShowInfo() {
+    let isPlaceholderSelected = customerSelect.options[customerSelect.selectedIndex].text === "--- Velg en kunde ---";
+    
+    addCustomerForm.style.display = isPlaceholderSelected ? 'block' : 'none';
+    customerInfoDiv.style.display = isPlaceholderSelected ? 'none' : 'block';
+    const addOrderButtonContainer = document.getElementById('add-order-button-container');
+    addOrderButtonContainer.style.display = isPlaceholderSelected ? 'none' : 'block'; 
+
+    if (!isPlaceholderSelected) {
+        let selectedCustomerId = customerSelect.value;
+        const customer = customersDict[selectedCustomerId];
+        
+        document.getElementById('customer-name').textContent = customer ? customer.name : 'N/A';
+        document.getElementById('customer-zip-code').textContent = customer ? customer.zip_code : 'N/A';
+        document.getElementById('customer-street-address').textContent = customer ? customer.street_address : 'N/A';
+        document.getElementById('customer-email').textContent = customer ? customer.email : 'N/A';
+        document.getElementById('customer-phone-number').textContent = customer ? customer.phone_number : 'N/A';
+        
+        const addOrderButton = document.getElementById('add-order-button');
+        addOrderButton.href = `/order/${selectedCustomerId}/`;
+        // Update the button text to include the selected customer's name
+        addOrderButton.textContent = 'Lag ny ordre for ' + (customer ? customer.name : '');
+
+        // Dynamically update the href for the customer detail link
+        const customerDetailLink = document.getElementById('customer-detail-link');
+        customerDetailLink.href = `/customer/${selectedCustomerId}/`; // Adjust the URL pattern as needed
+        
+
+    }
+}
+    // Event listeners
+    customerSearch.addEventListener('input', updateSelectOptions);
+
+    // Event listener for the customer select field
+    customerSelect.addEventListener('change', toggleFormDisplayAndShowInfo);
+
+    // Initial check to set the correct display state when the page loads
+    toggleFormDisplayAndShowInfo();
+});
+
+
+</script>
+{% endblock %}

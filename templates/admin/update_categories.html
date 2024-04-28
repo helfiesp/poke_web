@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/update_products.css' %}">
+    <h1>Kategorioversikt</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Kategori</th>
+                <th>Hovedkategori</th>
+                <th>Bilde</th>
+                <th>Oppdater</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <form method="post" action="{% url 'update_categories_id' category.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <td><input type="text" name="name" value="{{ category.name }}"></td>
+
+                    <td>
+                        <select name="parent">
+                            <option value="">None</option>
+                            {% for parent_category in categories %}
+                            <option value="{{ parent_category.id }}" {% if category.parent_id == parent_category.id %}selected{% endif %}>
+                                {{ parent_category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" alt="Category Image" height="100">
+                        {% endif %}
+                        <input type="file" name="image">
+                    </td>
+                    <td><button type="submit">Oppdater kategori</button></td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

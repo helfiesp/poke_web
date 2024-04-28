@@ -1,0 +1,108 @@
+<!-- website_app/templates/website_app/all_orders.html -->
+
+{% extends 'base/base.html' %}  <!-- Adjust the base template as needed -->
+
+{% block content %}
+<style>
+.main-orders-container {
+  max-width: 960px; /* A max-width helps readability on very large screens */
+  margin: 20px auto; /* Centers the container with some top and bottom margin */
+  padding: 20px;
+  background-color: #fff; /* A light background */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* A subtle shadow to lift the container off the page */
+}
+
+.orders-container {
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px; /* Adds a little space above the table */
+  border-collapse: collapse; /* Collapses the border to make it look like a single, continuous line */
+}
+
+th, td {
+  padding: 12px 15px; /* Adds space around content in table cells for readability */
+  text-align: left; /* Aligns text to the left for a clean look */
+  border-bottom: 1px solid #ddd; /* Adds a light line between rows */
+}
+
+th {
+  background-color: #f8f8f8; /* A light background on the table headers for contrast */
+  font-weight: normal; /* No bold on headers to keep it light and modern */
+}
+
+tr:hover {
+  background-color: #f1f1f1; /* Adds a hover effect on rows */
+}
+
+.buttons-row {
+  text-align: right; /* Aligns buttons to the right */
+  padding-bottom: 10px;
+}
+
+.order-button {
+  background-color: #4CAF50; /* Consider using a less saturated color for elegance */
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px; /* A larger font size for better clickability */
+  border-radius: 5px; /* Rounded corners */
+  text-decoration: none; /* No underline */
+  transition: background-color 0.3s ease; /* Transition for button interaction */
+}
+
+.order-button:hover {
+  background-color: #45a049; /* A slightly darker green on hover for feedback */
+}
+
+
+</style>
+
+<div class="main-orders-container">
+    <div class="orders-container">
+
+        <div class="buttons-row">
+            <a href="{% url 'add_customer' %}" class="order-button">Ny ordre</a>        
+        </div>
+
+
+        {% if orders %}
+        <h2>Alle ordre</h2>
+        <table>
+        <tr>
+                <th>Ordrenummer</th>
+                <th>Kunde</th>
+                <th>Totalpris</th>
+                <th>Selger</th>
+                <th>Leveringsdetaljer</th>
+                <th>Status</th>
+                <th>Dato</th>
+            </tr>
+            {% for order in orders %}
+            <tr>
+                <td><a href="{% url 'order_detail' order.order_number %}">{{ order.order_number }}</a></td>
+                <td><a href="{% url 'customer_detail' order.customer.id %}">{{ order.customer.name }}</a></td>
+                <td>{{ order.price }}</td> <!-- Corrected position for price -->
+                <td>{{ order.salesman }}</td>
+                <td>{{ order.delivery_info }}</td> <!-- Corrected position for delivery details -->
+                <td>{% if order.delivered %}Levert{% elif order.deleted %}Slettet{% else %}Aktiv{% endif %}</td>
+                <td>{{ order.date_added }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No orders found.</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p style="text-align: center;">
+            Ingen ordre funnet.
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+
+
+{% endblock %}

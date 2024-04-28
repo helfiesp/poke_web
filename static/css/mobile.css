@@ -1,0 +1,312 @@
+@media only screen and (max-width: 768px) {
+    /* Base Styles */
+
+body, h1, a, button {
+  margin: 0;
+  padding: 0;
+
+  max-width: 100%;
+  overflow-x: hidden; 
+}
+.filter-select {
+    margin-right:0%;
+}
+
+.per-page-selector li:nth-child(3),
+  .per-page-selector li:nth-child(4) {
+      display: none;
+  }
+
+
+/* Main container */
+.main-container {
+  width: 100%;
+  justify-content: center;
+  margin-left:10px;
+}
+
+.main-header {
+  background-size: cover;
+  background-position: center;
+  height: auto; /* Variable height on mobile */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center content horizontally in flex container */
+  position: relative;
+  color: #000;
+  width: 100%; /* Set width to 100% */
+  max-width: 100%; /* Ensure max-width doesn't exceed 100% */
+  margin-left: auto; /* Auto margin for horizontal centering */
+  margin-right: auto; /* Auto margin for horizontal centering */
+}
+
+.header-content {
+  width: 70%;
+  padding: 20px; /* Reduced padding for mobile */
+  box-sizing: border-box;
+}
+
+.header-title {
+  font-size: 10px; /* Reduced font size for mobile */
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.header-subtitle {
+  font-size: 1em; /* Reduced font size for mobile */
+  letter-spacing: normal; /* Adjust letter spacing for mobile */
+  text-transform: uppercase;
+  margin-bottom: 1em;
+}
+
+.explore-button {
+  padding: 10px 20px;
+  border: 2px solid #000;
+  text-decoration: none;
+  color: #fff;
+  background-color: #000;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+
+/* Navigation & header */
+header {
+  background-size: cover;
+  background-position: center;
+  padding: 10px; /* Reduced padding for mobile */
+  color: #fff;
+  margin-top: 25px;
+  margin-bottom:5px;
+}
+
+.nav-list {
+    display: none;
+}
+.nav-search {
+    display: none;
+}
+.nav-icons {
+    display: none;
+}
+nav {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20px; /* Ensure enough height for touch targets */
+
+}
+.menu-icon {
+  display: flex;
+  align-items: center;
+  margin-left:15px;
+}
+/* Search icon styles */
+.search-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom:5px;
+}
+/* Display search and menu icons */
+.menu-icon img, .search-icon img {
+  width: 25px; /* Adjust icon size */
+  height: 25px; /* Adjust icon size */
+
+}
+
+.nav-logo {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  marign-bottom:50px;
+
+}
+
+.nav-logo a img {
+    max-width: 200px;
+    height: auto;
+}
+/* Product & categories */
+.products, .product-categories {
+padding: 0; /* Remove padding */
+}
+
+.product-item, .category-item {
+  width: 100%; /* Full width for mobile */
+}
+
+.category-image {
+/* Keep the styles */
+}
+
+.product-count {
+/* Keep the styles */
+}
+
+.category-item h3 {
+/* Keep the styles */
+}
+
+/* Recent purchases section */
+.recent-products-section h2, .recent-products-section p {
+padding: 0 10px; /* Add padding */
+}
+
+/* Featured products section */
+.featured-product-item {
+width: 100%; /* Full width for mobile */
+margin: 10px 0; /* Stack with vertical margin */
+}
+
+/* ADD ITEM styles */
+.add-item-container {
+padding: 1rem;
+}
+
+.form-section input[type="text"],
+.form-section select,
+.form-section textarea,
+.form-section input[type="file"] {
+/* Keep the styles */
+}
+
+.image-preview img {
+width: 80px; /* Adjust for mobile */
+}
+
+.image-preview .remove-image {
+/* Keep the styles */
+}
+
+/* Mobile Menu Styles */
+.mobile-menu {
+  display: none; /* Hidden by default */
+  position: fixed; /* Positioning relative to the viewport */
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background-color: #fff; /* Adjust color as needed */
+  overflow-y: auto; /* In case the content overflows */
+  z-index: 1000; /* Ensure it's above other content */
+  transition: transform 0.3s ease; /* Smooth transition for opening/closing */
+  transform: translateX(-100%); /* Start off-screen */
+}
+
+.mobile-menu .closebtn {
+  padding: 12px 16px;
+  text-decoration: none;
+  font-size: 36px;
+  color: #818181;
+  display: block;
+  transition: color 0.3s;
+}
+
+.mobile-menu .closebtn:hover {
+  color: #f00;
+}
+
+.mobile-menu-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 60px; /* Give some space for the close button */
+}
+
+.mobile-menu-list li a {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+  display: block;
+  transition: background-color 0.3s;
+}
+
+.mobile-menu-list li a:hover {
+  background-color: #ddd;
+}
+.blur-content {
+  filter: blur(4px);
+  pointer-events: none; /* Optional: Prevent interaction with blurred content */
+  user-select: none; /* Optional: Prevent text selection on blurred content */
+}
+
+
+.menu-icon {
+  display: block;
+}
+  .mobile-menu[style*="translateX(0)"] {
+  display: block;
+}
+.sidebar-container-products {
+  display: none;
+}
+
+
+#overlay {
+  display: none; /* Hidden by default */
+  position: fixed; /* Full-screen fixed position overlay */
+  top: 0;
+  left: 60%; /* Start from where the mobile menu ends */
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  backdrop-filter: blur(4px); /* This applies the blur to the background */
+  z-index: 999; /* Below the menu but above other content */
+  opacity: 0; /* Start fully transparent */
+  transition: opacity 0.3s ease, left 0.3s ease; /* Fade and slide transitions */
+}
+
+.mobile-menu .filter-title-m  a{
+  font-size: 18px; /* Adjust the font size as needed */
+  margin: 10px 0; /* Space out the categories */
+  padding-left: 10px; /* Align with the subcategories */
+}
+
+.mobile-menu .filter-title-m  a{
+
+  text-decoration: none;
+  color: black;
+}
+
+.mobile-menu .filter-options-m {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0; /* Remove default padding */
+  margin: 0 0 10px 0; /* Space out the subcategories */
+
+  text-decoration: none;
+  color: black;
+}
+.mobile-menu .filter-options-m a{
+  text-decoration: none;
+  color: black;
+}
+
+.mobile-menu .filter-options-m li {
+  padding: 5px 10px; /* Padding for touch targets */
+}
+
+.mobile-menu .filter-options-m li a {
+  text-decoration: none; /* Remove underline from links */
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Align the count to the right */
+  align-items: center; /* Center items vertically */
+}
+
+.mobile-menu .filter-options-m li a .item-count {
+  background-color: #ddd; /* Light gray background */
+  border-radius: 10px; /* Rounded corners for the count */
+  padding: 2px 5px; /* Padding inside the count bubble */
+  margin-left: 10px; /* Space out the count from the subcategory name */
+}
+.menu-content {
+    margin-left:20px;
+}
+
+.item-count {
+  margin-right: 10px;
+}
+
+}
+
+

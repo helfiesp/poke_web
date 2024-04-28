@@ -1,0 +1,398 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<style>
+/* Order Form Enhancements */
+.item-menu {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.change-item-button, .item-menu button, .btn-primary{
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 5px; /* Ensures spacing between navigation buttons */
+    margin-bottom: 10px;
+}
+
+.item-menu button:hover, .items-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Apply styles to make the form and its components modern and minimalistic */
+.form-group label {
+    font-weight: 700;
+    margin-bottom: .5rem;
+    display: block;
+    color: #333;
+}
+
+.form-group input[type="text"], 
+.form-group input[type="number"], 
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem; /* Adds bottom margin for spacing */
+}
+
+.form-group textarea {
+    resize: vertical; /* Allows vertical resizing */
+}
+
+/* Center the main container and adjust width for a focused layout */
+.main-container {
+    width: 60%;
+    margin: auto;
+    display: block; /* Ensures that the container is centered */
+}
+
+/* Adjust the submit button to match the modern minimalistic design */
+/* Continue with your existing .btn-primary styles */
+.btn-primary {
+    background-color: #28a745;
+    color: #fff;
+    padding: 0px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: auto; /* This pushes the button to the right */
+}
+
+.btn-primary:hover {
+    background-color: #218838;
+}
+.button-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns items to the right */
+    gap: 10px; /* Optional: Adds space between buttons */
+}
+/* Style for "Remove Item" button */
+.remove-item-button {
+    background-color: #dc3545; /* Red */
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-item-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+/* Ensuring Add and Remove buttons are on the same row */
+.item-group .form-group:last-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-group .form-group:last-child .change-item-button {
+    margin-right: 0; /* Removes margin between Add and Remove buttons */
+}
+/* Active item button styling */
+.item-menu button.active {
+    background-color: #28a745; /* Green */
+    color: #ffffff;
+}
+input[type="text"], select {
+    width: 102.5%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+</style>
+<div class="main-container">
+    <h2>Ny ordre: {{ customer.name }}</h2>
+    <hr>
+    <div id="itemMenu" class="item-menu">
+        <!-- Item navigation will be inserted here -->
+    </div>
+
+
+
+    <form method="post" id="orderForm">
+        {% csrf_token %}
+        <div id="itemsContainer" class="items-container">
+            <!-- Dynamic item groups will be inserted here -->
+        </div>
+        <div id="additionalOrderFields" style="display: none;">
+            <div class="form-group">
+                <label for="delivery_info">Leveringsinfo:</label>
+                <textarea id="delivery_info" name="delivery_info" rows="2" cols="20"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="delivery_price">Leveringspris:</label>
+                <input type="text" id="delivery_price" name="delivery_price" value="0">
+            </div>
+            <div class="form-group">
+                <label for="extra_info">Ekstra info</label>
+                <textarea id="extra_info" name="extra_info" rows="2" cols="20"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="price">Totalpris:</label>
+                <input type="text" id="price" name="price">
+            </div>
+            <div class="form-group">
+                <label for="paid">Betalt:</label>
+                <input type="text" id="paid" name="paid" value="0">
+            </div>
+            <div class="form-group">
+                <label for="salesman">Salesman:</label>
+                <input type="text" id="salesman" name="salesman">
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="change-item-button" id="addItem">Nytt produkt</button>
+            <button type="button" class="change-item-button remove-item-button" id="removeLastItem" style="display: none;">Fjern produkt</button>
+            <button type="button" class="btn btn-primary" id="nextButton">Neste</button>
+            <!-- "Back" button, initially hidden -->
+            <button type="button" class="change-item-button" id="backButton" style="display: none;">Tilbake</button>
+            <button type="submit" class="btn btn-primary" id="submitOrderButton" style="display: none;">Legg til ordre</button>
+
+        </div>
+    </form>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    let items = [];
+
+    const removeLastItemButton = document.getElementById('removeLastItem');
+    const addButton = document.getElementById('addItem');
+    const menu = document.getElementById('itemMenu');
+    const nextButton = document.getElementById('nextButton');
+    const backButton = document.getElementById('backButton');
+    const submitOrderButton = document.getElementById('submitOrderButton');
+    const additionalOrderFields = document.getElementById('additionalOrderFields');
+    const itemsContainer = document.getElementById('itemsContainer');
+
+
+    const calculateTotalPrice = () => {
+        let totalPrice = 0;
+        items.forEach(item => {
+            const itemPrice = document.getElementById(`price_${item.index}`).value || 0;
+            const itemAmount = document.getElementById(`amount_${item.index}`).value || 1;
+            totalPrice += itemPrice * itemAmount;
+        });
+
+        const deliveryPrice = parseFloat(document.getElementById('delivery_price').value) || 0;
+        totalPrice += deliveryPrice;
+
+        document.getElementById('price').value = totalPrice; // Update the total price field
+    };
+
+    const validateItems = () => {
+        let missingFields = [];
+        document.querySelectorAll('.item-group').forEach((itemGroup, itemIndex) => {
+            const labels = itemGroup.querySelectorAll('label');
+            // Check regular inputs and textareas
+            itemGroup.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => {
+                if (input.style.display !== 'none' && input.value.trim() === '') {
+                    const label = Array.from(labels).find(lbl => lbl.getAttribute('for') === input.id);
+                    const fieldName = label ? label.innerText : 'Unknown Field';
+                    missingFields.push(`Item ${itemIndex + 1}: ${fieldName}`);
+                }
+            });
+            // Check if the custom product field is visible and not filled out
+            const customProductInput = itemGroup.querySelector(`#custom_product_${itemIndex}`);
+            if(customProductInput && customProductInput.style.display !== 'none' && customProductInput.value.trim() === '') {
+                missingFields.push(`Item ${itemIndex + 1}: Custom Product Name`);
+            }
+        });
+
+        if (missingFields.length > 0) {
+            alert('Please fill out all required fields before proceeding:\n\n' + missingFields.join('\n'));
+            return false;
+        }
+        return true;
+    };
+
+    nextButton.addEventListener('click', function() {
+        if (!validateItems()) {
+            return;
+        }
+
+        additionalOrderFields.style.display = 'block';
+        itemsContainer.style.display = 'none';
+        menu.style.display = 'none';
+        addButton.style.display = 'none';
+        removeLastItemButton.style.display = 'none';
+        nextButton.style.display = 'none';
+        backButton.style.display = 'inline-block';
+        submitOrderButton.style.display = 'inline-block'; // Show the "Submit Order" button
+    });
+
+    backButton.addEventListener('click', function() {
+        additionalOrderFields.style.display = 'none';
+        itemsContainer.style.display = 'block';
+        menu.style.display = 'block';
+        addButton.style.display = 'inline-block';
+        backButton.style.display = 'none';
+        submitOrderButton.style.display = 'none'; // Hide the "Submit Order" button
+        nextButton.style.display = 'inline-block'; // Show the "Next" button again
+        if (items.length > 1) {
+            removeLastItemButton.style.display = 'inline-block'; // Show if more than one item
+        }
+    });
+    
+    const addItem = () => {
+        const container = document.getElementById('itemsContainer');
+        items.forEach(item => item.element.style.display = 'none');
+
+        const index = items.length;
+        const newItem = document.createElement('div');
+        newItem.className = "item-group";
+
+        // Get all products and parse them into an array
+        const allProducts = JSON.parse('{{ products_json|safe }}');
+        
+        // Sort products by name
+        allProducts.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Generate options for sorted products
+        let productOptions = allProducts.map(product => `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`).join('');
+        productOptions += '<option value="Custom">Skriv inn produktnavn</option>'; // Add the "Custom" option
+
+        // Include a custom product input that is initially hidden
+        newItem.innerHTML = `
+            <div class="form-group">
+                <label for="product_${index}">Produkt:</label>
+                <select id="product_${index}" name="products[${index}][product]" required onchange="toggleCustomProductInput(this, ${index})">
+                    ${productOptions}
+                </select>
+                <input type="text" id="custom_product_${index}" name="products[${index}][product]" style="display: none;" placeholder="Enter custom product name">
+            </div>
+            
+            <div class="form-group">
+                <label for="product_info_${index}">Produkt Info:</label>
+                <textarea id="product_info_${index}" name="products[${index}][product_info]" rows="2" cols="20" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="amount_${index}">Antall:</label>
+                <input type="number" id="amount_${index}" name="products[${index}][amount]" required value="1">
+            </div>
+            <div class="form-group">
+                <label for="legs_${index}">Ben:</label>
+                <input type="text" id="legs_${index}" name="products[${index}][legs]" required>
+            </div>
+            <div class="form-group">
+                <label for="fabric_${index}">Stoff & farge:</label>
+                <input type="text" id="fabric_${index}" name="products[${index}][fabric]" required>
+            </div>
+            <div class="form-group">
+                <label for="price_${index}">Produktpris:</label>
+                <input type="text" id="price_${index}" name="products[${index}][price]" required value="0">
+            </div>
+            <div class="form-group"> 
+            </div>
+        `;
+        newItem.style.display = 'block';
+        container.appendChild(newItem);
+        items.push({element: newItem, index: index});
+        
+        // Attach event listeners to the new item's price and amount fields to trigger total price calculation
+        const newItemPriceInput = document.getElementById(`price_${index}`);
+        const newItemAmountInput = document.getElementById(`amount_${index}`);
+        const productSelect = document.getElementById(`product_${index}`);
+
+        newItemPriceInput.addEventListener('input', calculateTotalPrice);
+        newItemAmountInput.addEventListener('input', calculateTotalPrice);
+        productSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = selectedOption.getAttribute('data-price') || 0;
+            newItemPriceInput.value = price;
+            calculateTotalPrice(); // Update total price after changing the product price
+        });
+
+        updateMenu();
+        setActiveButton(index);
+        removeLastItemButton.style.display = items.length > 0 ? 'inline-block' : 'none';
+    };
+
+
+    window.toggleCustomProductInput = function(select, index) {
+        const customInput = document.getElementById(`custom_product_${index}`);
+        const productSelect = document.getElementById(`product_${index}`);
+        if (select.value === 'Custom') {
+            customInput.style.display = 'block';
+            productSelect.name = ''; // Disable name for select so it's not submitted
+            customInput.name = `products[${index}][product]`; // Enable name for custom input
+        } else {
+            customInput.style.display = 'none';
+            customInput.name = ''; // Disable name for custom input so it's not submitted
+            productSelect.name = `products[${index}][product]`; // Enable name for select
+        }
+    };
+
+    const removeLastItem = () => {
+        if (items.length > 0) {
+            const removedItemIndex = items.length - 1;
+            items[removedItemIndex].element.remove();
+            items.pop();
+            removeLastItemButton.style.display = items.length > 0 ? 'inline-block' : 'none';
+            updateMenu();
+            const nextIndex = removedItemIndex - 1 >= 0 ? removedItemIndex - 1 : 0;
+            if (items.length > 0) {
+                items[nextIndex].element.style.display = 'block';
+                setActiveButton(nextIndex);
+            }
+        }
+    };
+
+    const updateMenu = () => {
+        menu.innerHTML = '';
+        items.forEach((item, i) => {
+            const button = document.createElement('button');
+            button.textContent = `Produkt ${i + 1}`;
+            button.onclick = () => {
+                items.forEach(it => it.element.style.display = 'none');
+                item.element.style.display = 'block';
+                setActiveButton(i);
+            };
+            menu.appendChild(button);
+        });
+    };
+
+    const setActiveButton = (activeIndex) => {
+        const buttons = menu.querySelectorAll('button');
+        buttons.forEach((button, index) => {
+            if (index === activeIndex) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+    };
+
+    document.getElementById('addItem').addEventListener('click', addItem);
+    removeLastItemButton.addEventListener('click', removeLastItem);
+    // Add event listener for the delivery price input field as well
+    document.getElementById('delivery_price').addEventListener('input', calculateTotalPrice);
+
+    addItem(); // Load the first item by default
+
+    // Make sure to call calculateTotalPrice after loading the first item or when the form is initially displayed
+    calculateTotalPrice();
+});
+</script>
+
+
+<a href="{% url 'add_customer' %}?customer={{ customer.id }}">Tilbake til kundeoversikt</a>
+</div>
+{% endblock %}

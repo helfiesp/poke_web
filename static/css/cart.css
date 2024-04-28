@@ -1,0 +1,156 @@
+/* Cart Overlay */
+.cart-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  visibility: hidden; /* Hide with visibility */
+  opacity: 0; /* Start fully transparent */
+  transition: visibility 0s linear 0.5s, opacity 0.5s ease-in-out; /* Smooth transition for opacity, delay hiding visibility */
+}
+
+/* Cart slide in/out */
+.cart {
+  width: 25%;
+  background: #fff;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  right: -50%; /* Start from outside of the screen */
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 1001;
+  visibility: hidden; /* Hide with visibility */
+  transition: visibility 0s linear 0.5s, right 0.5s ease-in-out; /* Smooth transition for sliding, delay hiding visibility */
+}
+
+/* Adjusted styles for showing the cart */
+.cart-overlay.show,
+.cart.show {
+  visibility: visible;
+  opacity: 1;
+  right: 0;
+  transition: visibility 0s 0s, opacity 0.5s ease-in-out, right 0.5s ease-in-out;
+}
+
+/* Header Styles */
+.cart-header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-cart-btn {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Cart Item Styles */
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 20px;
+}
+
+.cart-item:last-child {
+  border: none;
+}
+
+.cart-item img {
+  width: 100px; /* Set image width */
+  margin-right: 10px;
+}
+
+.cart-item-details {
+  flex-grow: 1;
+}
+
+.cart-item-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-btn {
+  padding: 0 10px;
+  font-size: 18px;
+  background: none;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.quantity-text {
+  margin: 0 10px;
+}
+
+/* Subtotal and Checkout Button Styles */
+.cart-footer {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 20px;
+}
+
+.subtotal {
+  font-size: 20px;
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkout-btn {
+  background: #000;
+  color: #FFF;
+  text-align: center;
+  font-size: 20px;
+  padding: 10px 20px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+}
+
+/* Payment Methods Styles */
+.payment-methods {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.remove-item {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+  color: #000; /* Or any color you prefer */
+}
+
+.sale-price {
+    color: #F00; /* Or any color that indicates a sale */
+    font-weight: bold;
+}
+
+.normal-price {
+    text-decoration: none;
+    color: #000; /* Default color for non-sale price */
+}
+
+.normal-price.struck {
+    text-decoration: line-through;
+    color: #777; /* Grayed out color for original price that is on sale */
+}

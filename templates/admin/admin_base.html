@@ -1,0 +1,89 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+
+
+{% block content %}
+<style>
+.category-item {
+  max-width:150px;
+}
+.alert-container {
+  background-color: #fa616e;
+  padding:6px;
+  border-radius: 10px;
+  width:50%;
+  text-align: center;
+  margin:auto;
+}
+
+
+</style>
+<div class="main-container">
+  {% if alerts %}
+  <div class="alert-container">
+    <h2>Varslinger</h2>
+      <p>
+        {% for alert in alerts %}
+          Produkt <a href="{% url 'product_page' alert.id %}" style="color: black;">{{ alert }}</a> har ikke vært oppdatert på {{ alert_interval }} dager <br>
+        {% endfor %}
+         </p>
+        
+  </div>
+  {% endif %}
+  <div class="product-categories">
+    <div class="category-item">
+      <a style="text-decoration: none; color: black;" href="{% url 'all_orders' %}">
+      <img src="{{ MEDIA_URL }}/icons/order_icon.png"class="category-image">
+    <h3>Ordre</h3>
+    <p>Legg til nye ordre, og se eksisterende ordre</p></a>
+  </div>
+
+    <div class="category-item">
+      <a style="text-decoration: none; color: black;" href="{% url 'add_product' %}">
+      <img src="{{ MEDIA_URL }}/icons/contract.png"class="category-image">
+    <h3>Nytt produkt</h3>
+    <p>Legg til et nytt produkt på nettsiden</p></a>
+  </div>
+
+   <div class="category-item">
+      <a style="text-decoration: none; color: black;" href="{% url 'add_category' %}">
+      <img src="{{ MEDIA_URL }}/icons/add.png"class="category-image">
+    <h3>Ny kategori</h3>
+    <p>Legg til en ny kategori på nettsiden</p></a>
+  </div>
+
+     <div class="category-item">
+      <a style="text-decoration: none; color: black;" href="{% url 'add_supplier' %}">
+      <img src="{{ MEDIA_URL }}/icons/add.png"class="category-image">
+    <h3>Ny leverandør</h3>
+    <p>Legg til en ny leverandør</p></a>
+  </div>
+
+
+  <div class="category-item">
+      <a style="text-decoration: none; color: black;" href="{% url 'update_products' %}">
+      <img src="{{ MEDIA_URL }}/icons/shopping-cart.png"class="category-image">
+    <h3>Endre produktinfo</h3>
+    <p>Endre produktinfo og priser</p></a>
+  </div>
+
+  <div class="category-item">
+      <a style="text-decoration: none; color: black;" href="{% url 'update_categories' %}">
+      <img src="{{ MEDIA_URL }}/icons/photo-camera.png"class="category-image">
+    <h3>Endre kategorier</h3>
+    <p>Endre kategorier og bilder</p></a>
+  </div>
+
+  <div class="category-item">
+      <a style="text-decoration: none; color: black;" href="{% url 'update_text_areas' %}">
+      <img src="{{ MEDIA_URL }}/icons/settings.png"class="category-image">
+    <h3>Endre basis informasjon</h3>
+    <p>Endre informasjon som tekst på hovedsiden eller på kontaktsiden</p></a>
+  </div>
+
+
+  </div>
+</div>
+
+{% endblock %}
