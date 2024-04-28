@@ -1214,10 +1214,10 @@ def klarna_checkout(request):
                 },
             ], 
 
-                "shipping_options": build_shipping_options(int(str(total_amount)[:-1])),
+                "shipping_options": build_shipping_options(int(str(total_amount)[:-2])),
             
         }
-        print(int(str(total_amount)[:-1]))
+        print(int(str(total_amount)[:-2]))
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 201:
             klarna_order = response.json()
