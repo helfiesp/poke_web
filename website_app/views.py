@@ -1155,6 +1155,8 @@ def klarna_checkout(request):
                 {
                     "name": "Vipps", 
                     "redirect_url": "https://testing.pokelageret.no/checkout",
+                    "image_url": "https://vipps.no/media/images/vipps_logo_rgb.width-400.jpegquality-60.png",
+                    "description": "Betal med Vipps. Åpnes i eget vindu."
                 }
             ]
         }
