@@ -1190,7 +1190,7 @@ def klarna_checkout(request):
         data = {
             "purchase_country": "NO",
             "purchase_currency": "NOK",
-            "locale": "no-NO",
+            "locale": "nb",
             "order_amount": total_amount,
             "order_tax_amount": total_tax_amount,
             "order_lines": order_lines,
