@@ -1077,7 +1077,7 @@ def klarna_checkout(request):
 
             total_amount += total_amount_incl_tax
             total_tax_amount += total_tax_amount_for_item
-
+            print(order_lines)
         url = "https://api.playground.klarna.com/checkout/v3/orders"
         credentials = f"{settings.KLARNA_API_USERNAME}:{settings.KLARNA_API_PASSWORD}"
         encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
@@ -1106,6 +1106,7 @@ def klarna_checkout(request):
             klarna_order = response.json()
             return redirect(klarna_order['html_snippet'])
         else:
+            print(response.text)
             return render(request, "checkout_error.html", {"error": response.text})
 
     return render(request, "checkout_page.html")
