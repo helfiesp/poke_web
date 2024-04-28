@@ -94,9 +94,9 @@ urlpatterns = [
 
 
     # KLARNA
-    path('terms/', views.terms_and_conditions, name='terms'),
-    path('checkout_update/', views.checkout_update, name='checkout_update'),
-    path('confirmation/<int:order_number>/', views.order_success, name='order_success'),
+    #path('terms/', views.terms_and_conditions, name='terms'),
+    #path('checkout_update/', views.checkout_update, name='checkout_update'),
+    #path('confirmation/<int:order_number>/', views.order_success, name='order_success'),
     path('klarna/push/', views.klarna_push_notification, name='klarna_push_notification'),
 
 

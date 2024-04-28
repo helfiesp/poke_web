@@ -1102,9 +1102,9 @@ def klarna_checkout(request):
             "order_tax_amount": total_tax_amount,
             "order_lines": order_lines,
             "merchant_urls": {
-                "terms": "http://example.com/terms.html",
-                "checkout": "http://example.com/checkout.html",
-                "confirmation": "http://example.com/thank_you.html",
+                "terms": "http://16.16.255.122:8000",
+                "checkout": "http://16.16.255.122:8000/checkout",
+                "confirmation": "http://16.16.255.122:8000",
                 "push": "http://16.16.255.122:8000/klarna/push"
             }
         }
