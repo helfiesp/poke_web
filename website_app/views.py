@@ -1105,7 +1105,7 @@ def klarna_checkout(request):
                 "terms": "http://16.16.255.122:8000",
                 "checkout": "http://16.16.255.122:8000/checkout",
                 "confirmation": "http://16.16.255.122:8000/confirmation/1/",
-                "push": "http://16.16.255.122:8000/klarna/push"
+                "push": "http://16.16.255.122:8000/klarna/push/"
             }
         }
 
