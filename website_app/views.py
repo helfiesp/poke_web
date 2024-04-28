@@ -1039,6 +1039,14 @@ def order_success(request, order_number):
 
     return render(request, 'admin/order_confirmation.html', {'payment_details': payment_details, 'items':items, 'order': order})
 
+def klarna_push_notification(request):
+    if request.method == 'POST':
+        # Process the notification (you might want to log it, or update order status in your database)
+        print("Received push notification:", request.body)
+        return HttpResponse("OK", status=200)
+    return HttpResponse("Method Not Allowed", status=405)
+
+
 def klarna_checkout(request):
     if request.method == 'POST':
         items_ids = request.POST.getlist('item_id[]')
@@ -1097,7 +1105,7 @@ def klarna_checkout(request):
                 "terms": "http://example.com/terms.html",
                 "checkout": "http://example.com/checkout.html",
                 "confirmation": "http://example.com/thank_you.html",
-                "push": "http://example.com/api/push"
+                "push": "http://16.16.255.122:8000/klarna/push"
             }
         }
 
