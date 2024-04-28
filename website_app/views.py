@@ -1173,7 +1173,7 @@ def klarna_checkout(request):
         "name": "Postal delivery",
         "price": 0,
         "tax_rate": 0,
-        "tax_amount": 0,  // Explicitly setting the tax amount
+        "tax_amount": 0, 
         "delivery_time": {
             "interval": {
                 "earliest": 4,
