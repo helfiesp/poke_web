@@ -1011,6 +1011,7 @@ def get_or_create_customer(first_name, last_name, phone, email, address, postal_
     return customer
 
 def order_success(request, order_number):
+    print(order_number)
     try:
         order = models.orders.objects.get(order_number=order_number) 
         items = json.loads(order.items)
@@ -1181,7 +1182,7 @@ def klarna_checkout(request):
             # Update the redirect URL for the "Faktura" option with the new order_id
             for payment_method in data['external_payment_methods']:
                 if payment_method['name'].lower() == 'faktura':
-                    payment_method['redirect_url'] = f"https://testing.pokelageret.no/checkout/{order_id}/"
+                    payment_method['redirect_url'] = f"https://testing.pokelageret.no/order_success/{order_id}/"
 
             # Pass the updated data to your template, including the new redirect URL for "Faktura"
             return render(request, "klarna_checkout.html", {

@@ -88,7 +88,7 @@ urlpatterns = [
     path('checkout', views.checkout, name='checkout'),
     path('klarna-checkout/', views.klarna_checkout, name='klarna_checkout'),
 
-    path('order-success/<int:order_number>/', views.order_success, name='order_success'),
+    path('order-success/<str:order_number>/', views.order_success, name='order_success'),
 
 
 
