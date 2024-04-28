@@ -1150,7 +1150,7 @@ def klarna_checkout(request):
                 "checkout": "https://testing.pokelageret.nocheckout",
                 "confirmation": f"https://testing.pokelageret.no/confirmation/{order_number}/",
                 "push": "https://testing.pokelageret.no/klarna/push/"
-            }
+            }, 
             "options": {
                 "shipping_details": "Delivered within 1-3 days"
             }
