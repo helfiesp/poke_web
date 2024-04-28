@@ -1166,23 +1166,23 @@ def klarna_checkout(request):
             ], 
 
                 "shipping_options": [
-
-        {
-            "id": "id-1070",
-            "type": "postal",
-            "carrier": "postnord",
-            "name": "Postal delivery",
-            "price": 500,
-            "tax_rate": 2500,
-            "delivery_time": {
-                "interval": {
-                    "earliest": 4,
-                    "latest": 6
-                }
-            },
-            "class": "standard"
+    {
+        "id": "id-1070",
+        "type": "postal",
+        "carrier": "postnord",
+        "name": "Postal delivery",
+        "price": 0,
+        "tax_rate": 0,
+        "tax_amount": 0,  // Explicitly setting the tax amount
+        "delivery_time": {
+            "interval": {
+                "earliest": 4,
+                "latest": 6
+            }
         },
-        ]
+        "class": "standard"
+    }
+]
         }
 
         response = requests.post(url, headers=headers, data=json.dumps(data))
