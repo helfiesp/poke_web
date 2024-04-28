@@ -1146,10 +1146,10 @@ def klarna_checkout(request):
             "order_tax_amount": total_tax_amount,
             "order_lines": order_lines,
             "merchant_urls": {
-                "terms": "http://16.16.255.122:8000",
-                "checkout": "http://16.16.255.122:8000/checkout",
-                "confirmation": f"https://16.16.255.122:8000/confirmation/{order_number}/",
-                "push": "http://16.16.255.122:8000/klarna/push/"
+                "terms": "https://testing.pokelageret.no",
+                "checkout": "https://testing.pokelageret.nocheckout",
+                "confirmation": f"https://testing.pokelageret.no/confirmation/{order_number}/",
+                "push": "https://testing.pokelageret.no/klarna/push/"
             }
         }
 
