@@ -1089,16 +1089,17 @@ def klarna_push_notification(request):
         return HttpResponse("OK", status=200)
     return HttpResponse("Method Not Allowed", status=405)
 
-def build_shipping_options():
+def build_shipping_options(order_price):
+    # Define the base shipping options
     shipping_options = [
-         {
+        {
             "id": "1",
             "type": "postal",
             "carrier": "posten",
             "name": "Pakke til postkassen",
-            "price": 69,
+            "price": 6900,
             "tax_rate": 0,
-            "tax_amount": 0, 
+            "tax_amount": 0,  # Should be recalculated if price changes
             "delivery_time": {
                 "interval": {
                     "earliest": 4,
@@ -1107,14 +1108,14 @@ def build_shipping_options():
             },
             "class": "standard"
         },
-         {
+        {
             "id": "2",
             "type": "postal",
             "carrier": "posten",
             "name": "Pakke til hentested",
-            "price": 129,
+            "price": 12900,
             "tax_rate": 0,
-            "tax_amount": 0, 
+            "tax_amount": 0,  # Should be recalculated if price changes
             "delivery_time": {
                 "interval": {
                     "earliest": 1,
@@ -1123,8 +1124,19 @@ def build_shipping_options():
             },
             "class": "standard"
         }
-
     ]
+
+    # Adjust shipping prices based on order price
+    if order_price > 2999:
+        # Both shipping options free
+        for option in shipping_options:
+            option['price'] = 0
+            option['tax_amount'] = 0  # Adjust tax_amount accordingly
+    elif order_price > 999:
+        # Only the first shipping option free
+        shipping_options[0]['price'] = 0
+        shipping_options[0]['tax_amount'] = 0  # Adjust tax_amount accordingly
+
     return shipping_options
 
 
@@ -1161,13 +1173,12 @@ def klarna_checkout(request):
                 "quantity": quantity,
                 "unit_price": price_in_cents,
                 "tax_rate": 2500,
-                "total_amount": total_amount_incl_tax,  # total excl tax
+                "total_amount": total_amount_incl_tax, 
                 "total_tax_amount": total_tax_amount_for_item,
             })
 
             total_amount += total_amount_incl_tax
             total_tax_amount += total_tax_amount_for_item
-            print(order_lines)
         url = "https://api.playground.klarna.com/checkout/v3/orders"
         credentials = f"{settings.KLARNA_API_USERNAME}:{settings.KLARNA_API_PASSWORD}"
         encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
@@ -1203,7 +1214,7 @@ def klarna_checkout(request):
                 },
             ], 
 
-                "shipping_options": build_shipping_options(),
+                "shipping_options": build_shipping_options(total_amount),
             
         }
 
