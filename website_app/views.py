@@ -1153,6 +1153,7 @@ def klarna_checkout(request):
             }
         }
 
+        print(data)
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 201:
             klarna_order = response.json()
