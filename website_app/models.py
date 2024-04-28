@@ -129,16 +129,16 @@ class customers(models.Model):
 
 class orders(models.Model):
     order_number = models.AutoField(primary_key=True, verbose_name="Order Number")
-    customer = models.ForeignKey(customers, on_delete=models.CASCADE)
+    customer = models.ForeignKey(customers, on_delete=models.CASCADE, null=True, blank=True)
     items = models.JSONField()  # This will contain item_info, fabric, legs, amount, and productprice
-    delivery_info = models.JSONField()
+    delivery_info = models.JSONField(null=True, blank=True)
     extra_info = models.CharField(max_length=255, blank=True)
     # Changed fields to DecimalField for financial precision
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     paid = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     remaining = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
     delivery_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
-    payment_info = models.JSONField()
+    payment_info = models.JSONField(null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     # New field for order status

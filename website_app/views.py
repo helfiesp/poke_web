@@ -930,28 +930,11 @@ def update_cart(request, product_id):
 
 
 def fetch_checkout_data(request):
-    delivery_option = request.POST.get('delivery_option')
-    shipping_option = request.POST.get('shipping_option')
-    extra_info = request.POST.get('extra_info', '')
-    payment_method = request.POST.get('payment_method')
     item_data = sort_purchased_items(request)  # This function processes item data
-
-    # Same extraction logic
-    customer = get_or_create_customer(
-            request.POST.get('first_name'),
-            request.POST.get('last_name'),
-            request.POST.get('phone'),
-            request.POST.get('contact_email'),
-            request.POST.get('address'),
-            request.POST.get('postal_code'),
-            request.POST.get('city')
-        )
-    # Manually create an order instance
+    customer = None
     new_order = models.orders()
-    new_order.customer = customer
-    new_order.delivery_info = json.dumps({'delivery_type': delivery_option, 'shipping_option': shipping_option})
-    new_order.payment_info = json.dumps({'payment_method': payment_method})
-    new_order.extra_info = extra_info
+    if customer:
+        new_order.customer = customer
     new_order.items = json.dumps(item_data)  # Assuming this is structured correctly
 
     # Calculate price and related fields
@@ -959,58 +942,14 @@ def fetch_checkout_data(request):
     new_order.price = total_price
     new_order.paid = float('0.00')  # This could be set based on your payment processing logic
     new_order.remaining = total_price - new_order.paid
-    new_order.delivery_price = float('0.00')  # Adjust if needed
     new_order.status = 'processing'  # Default, or set based on logic
 
-    # Save the new order
     new_order.save()
-    print("RETURNING ORDER NUMBER: {}".format(new_order.order_number))
     return new_order.order_number
 
 def checkout(request):
-    if request.method == 'POST':
-        # Extract data from request.POST
-        delivery_option = request.POST.get('delivery_option')
-        shipping_option = request.POST.get('shipping_option')
-        extra_info = request.POST.get('extra_info', '')
-        payment_method = request.POST.get('payment_method')
-        item_data = sort_purchased_items(request)  # This function processes item data
-
-        # Same extraction logic
-        customer = get_or_create_customer(
-                request.POST.get('first_name'),
-                request.POST.get('last_name'),
-                request.POST.get('phone'),
-                request.POST.get('contact_email'),
-                request.POST.get('address'),
-                request.POST.get('postal_code'),
-                request.POST.get('city')
-            )
-        # Manually create an order instance
-        new_order = models.orders()
-        new_order.customer = customer
-        new_order.delivery_info = json.dumps({'delivery_type': delivery_option, 'shipping_option': shipping_option})
-        new_order.payment_info = json.dumps({'payment_method': payment_method})
-        new_order.extra_info = extra_info
-        new_order.items = json.dumps(item_data)  # Assuming this is structured correctly
-
-        # Calculate price and related fields
-        total_price = sum(item['quantity'] * (item['purchase_price'] if item['purchase_price'] else item['normal_price']) for item in item_data)
-        new_order.price = total_price
-        new_order.paid = float('0.00')  # This could be set based on your payment processing logic
-        new_order.remaining = total_price - new_order.paid
-        new_order.delivery_price = float('0.00')  # Adjust if needed
-        new_order.status = 'processing'  # Default, or set based on logic
-
-        # Save the new order
-        new_order.save()
-        if payment_method == "faktura":
-            return redirect('order_success', order_number=new_order.order_number)
-        else:
-            return redirect('klarna_checkout', order_number=new_order.order_number)
-
-    else:
-        return render(request, 'checkout.html')
+    return render(request, 'checkout.html')
+   
 
 def sort_purchased_items(request):
     item_ids = request.POST.getlist('item_id[]')
@@ -1140,6 +1079,23 @@ def build_shipping_options(order_price):
     return shipping_options
 
 
+def retrieve_klarna_order(klarna_order_id):
+    url = f"https://api.playground.klarna.com/checkout/v3/orders/{klarna_order_id}"
+    credentials = f"{settings.KLARNA_API_USERNAME}:{settings.KLARNA_API_PASSWORD}"
+    encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+    headers = {'Authorization': f'Basic {encoded_credentials}'}
+    
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        order_details = response.json()
+        print(order_details)
+        return order_details
+    else:
+        # Handle error: log it, send notification, etc.
+        print(f"Failed to retrieve order from Klarna: {response.text}")
+        return None
+
+
 def klarna_checkout(request):
     if request.method == 'POST':
         order_number = fetch_checkout_data(request)
@@ -1217,13 +1173,25 @@ def klarna_checkout(request):
                 "shipping_options": build_shipping_options(int(str(total_amount)[:-2])),
             
         }
-        print(int(str(total_amount)[:-2]))
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 201:
             klarna_order = response.json()
-            return render(request, "klarna_checkout.html", {'html_snippet': klarna_order['html_snippet']})
+            order_id = klarna_order["order_id"]
+
+            # Update the redirect URL for the "Faktura" option with the new order_id
+            for payment_method in data['external_payment_methods']:
+                if payment_method['name'].lower() == 'faktura':
+                    payment_method['redirect_url'] = f"https://testing.pokelageret.no/checkout/{order_id}/"
+
+            # Pass the updated data to your template, including the new redirect URL for "Faktura"
+            return render(request, "klarna_checkout.html", {
+                'html_snippet': klarna_order['html_snippet'],
+                'external_payment_methods': data['external_payment_methods'],
+                'order_id': order_id  # You can pass this if you need to use it in your template
+            })
         else:
-            print(response.text)
+            # If there was an error, render the checkout error page
             return render(request, "checkout_error.html", {"error": response.text})
+
 
     return render(request, "checkout.html")

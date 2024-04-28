@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
+
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
 }
 
 .section-header {
@@ -16,35 +18,17 @@ body, html {
     min-height: 100vh; /* Sets minimum height to full viewport height */
 }
 
-.left-column, .right-column {
+.main-column {
     width: 50%;
+    max-width: 700px;
     padding: 10px;
     border-top: 1px solid #D3D3D3;
     display: flex;
     flex-direction: column;
     min-height: 100vh; /* Ensures columns take up at least the viewport height */
+    margin: auto;
 }
 
-.right-column {
-    background-color: #F5F5F5;
-    border-left: 1px solid #D3D3D3;
-}
-
-.left-column-content, .right-column-content {
-    max-width: 512px;
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* Ensures content uses available height */
-}
-
-.left-column-content {
-    width: 512px;
-    margin-left: auto; /* Aligns content to the right within the column */
-}
-
-.right-column-content {
-    margin-right: auto; /* Aligns content to the left within the column */
-}
 
 /* RIGHT SECTION */
 .product-item-checkout {
@@ -196,34 +180,6 @@ input[type="radio"] {
     width: auto;
 }
 
-/* Adjust the radio button containers within delivery options */
-.delivery-options > .checkout-radio:first-child label {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom: none; /* Remove bottom border */
-
-}
-
-.delivery-options > .checkout-radio:last-child label {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
-
-/* Remove border-radius from sides that should not be rounded */
-.delivery-options > .checkout-radio label {
-    border-radius: 0;
-}
-
-/* Reapply border-radius to the appropriate corners of each label */
-.delivery-options > .checkout-radio:first-child label {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-.delivery-options > .checkout-radio:last-child label {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
 /* Checkbox group styling */
 .checkbox-group {
     display: flex;
@@ -248,9 +204,15 @@ h2 {
 }
 
 .complete-order {
-    margin-top: 20px;
+    display: flex; /* Enables Flexbox layout */
+    justify-content: center; /* Centers the button horizontally */
+    align-items: center; /* Optional: if you also want to center it vertically */
+    width: 100%; /* Full width of its parent */
+    margin-top: 20px; /* Spacing from the top */
 }
+
 .complete-order button {
     background-color: #419cd6;
     border-radius: 5px;
+    width: 50%; /* Button width is 50% of the .complete-order container */
 }

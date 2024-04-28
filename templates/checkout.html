@@ -11,20 +11,6 @@
 
 {% block content %}
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var checkoutForm = document.getElementById('checkoutForm');
-    // Pre-rendered URLs from Django
-    var defaultActionUrl = "{% url 'checkout' %}";  // Confirm this named URL is correctly defined in your urls.py
-    var klarnaActionUrl = "{% url 'klarna_checkout' %}";  // Confirm this named URL is correctly defined in your urls.py
-
-    checkoutForm.addEventListener('submit', function(event) {
-        var klarnaSelected = document.getElementById('klarna_radio').checked;
-        // Set the action based on the selected payment method
-        checkoutForm.action = klarnaSelected ? klarnaActionUrl : defaultActionUrl;
-    });
-});
-</script>
 <div class="checkout-header">
     <div class="nav-logo">
         <a href="{% url 'hjem' %}">
@@ -33,136 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
 </div>
-<form id="checkoutForm" method="post" class="checkout-wrapper">
-    {% csrf_token %}
-        <!-- Left Column: Contact & Delivery Info -->
-        <div class="left-column">
-            <!-- Contact Section -->
-            <div class="left-column-content">
-                <section class="contact-section">
-                    <h2 style="margin-bottom:0px">{% trans "Kontakt" %}</h2>
-                    <!-- Email Input -->
-                    <input type="email" name="contact_email" placeholder="{% trans "E-postadresse" %}" required>
-
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="newsletter">
-                        <label for="newsletter">{% trans "Ja takk til å motta unike tilbud, tips og nyheter" %}</label>
-                    </div>
-                </section>
-                
-                <!-- Delivery Section -->
-                    <section class="delivery-section">
-                        <h2 style="margin-bottom:0px">Levering</h2>
-                        <div class="delivery-options">
-                            <div class="checkout-radio">
-                                <input type="radio" id="delivery" name="delivery_option" value="delivery" onclick="toggleDeliveryOptions(true)">
-                                <label for="delivery" class="radio-label">
-                                    Sendes
-                                    <img src="{{ MEDIA_URL }}icons/posten_logo.png" alt="Logo" class="radio-button-logo">
-                                </label>
-                            </div>
-                            <div class="checkout-radio">
-                                <input type="radio" id="pickup" name="delivery_option" value="pickup" onclick="toggleDeliveryOptions(false)">
-                                <label for="pickup" class="radio-label">
-                                    Hent i Sarpsborg
-                                    <img src="{{ MEDIA_URL }}icons/house.png" alt="Logo" class="radio-button-logo">
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="shipping-options" id="shipping-options" style="display: none;">
-                        <h2 style="margin-bottom:0px">Sendingsalternativer</h2>
-                        <div class="delivery-options">
-                            <div class="checkout-radio">
-                                <input id="shipping_radio_1" name="shipping_option" type="radio" value="postkassen"/>
-                                <label for="shipping_radio_1" class="radio-label">
-                                    Pakke i postkassen
-                                    <span class="radio-label-text">GRATIS</span>
-                                </label>
-                            </div>
-                            <div class="checkout-radio">
-                                <input id="shipping_radio_2" name="shipping_option" type="radio" value="hentested"/>
-                                <label for="shipping_radio_2" class="radio-label">
-                                    Pakke til hentested
-                                    <span class="radio-label-text">GRATIS</span>
-                                </label>
-                            </div>
-                        </div>
-                                                   
-                        <div class="pickup-address" id="pickup-address" style="display: none;">
-
-                            <p>DELIVER</p>
-                        </div>
-
-
-                    </div>
-
-                    <div class="address-fields">
-                        <div class="grid-item half-width">
-                            <input type="text" name="first_name" placeholder="{% trans 'Fornavn' %}" required>
-                        </div>
-                        <div class="grid-item half-width">
-                            <input type="text" name="last_name" placeholder="{% trans 'Etternavn' %}" required>
-                        </div>
-                        <div class="grid-item single">
-                            <input type="text" name="address" placeholder="{% trans 'Adresse' %}" required>
-                        </div>
-                        <div class="grid-item half-width">
-                            <input type="text" name="postal_code" placeholder="{% trans 'Postnummer' %}" required>
-                        </div>
-                        <div class="grid-item half-width">
-                            <input type="text" name="city" placeholder="{% trans 'By' %}" required>
-                        </div>
-                        <div class="grid-item single">
-                           <input type="tel" name="phone" placeholder="{% trans 'Telefon' %}" required>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Payment Section -->
-                <section class="payment-section">
-                    <h2 style="margin-bottom:0px">{% trans "Betaling" %}</h2>
-                    <!-- Payment Method -->
-                    <div class="delivery-options">
-                            <div class="checkout-radio">
-                                <input id="klarna_radio" name="payment_method" type="radio" value="klarna">
-                                <label for="klarna_radio" class="radio-label">
-                                    Klarna
-                                    <img src="{{ MEDIA_URL }}icons/klarna.png" alt="Logo" class="radio-button-logo" style="width:45px">
-                                </label>
-                            </div>
-                            <div class="checkout-radio">
-                                <input id="invoice_radio" name="payment_method" type="radio" value="invoice">
-                                <label for="invoice_radio" class="radio-label" style="border-bottom:none;">
-                                    Faktura (etter avtale)
-                                    <img src="{{ MEDIA_URL }}icons/contract.png" alt="Logo" class="radio-button-logo">
-                                </label>
-                            </div>
-
-                            <div class="checkout-radio">
-                                <input id="vipps_radio" name="payment_method" type="radio" value="vipps">
-                                <label for="vipps_radio" class="radio-label">
-                                    Vipps
-                                    <img src="{{ MEDIA_URL }}icons/vipps.png" alt="Logo" class="radio-button-logo" style="width:45px">
-                                </label>
-                            </div>
-
-                           
-                           
-
-                        </div>
-                    
-                </section>
-            <div class="complete-order">
-                <button type="submit" class="checkout-btn">Betal nå</button>
-            </div>
-
-            </div>
-        </div>
-        
-        <!-- Right Column: Order Summary & Payment -->
-<!-- Right Column: Order Summary & Payment -->
-<div class="right-column">
+<form id="checkoutForm" method="post" action="{% url 'klarna_checkout' %}" class="checkout-wrapper">
+{% csrf_token %}
+<div class="main-column">
         <div class="right-column-content">
             <!-- Order Summary Section -->
             <section class="order-summary-section">
@@ -181,8 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
         </div>
+            <div class="complete-order">
+                <button type="submit" class="checkout-btn">Betal nå</button>
+            </div>
+
     </div>
     </div>
-
-
+</form>
 {% endblock %}
