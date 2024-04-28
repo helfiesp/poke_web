@@ -1172,8 +1172,8 @@ def klarna_checkout(request):
             "type": "postal",
             "carrier": "postnord",
             "name": "Postal delivery",
-            "price": 0,
-            "tax_rate": 0,
+            "price": 500,
+            "tax_rate": 2500,
             "delivery_time": {
                 "interval": {
                     "earliest": 4,
