@@ -1157,7 +1157,7 @@ def klarna_checkout(request):
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 201:
             klarna_order = response.json()
-            return redirect(klarna_order['html_snippet'])
+            return render(request, "klarna_checkout.html", {'html_snippet': klarna_order['html_snippet']})
         else:
             print(response.text)
             return render(request, "checkout_error.html", {"error": response.text})
