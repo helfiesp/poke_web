@@ -2,6 +2,23 @@
 {% load static %}
 {% block content %}
 
+<!-- Place for additional UI elements such as shipping options -->
+<div id="shipping-options">
+    <h3>Select Shipping Method:</h3>
+    <select id="shipping-method" onchange="updateShippingMethod(this.value)">
+        <option value="standard">Standard Shipping</option>
+        <option value="express">Express Shipping</option>
+    </select>
+</div>
+
 {{ html_snippet|safe }}
+
+<script>
+    function updateShippingMethod(method) {
+        // JavaScript to update the Klarna checkout object
+        console.log("Selected shipping method: " + method);
+        // Here you would normally call Klarna's JavaScript API to update the order lines
+    }
+</script>
 
 {% endblock %}

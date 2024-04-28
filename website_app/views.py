@@ -1151,9 +1151,11 @@ def klarna_checkout(request):
                 "confirmation": f"https://testing.pokelageret.no/confirmation/{order_number}/",
                 "push": "https://testing.pokelageret.no/klarna/push/"
             }
+            "options": {
+                "shipping_details": "Delivered within 1-3 days"
+            }
         }
 
-        print(data)
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 201:
             klarna_order = response.json()
