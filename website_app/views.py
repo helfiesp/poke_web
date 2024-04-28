@@ -928,6 +928,45 @@ def update_cart(request, product_id):
     request.session['cart'] = cart
     return JsonResponse({'status': 'ok'})
 
+
+def fetch_checkout_data(request):
+    delivery_option = request.POST.get('delivery_option')
+    shipping_option = request.POST.get('shipping_option')
+    extra_info = request.POST.get('extra_info', '')
+    payment_method = request.POST.get('payment_method')
+    item_data = sort_purchased_items(request)  # This function processes item data
+
+    # Same extraction logic
+    customer = get_or_create_customer(
+            request.POST.get('first_name'),
+            request.POST.get('last_name'),
+            request.POST.get('phone'),
+            request.POST.get('contact_email'),
+            request.POST.get('address'),
+            request.POST.get('postal_code'),
+            request.POST.get('city')
+        )
+    # Manually create an order instance
+    new_order = models.orders()
+    new_order.customer = customer
+    new_order.delivery_info = json.dumps({'delivery_type': delivery_option, 'shipping_option': shipping_option})
+    new_order.payment_info = json.dumps({'payment_method': payment_method})
+    new_order.extra_info = extra_info
+    new_order.items = json.dumps(item_data)  # Assuming this is structured correctly
+
+    # Calculate price and related fields
+    total_price = sum(item['quantity'] * (item['purchase_price'] if item['purchase_price'] else item['normal_price']) for item in item_data)
+    new_order.price = total_price
+    new_order.paid = float('0.00')  # This could be set based on your payment processing logic
+    new_order.remaining = total_price - new_order.paid
+    new_order.delivery_price = float('0.00')  # Adjust if needed
+    new_order.status = 'processing'  # Default, or set based on logic
+
+    # Save the new order
+    new_order.save()
+    print("RETURNING ORDER NUMBER: {}".format(new_order.order_number))
+    return new_order.order_number
+
 def checkout(request):
     if request.method == 'POST':
         # Extract data from request.POST
@@ -965,7 +1004,11 @@ def checkout(request):
 
         # Save the new order
         new_order.save()
-        return redirect('order_success', order_number=new_order.order_number)
+        if payment_method == "faktura":
+            return redirect('order_success', order_number=new_order.order_number)
+        else:
+            return redirect('klarna_checkout', order_number=new_order.order_number)
+
     else:
         return render(request, 'checkout.html')
 
@@ -1049,6 +1092,7 @@ def klarna_push_notification(request):
 
 def klarna_checkout(request):
     if request.method == 'POST':
+        order_number = fetch_checkout_data(request)
         items_ids = request.POST.getlist('item_id[]')
         quantities = request.POST.getlist('item_quantity[]')
         prices = request.POST.getlist('item_price[]')
@@ -1104,7 +1148,7 @@ def klarna_checkout(request):
             "merchant_urls": {
                 "terms": "http://16.16.255.122:8000",
                 "checkout": "http://16.16.255.122:8000/checkout",
-                "confirmation": "http://16.16.255.122:8000/confirmation/1/",
+                "confirmation": "http://16.16.255.122:8000/confirmation/" + str(order.order_number) + "/",
                 "push": "http://16.16.255.122:8000/klarna/push/"
             }
         }
@@ -1117,4 +1161,4 @@ def klarna_checkout(request):
             print(response.text)
             return render(request, "checkout_error.html", {"error": response.text})
 
-    return render(request, "checkout_page.html")
+    return render(request, "checkout.html")
