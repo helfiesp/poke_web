@@ -1089,6 +1089,44 @@ def klarna_push_notification(request):
         return HttpResponse("OK", status=200)
     return HttpResponse("Method Not Allowed", status=405)
 
+def build_shipping_options():
+    shipping_options = [
+         {
+            "id": "1",
+            "type": "postal",
+            "carrier": "posten",
+            "name": "Pakke til postkassen",
+            "price": 69,
+            "tax_rate": 0,
+            "tax_amount": 0, 
+            "delivery_time": {
+                "interval": {
+                    "earliest": 4,
+                    "latest": 6
+                }
+            },
+            "class": "standard"
+        },
+         {
+            "id": "2",
+            "type": "postal",
+            "carrier": "posten",
+            "name": "Pakke til hentested",
+            "price": 129,
+            "tax_rate": 0,
+            "tax_amount": 0, 
+            "delivery_time": {
+                "interval": {
+                    "earliest": 1,
+                    "latest": 3
+                }
+            },
+            "class": "standard"
+        }
+
+    ]
+    return shipping_options
+
 
 def klarna_checkout(request):
     if request.method == 'POST':
@@ -1165,24 +1203,8 @@ def klarna_checkout(request):
                 },
             ], 
 
-                "shipping_options": [
-    {
-        "id": "id-1070",
-        "type": "postal",
-        "carrier": "postnord",
-        "name": "Postal delivery",
-        "price": 0,
-        "tax_rate": 0,
-        "tax_amount": 0, 
-        "delivery_time": {
-            "interval": {
-                "earliest": 4,
-                "latest": 6
-            }
-        },
-        "class": "standard"
-    }
-]
+                "shipping_options": build_shipping_options(),
+            
         }
 
         response = requests.post(url, headers=headers, data=json.dumps(data))
