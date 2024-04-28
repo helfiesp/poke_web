@@ -1147,13 +1147,16 @@ def klarna_checkout(request):
             "order_lines": order_lines,
             "merchant_urls": {
                 "terms": "https://testing.pokelageret.no",
-                "checkout": "https://testing.pokelageret.nocheckout",
+                "checkout": "https://testing.pokelageret.no/checkout",
                 "confirmation": f"https://testing.pokelageret.no/confirmation/{order_number}/",
                 "push": "https://testing.pokelageret.no/klarna/push/"
             }, 
-            "options": {
-                "shipping_details": "Delivered within 1-3 days"
-            }
+            "external_payment_methods": [
+                {
+                    "name": "Vipps", 
+                    "redirect_url": "https://testing.pokelageret.no/checkout",
+                }
+            ]
         }
 
         response = requests.post(url, headers=headers, data=json.dumps(data))
