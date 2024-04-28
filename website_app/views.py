@@ -1148,7 +1148,7 @@ def klarna_checkout(request):
             "merchant_urls": {
                 "terms": "http://16.16.255.122:8000",
                 "checkout": "http://16.16.255.122:8000/checkout",
-                "confirmation": "http://16.16.255.122:8000/confirmation/" + str(order_number) + "/",
+                "confirmation": f"https://16.16.255.122:8000/confirmation/{order_number}/",
                 "push": "http://16.16.255.122:8000/klarna/push/"
             }
         }
