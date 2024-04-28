@@ -1158,7 +1158,31 @@ def klarna_checkout(request):
                     "image_url": "https://vipps.no/media/images/vipps_logo_rgb.width-400.jpegquality-60.png",
                     "description": "Betal med Vipps. Åpnes i eget vindu."
                 }
+                {
+                    "name": "Faktura", 
+                    "redirect_url": "https://testing.pokelageret.no/checkout",
+                    "description": "Betales med faktura etter avtale. Ta kontakt med support@pokelageret.no for å bruke dette valget."
+                }
             ]
+
+                "shipping_options": [
+
+        {
+            "id": "id-1070",
+            "type": "postal",
+            "carrier": "postnord",
+            "name": "Postal delivery",
+            "price": 0,
+            "tax_rate": 0,
+            "delivery_time": {
+                "interval": {
+                    "earliest": 4,
+                    "latest": 6
+                }
+            },
+            "class": "standard"
+        },
+        ]
         }
 
         response = requests.post(url, headers=headers, data=json.dumps(data))
