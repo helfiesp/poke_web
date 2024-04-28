@@ -1166,6 +1166,7 @@ def klarna_checkout(request):
                 },
                 {
                     "name": "Faktura", 
+                    "redirect_url": "https://testing.pokelageret.no/checkout",
                     "description": "Betales med faktura etter avtale. Ta kontakt med support@pokelageret.no for å bruke dette valget."
                 },
             ], 
@@ -1180,7 +1181,7 @@ def klarna_checkout(request):
 
             # Update the redirect URL for the "Faktura" option with the new order_id
             for payment_method in data['external_payment_methods']:
-                if payment_method['name'].lower() == 'faktura':
+                if payment_method['name'].lower() == 'Faktura':
                     payment_method['redirect_url'] = f"https://testing.pokelageret.no/order_success/{order_id}/"
 
             # Pass the updated data to your template, including the new redirect URL for "Faktura"
