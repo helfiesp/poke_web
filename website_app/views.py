@@ -1106,7 +1106,11 @@ def klarna_checkout(request):
         quantities = request.POST.getlist('item_quantity[]')
         prices = request.POST.getlist('item_price[]')
         sale_prices = request.POST.getlist('item_sale_price[]')
-        print(request.POST)
+        delivery_method = request.POST.get('delivery_option')
+        shipping_option = request.POST.get('shipping_option')
+        if shipping_option:
+            selected_shipping_option = models.shipping_options.objects.filter(pk=shipping_option)
+            print(selected_shipping_option)
         order_lines = []
         total_amount = 0
         total_tax_amount = 0
