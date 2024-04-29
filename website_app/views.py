@@ -1129,7 +1129,11 @@ def klarna_checkout(request):
             total_tax_amount_for_item = (price_in_cents - unit_price_excl_tax) * quantity
             total_price_excl_tax = unit_price_excl_tax * quantity
             total_amount_incl_tax = total_price_excl_tax + total_tax_amount_for_item
-            product_name = models.product.objects.filter(pk=item_id).first()
+            product_name = None
+            product = models.product.objects.filter(pk=item_id).first()
+            if product:
+                product_name = product
+
             order_lines.append({
                 "type": "physical",
                 "reference": str(item_id),
