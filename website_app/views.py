@@ -1147,7 +1147,6 @@ def klarna_checkout(request):
                 product_name = product.title
             order_lines.append({
                 "type": "physical",
-                "reference": str(item_id),
                 "name": product_name,
                 "quantity": quantity,
                 "unit_price": price_in_cents,
