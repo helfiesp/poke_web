@@ -1196,7 +1196,7 @@ def klarna_checkout(request):
             order_id = klarna_order["order_id"]
             return render(request, "klarna_checkout.html", {'html_snippet': klarna_order['html_snippet']})
         else:
-            return render(request, "checkout_error.html", {"error": response.text})
+            return render(request, "error/checkout_error.html", {"error": response.text})
 
     return render(request, "checkout.html")
 
