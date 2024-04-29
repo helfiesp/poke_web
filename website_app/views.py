@@ -1133,7 +1133,7 @@ def klarna_checkout(request):
             order_lines.append({
                 "type": "physical",
                 "reference": str(item_id),
-                "name": models.product.objects.filter(pk=item_id).first(),
+                "name": "Test",
                 "quantity": quantity,
                 "unit_price": price_in_cents,
                 "tax_rate": 2500,
