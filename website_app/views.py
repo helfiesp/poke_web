@@ -1152,7 +1152,7 @@ def klarna_checkout(request):
                 "quantity": quantity,
                 "unit_price": price_in_cents,
                 "product_url": product.product_url,
-                "image_url": "https://testing.pokelageret.no/media/{}"fetch_product_image(product.string_id),
+                "image_url": "https://testing.pokelageret.no/media/{}".format(fetch_product_image(product.string_id)),
                 "tax_rate": 2500,
                 "total_amount": total_amount_incl_tax, 
                 "total_tax_amount": total_tax_amount_for_item,
