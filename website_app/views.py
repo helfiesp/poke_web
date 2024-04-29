@@ -1132,7 +1132,7 @@ def klarna_checkout(request):
             product_name = None
             product = models.product.objects.filter(pk=item_id).first()
             if product:
-                product_name = product
+                product_name = product.title
 
             order_lines.append({
                 "type": "physical",
