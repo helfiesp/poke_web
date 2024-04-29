@@ -1145,18 +1145,22 @@ def klarna_checkout(request):
             total_tax_amount += total_tax_amount_for_item
 
         if delivery_method == 'delivery' and selected_shipping_option:
+            # Assuming the shipping price from the database is inclusive of tax
             shipping_cost_in_cents = round(float(selected_shipping_option.price) * 100)
+            shipping_cost_excl_tax = int(shipping_cost_in_cents / 1.25)  # Calculate price exclusive of tax
+            shipping_tax_amount = shipping_cost_in_cents - shipping_cost_excl_tax
+
             order_lines.append({
                 "type": "shipping_fee",
                 "name": "Delivery",
                 "quantity": 1,
                 "unit_price": shipping_cost_in_cents,
-                "tax_rate": 2500,
+                "tax_rate": 2500,  # 25%
                 "total_amount": shipping_cost_in_cents,
-                "total_tax_amount": int(shipping_cost_in_cents * 0.25),
+                "total_tax_amount": shipping_tax_amount,
             })
             total_amount += shipping_cost_in_cents
-            total_tax_amount += int(shipping_cost_in_cents * 0.25)
+            total_tax_amount += shipping_tax_amount
 
         url = "https://api.playground.klarna.com/checkout/v3/orders"
         credentials = f"{settings.KLARNA_API_USERNAME}:{settings.KLARNA_API_PASSWORD}"
