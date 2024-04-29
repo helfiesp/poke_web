@@ -1156,7 +1156,7 @@ def klarna_checkout(request):
 
             order_lines.append({
                 "type": "shipping_fee",
-                "name": "Delivery",
+                "name": selected_shipping_option.title,
                 "quantity": 1,
                 "unit_price": shipping_cost_in_cents,
                 "tax_rate": 2500,  # 25%
