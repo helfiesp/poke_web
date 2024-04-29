@@ -20,7 +20,7 @@ body, html {
 
 .main-column {
     width: 50%;
-    max-width: 700px;
+    max-width: 500px;
     padding: 10px;
     border-top: 1px solid #D3D3D3;
     display: flex;
@@ -66,7 +66,7 @@ body, html {
 .address-fields {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Two columns */
-    grid-gap: 10px; /* Adjust grid gap as needed */
+    grid-gap: 10px /* First value is vertical gap, second is horizontal gap */
 }
 
 /* For the inputs that should be full width */
@@ -103,7 +103,7 @@ body, html {
 input[type=email], input[type=text], input[type=tel], select, input[type="radio"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 6px; 
     border: 1px solid #ccc;
     border-radius: 10px;
     box-sizing: border-box;
@@ -180,6 +180,34 @@ input[type="radio"] {
     width: auto;
 }
 
+/* Adjust the radio button containers within delivery options */
+.delivery-options > .checkout-radio:first-child label {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: none; /* Remove bottom border */
+
+}
+
+.delivery-options > .checkout-radio:last-child label {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* Remove border-radius from sides that should not be rounded */
+.delivery-options > .checkout-radio label {
+    border-radius: 0;
+}
+
+/* Reapply border-radius to the appropriate corners of each label */
+.delivery-options > .checkout-radio:first-child label {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.delivery-options > .checkout-radio:last-child label {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
 /* Checkbox group styling */
 .checkbox-group {
     display: flex;
@@ -215,4 +243,66 @@ h2 {
     background-color: #419cd6;
     border-radius: 5px;
     width: 50%; /* Button width is 50% of the .complete-order container */
+}
+        
+
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 20px;
+  min-height: 120px; /* Adjust as necessary */
+}
+
+.cart-item-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cart-item-title,
+.cart-item-price {
+  margin: 5px 0; /* Give a little space between title and price */
+}
+
+.quantity-btn,
+.remove-item {
+  width: 30px; /* Adjust as necessary */
+  text-align: center;
+}
+
+.cart-item {
+  position: relative; /* Add this line */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 20px;
+  min-height: 120px; /* Adjust as necessary */
+}
+
+
+.remove-item {
+  position: absolute; /* Changed from default */
+  top: 10px; /* Distance from the top of the container */
+  right: 10px; /* Distance from the right of the container */
+  width: 10px; /* Size of the button */
+  height: 10px; /* Size of the button */
+  line-height: 30px; /* Center the 'X' vertically */
+  text-align: center;
+  background: none;
+  border: none;
+  font-size: 12px; /* Size of the 'X' */
+  color: red; /* Color of the 'X' */
+  cursor: pointer;
+  padding: 0;
+  border-radius: 15px; /* Optional: if you want a circular button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

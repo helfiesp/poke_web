@@ -948,7 +948,8 @@ def fetch_checkout_data(request):
     return new_order.order_number
 
 def checkout(request):
-    return render(request, 'checkout.html')
+    options = models.shipping_options.objects.all()
+    return render(request, 'checkout.html', {'shipping_options': options})
    
 
 def sort_purchased_items(request):
@@ -1011,7 +1012,6 @@ def get_or_create_customer(first_name, last_name, phone, email, address, postal_
     return customer
 
 def order_success(request, order_number):
-    print(order_number)
     try:
         order = models.orders.objects.get(order_number=order_number) 
         items = json.loads(order.items)
@@ -1096,6 +1096,8 @@ def retrieve_klarna_order(klarna_order_id):
         print(f"Failed to retrieve order from Klarna: {response.text}")
         return None
 
+def generate_klarna_customer_info(request):
+    pass
 
 def klarna_checkout(request):
     if request.method == 'POST':
@@ -1104,7 +1106,7 @@ def klarna_checkout(request):
         quantities = request.POST.getlist('item_quantity[]')
         prices = request.POST.getlist('item_price[]')
         sale_prices = request.POST.getlist('item_sale_price[]')
-
+        print(request.POST)
         order_lines = []
         total_amount = 0
         total_tax_amount = 0
@@ -1157,43 +1159,57 @@ def klarna_checkout(request):
                 "confirmation": f"https://testing.pokelageret.no/confirmation/{order_number}/",
                 "push": "https://testing.pokelageret.no/klarna/push/"
             }, 
-            "external_payment_methods": [
-                {
-                    "name": "Vipps", 
-                    "redirect_url": "https://testing.pokelageret.no/checkout",
-                    "image_url": "https://vipps.no/media/images/vipps_logo_rgb.width-400.jpegquality-60.png",
-                    "description": "Betal med Vipps. Åpnes i eget vindu."
-                },
-                {
-                    "name": "Faktura", 
-                    "redirect_url": "https://testing.pokelageret.no/checkout",
-                    "description": "Betales med faktura etter avtale. Ta kontakt med support@pokelageret.no for å bruke dette valget."
-                },
-            ], 
-
-                "shipping_options": build_shipping_options(int(str(total_amount)[:-2])),
-            
+            "billing_address": {
+                "email": request.POST.get('email'),  # Replace with your customer's email
+                "postal_code": request.POST.get('postal_code'),  # Replace with your customer's postal code
+                "given_name": request.POST.get('first_name'),  # Replace with your customer's first name
+                "family_name": request.POST.get('last_name'),  # Replace with your customer's last name
+                "street_address": request.POST.get('address'),  # Replace with your customer's street address
+                "city": request.POST.get('city'),  # Replace with your customer's city
+                "phone": request.POST.get('phone'),  # Replace with your customer's phone number
+                "country": "NO",  # Replace with your customer's country code if different
+            },
         }
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 201:
             klarna_order = response.json()
             order_id = klarna_order["order_id"]
-
-            # Update the redirect URL for the "Faktura" option with the new order_id
-            for payment_method in data['external_payment_methods']:
-                if payment_method['name'] == 'Faktura':
-                    payment_method['redirect_url'] = f"https://testing.pokelageret.no/order_success/{order_id}/"
-            print(payment_method)
-
-            # Pass the updated data to your template, including the new redirect URL for "Faktura"
-            return render(request, "klarna_checkout.html", {
-                'html_snippet': klarna_order['html_snippet'],
-                'external_payment_methods': data['external_payment_methods'],
-                'order_id': order_id  # You can pass this if you need to use it in your template
-            })
+            return render(request, "klarna_checkout.html", {'html_snippet': klarna_order['html_snippet']})
         else:
-            # If there was an error, render the checkout error page
             return render(request, "checkout_error.html", {"error": response.text})
 
-
     return render(request, "checkout.html")
+
+def manage_shipping_option(request, id=None):
+    if request.method == 'POST':
+        # Extract data from POST request
+        data = {
+            'title': request.POST.get('title', ''),
+            'subtitle': request.POST.get('subtitle', ''),
+            'description': request.POST.get('description', ''),
+            'company': request.POST.get('company', ''),
+            'max_weight': request.POST.get('max_weight', None),
+            'price': request.POST.get('price', None),
+            'free_shipping_limit': request.POST.get('free_shipping_limit', None)
+        }
+        
+        if id:
+            # Update existing shipping option
+            shipping_option = get_object_or_404(models.shipping_options, pk=id)
+            for field, value in data.items():
+                setattr(shipping_option, field, value)
+        else:
+            # Create a new shipping option
+            shipping_option = models.shipping_options(**data)
+
+        # Handle image separately to account for file uploads
+        shipping_option.image = request.FILES.get('image', None)
+
+        # Save the object to database
+        shipping_option.save()
+        
+        return redirect('hjem')  # Assuming you have a listing URL
+    else:
+        # Prepare context data for template
+        shipping_option = models.shipping_options.objects.filter(pk=id).first() if id else None
+        return render(request, 'admin/shipping_options.html', {'shipping_option': shipping_option})

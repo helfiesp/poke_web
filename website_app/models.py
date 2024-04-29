@@ -50,8 +50,6 @@ class product_image(models.Model):
     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     order = models.IntegerField(default=0) 
 
-
-
 class category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subcategories')
@@ -164,3 +162,13 @@ class orders(models.Model):
 
     class Meta:
         verbose_name_plural = "Orders"
+
+class shipping_options(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True)
+    subtitle = models.CharField(max_length=200, null=True, blank=True)
+    description = models.TextField(max_length=200, null=True, blank=True)
+    company = models.CharField(max_length=300, null=True, blank=True)
+    image = models.ImageField(upload_to='supplier_images/', null=True, blank=True)
+    max_weight = IntegerField(null=True, blank=True)
+    price = IntegerField(null=True, blank=True)
+    free_shipping_limit = IntegerField(null=True, blank=True)

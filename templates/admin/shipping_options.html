@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+{% block content %}
+<style>
+.shipping-container {
+    margin: auto;
+    width: 100%;
+}
+</style>
+
+    <form method="post" enctype="multipart/form-data" class="shipping-container">
+        {% csrf_token %}
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" value="{{ shipping_option.title }}">
+        <br>
+        <label for="subtitle">Subtitle:</label>
+        <input type="text" id="subtitle" name="subtitle" value="{{ shipping_option.subtitle }}">
+        <br>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description">{{ shipping_option.description }}</textarea>
+        <br>
+        <label for="company">Company:</label>
+        <input type="text" id="company" name="company" value="{{ shipping_option.company }}">
+        <br>
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image">
+        <br>
+        <label for="max_weight">Max Weight:</label>
+        <input type="number" id="max_weight" name="max_weight" value="{{ shipping_option.max_weight }}">
+        <br>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" value="{{ shipping_option.price }}">
+        <br>
+        <label for="free_shipping_limit">Free Shipping Limit:</label>
+        <input type="number" id="free_shipping_limit" name="free_shipping_limit" value="{{ shipping_option.free_shipping_limit }}">
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

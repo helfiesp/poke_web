@@ -91,7 +91,8 @@ urlpatterns = [
     path('order-success/<str:order_number>/', views.order_success, name='order_success'),
 
 
-
+    path('shipping_option/', views.manage_shipping_option, name='new_shipping_option'),
+    path('shipping_option/<int:id>/', views.manage_shipping_option, name='edit_shipping_option'),
 
     # KLARNA
     #path('terms/', views.terms_and_conditions, name='terms'),

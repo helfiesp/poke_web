@@ -29,10 +29,105 @@
                 <!-- Dynamic Product Items will be injected here -->
                 <!-- Subtotal, Shipping, and Total -->
             </section>
+               <!-- Delivery Section -->
+                    <section class="delivery-section">
+
+                    <h2 style="margin-bottom:0px">Kundeinformasjon</h2>      
+                    <div class="address-fields">
+                        <div class="grid-item half-width">
+                            <input type="text" name="first_name" placeholder="{% trans 'Fornavn' %}" required>
+                        </div>
+                        <div class="grid-item half-width">
+                            <input type="text" name="last_name" placeholder="{% trans 'Etternavn' %}" required>
+                        </div>
+                        <div class="grid-item single">
+                            <input type="text" name="address" placeholder="{% trans 'Adresse' %}" required>
+                        </div>
+                        <div class="grid-item half-width">
+                            <input type="text" name="postal_code" placeholder="{% trans 'Postnummer' %}" required>
+                        </div>
+                        <div class="grid-item half-width">
+                            <input type="text" name="city" placeholder="{% trans 'By' %}" required>
+                        </div>
+                        <div class="grid-item single">
+                           <input type="tel" name="phone" placeholder="{% trans 'Telefon' %}" required>
+                        </div>
+                        <div class="grid-item single">
+                           <input type="text" name="email" placeholder="{% trans 'E-post' %}" required>
+                        </div>
+                    </div>
+
+                        <h2 style="margin-bottom:0px">Levering</h2>
+                        <div class="delivery-options">
+                            <div class="checkout-radio">
+                                <input type="radio" id="delivery" name="delivery_option" value="delivery" onclick="toggleDeliveryOptions(true)">
+                                <label for="delivery" class="radio-label">
+                                    Sendes
+                                    <img src="{{ MEDIA_URL }}icons/posten_logo.png" alt="Logo" class="radio-button-logo">
+                                </label>
+                            </div>
+                            <div class="checkout-radio">
+                                <input type="radio" id="pickup" name="delivery_option" value="pickup" onclick="toggleDeliveryOptions(false)">
+                                <label for="pickup" class="radio-label">
+                                    Hent i Sarpsborg
+                                    <img src="{{ MEDIA_URL }}icons/house.png" alt="Logo" class="radio-button-logo">
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="shipping-options" id="shipping-options" style="display: none;">
+                        <h2 style="margin-bottom:0px">Sendingsalternativer</h2>
+                        <div class="delivery-options">
+                            {% for option in shipping_options %}
+                            <div class="checkout-radio">
+                                <input id="shipping_radio_{{ forloop.counter }}" name="shipping_option" type="radio" value="{{ option.id }}" data-price="{{ option.price }}" data-free-shipping-limit="{{ option.free_shipping_limit }}">
+                                <label for="shipping_radio_{{ forloop.counter }}" class="radio-label">
+                                    {{ option.title }}
+                                    <span class="radio-label-text">{{ option.price|default_if_none:"GRATIS" }} kr</span>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                                                   
+                        <div class="pickup-address" id="pickup-address" style="display: none;">
+
+                            <p>DELIVER</p>
+                        </div>
+
+
+                    </div>
+                </section>
+                <h2 style="margin-bottom:0px">Betaling</h2>
+                    <div class="delivery-options" style="margin-bottom:20px">
+                            <div class="checkout-radio">
+                                <input id="klarna_radio" name="payment_method" type="radio" value="klarna">
+                                <label for="klarna_radio" class="radio-label">
+                                    Klarna
+                                    <img src="{{ MEDIA_URL }}icons/klarna.png" alt="Logo" class="radio-button-logo" style="width:45px">
+                                </label>
+                            </div>
+                            <div class="checkout-radio">
+                                <input id="vipps_radio" name="payment_method" type="radio" value="vipps">
+                                <label for="vipps_radio" class="radio-label" style="border-bottom:none;">
+                                    Vipps
+                                    <img src="{{ MEDIA_URL }}icons/vipps.png" alt="Logo" class="radio-button-logo" style="width:45px">
+                                </label>
+                            </div>
+                            <div class="checkout-radio">
+                                <input id="invoice_radio" name="payment_method" type="radio" value="invoice">
+                                <label for="invoice_radio" class="radio-label">
+                                    Faktura (etter avtale)
+                                    <img src="{{ MEDIA_URL }}icons/contract.png" alt="Logo" class="radio-button-logo">
+                                </label>
+                            </div>
+
+
+                        </div>
+
                 <div class="summary-totals">
                     <div class="shipping">
                         <span class="label">{% trans "Frakt" %}</span>
-                        <span class="price">{% trans "Gratis" %}</span>
+                        <span class="price"></span>
                     </div>
                     <div class="total">
                         <span class="label">{% trans "Totalt" %}</span>
@@ -47,4 +142,4 @@
     </div>
     </div>
 </form>
-{% endblock %}
+{% endblock %}  
