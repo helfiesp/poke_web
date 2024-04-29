@@ -1136,7 +1136,7 @@ def klarna_checkout(request):
             product = models.product.objects.filter(pk=item_id).first()
             if product:
                 product_name = product.title
-
+            print(product.image)
             order_lines.append({
                 "type": "physical",
                 "reference": str(item_id),
