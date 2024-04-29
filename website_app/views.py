@@ -1108,9 +1108,10 @@ def klarna_checkout(request):
         sale_prices = request.POST.getlist('item_sale_price[]')
         delivery_method = request.POST.get('delivery_option')
         shipping_option = request.POST.get('shipping_option')
+        selected_shipping_option = None
         if shipping_option:
-            selected_shipping_option = models.shipping_options.objects.filter(pk=shipping_option)
-            print(selected_shipping_option)
+            selected_shipping_option = models.shipping_options.objects.filter(pk=shipping_option).first()
+
         order_lines = []
         total_amount = 0
         total_tax_amount = 0
@@ -1142,6 +1143,21 @@ def klarna_checkout(request):
 
             total_amount += total_amount_incl_tax
             total_tax_amount += total_tax_amount_for_item
+
+        if delivery_method == 'delivery' and selected_shipping_option:
+            shipping_cost_in_cents = round(float(selected_shipping_option.price) * 100)
+            order_lines.append({
+                "type": "shipping_fee",
+                "name": "Delivery",
+                "quantity": 1,
+                "unit_price": shipping_cost_in_cents,
+                "tax_rate": 2500,
+                "total_amount": shipping_cost_in_cents,
+                "total_tax_amount": int(shipping_cost_in_cents * 0.25),
+            })
+            total_amount += shipping_cost_in_cents
+            total_tax_amount += int(shipping_cost_in_cents * 0.25)
+
         url = "https://api.playground.klarna.com/checkout/v3/orders"
         credentials = f"{settings.KLARNA_API_USERNAME}:{settings.KLARNA_API_PASSWORD}"
         encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
