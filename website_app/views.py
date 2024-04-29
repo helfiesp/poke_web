@@ -325,6 +325,8 @@ def add_product(request):
             bestseller = request.POST.get('bestseller')
             if bestseller:
                 product_instance.bestseller = True
+            product_instance.product_url = "https://testing.pokelageret.no/product/{}".format(product_instance.string_id)
+            product_instance.save()
             product_instance.save()
 
 
@@ -370,6 +372,7 @@ def edit_product(request, product_id):
                 bestseller = request.POST.get('bestseller')
                 if bestseller:
                     product_instance.bestseller = True
+                product_instance.product_url = "https://testing.pokelageret.no/product/{}".format(product_instance.string_id)
                 product_instance.save()
 
                 # Update the remaining images
@@ -1140,6 +1143,7 @@ def klarna_checkout(request):
                 "name": product_name,
                 "quantity": quantity,
                 "unit_price": price_in_cents,
+                "product_url": product.product_url,
                 "tax_rate": 2500,
                 "total_amount": total_amount_incl_tax, 
                 "total_tax_amount": total_tax_amount_for_item,
@@ -1160,6 +1164,7 @@ def klarna_checkout(request):
                 "quantity": 1,
                 "unit_price": shipping_cost_in_cents,
                 "tax_rate": 2500,  # 25%
+                #"image_url": "https://www.exampleobjects.com/product-image-1200x1200.jpg",  
                 "total_amount": shipping_cost_in_cents,
                 "total_tax_amount": shipping_tax_amount,
             })

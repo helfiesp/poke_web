@@ -28,6 +28,8 @@
             {% csrf_token %}
             <div class="form-section">
                 <h2>Edit Product</h2>
+                <p>Product url: {{ product.product_url }}</p>
+
                 <p>Title</p>
                 {{ form.title }}
                 <p>Subtitle</p>
@@ -53,18 +55,16 @@
                 {{ form.price }}
                 <p>Salgspris</p>
                 {{ form.sale_price }}
-                <p>Materiale</p>
-                {{ form.material }}
-                <p>Farge</p>
-                {{ form.color }}
                 <p>Høyde</p>
                 {{ form.height }}
                 <p>Bredde</p>
                 {{ form.width }}
-                <p>Dybde</p>
-                {{ form.depth }}
                 <p>Lengde</p>
                 {{ form.length }}
+                <p>Vekt</p>
+                {{ form.weight }}
+                <p>Leverandør</p>
+                {{ form.supplier }}
                 <p>På lager</p>
                 {{ form.instock }}
                 <p>Mer informasjon</p>
