@@ -13,7 +13,6 @@ class product(models.Model):
     subtitle = models.CharField(max_length=200, blank=True)
     category = models.ForeignKey('category', on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     product_url = models.TextField(null=True, blank=True)
     price = models.IntegerField(null=True, blank=True)
     sale_price = models.IntegerField(null=True, blank=True)

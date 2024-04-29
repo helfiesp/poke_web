@@ -251,6 +251,14 @@ def general_search(request):
     
     return render(request, 'products.html', context)
 
+def fetch_product_image(string_id):
+    product = get_object_or_404(models.product, string_id=string_id)
+    product_images = product.images.exclude(image__isnull=True).exclude(image__exact='')
+    for product_image in product_images:
+        if product_image.order == 0:
+            return product_image.image
+            
+
 def product_page(request, string_id):
     product = get_object_or_404(models.product, string_id=string_id)
 
@@ -358,6 +366,7 @@ def add_product(request):
 def edit_product(request, product_id):
     product_instance = get_object_or_404(models.product, id=product_id)
     categories = models.category.objects.all()
+    print(fetch_product_image(product_instance.string_id))
     suppliers = models.supplier.objects.all()
     if request.method == 'POST':
         form = forms.product_form(request.POST, request.FILES, instance=product_instance)
@@ -1136,7 +1145,6 @@ def klarna_checkout(request):
             product = models.product.objects.filter(pk=item_id).first()
             if product:
                 product_name = product.title
-            print(product.image)
             order_lines.append({
                 "type": "physical",
                 "reference": str(item_id),
@@ -1144,6 +1152,7 @@ def klarna_checkout(request):
                 "quantity": quantity,
                 "unit_price": price_in_cents,
                 "product_url": product.product_url,
+                "image_url": "https://testing.pokelageret.no/media/{}"fetch_product_image(product.string_id),
                 "tax_rate": 2500,
                 "total_amount": total_amount_incl_tax, 
                 "total_tax_amount": total_tax_amount_for_item,
@@ -1164,7 +1173,7 @@ def klarna_checkout(request):
                 "quantity": 1,
                 "unit_price": shipping_cost_in_cents,
                 "tax_rate": 2500,  # 25%
-                #"image_url": "https://www.exampleobjects.com/product-image-1200x1200.jpg",  
+                #"image_url": fetch_product_image(product_instance.string_id),
                 "total_amount": shipping_cost_in_cents,
                 "total_tax_amount": shipping_tax_amount,
             })
