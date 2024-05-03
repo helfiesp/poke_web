@@ -1065,7 +1065,7 @@ def create_order(request, customer_instance):
             }),
             status='processing'
         )
-        send_order_confirmation(customer_instance)
+        send_order_confirmation(order)
         return {'status': 'success', 'message': 'Order created successfully.', 'order_number': order.order_number}
 
 
