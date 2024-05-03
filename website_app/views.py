@@ -1020,7 +1020,8 @@ def checkout(request):
 
     return render(request, 'checkout.html', {
         'shipping_options': options,
-        'form': form
+        'form': form,
+        'customer':customer_instance,
     })
 
 def create_order(request, customer_instance):
@@ -1070,12 +1071,10 @@ def create_order(request, customer_instance):
 
 def send_order_confirmation(customer_instance):
     subject = 'Order Confirmation'
-    html_message = render_to_string('emails/order_confirmation.html')
-    plain_message = strip_tags(html_message)
-    from_email = 'From <your-email@pokelageret.no>'
-    to = customer_instance.email
-
-    send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+    message = "Hello thank you for the order"
+    email_from = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [customer_instance.email]
+    send_mail(subject, message, email_from, recipient_list)
 
 def sort_purchased_items(request):
     item_ids = request.POST.getlist('item_id[]')
