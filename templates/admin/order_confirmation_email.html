@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+
+{% load static i18n %}
+{% load form_tags %}
+
+{% block content %}
+<div style="background: #fff; margin: 50px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; max-width: 700px;">
+    <div style="background: #f9f9f9; padding: 30px; text-align: center;">
+        <h1 style="color: #c8323f; margin-bottom: 10px;">{% trans "Takk for bestillingen!" %}</h1>
+        <p>{% trans "Ordren din vil bli sendt i løpet av én arbeidsdag. Du vil få en bekreftelse på e-post når varen din er sendt." %}</p>
+    </div>
+    <div style="display: flex; justify-content: space-between; padding: 30px; align-items: flex-start; border-bottom: 2px solid #eee;">
+        <div style="padding: 20px 30px; flex: 1; margin-right: 30px;">
+            <h2 style="color: #333; margin-bottom: 10px;">{% trans "Kundeinformasjon" %}</h2>
+            <p><strong>{% trans "Navn" %}:</strong> {{ order.customer }}</p>
+            <p><strong>{% trans "Adresse" %}:</strong> {{ order.customer.address }}</p>
+            <p><strong>{% trans "Telefon" %}:</strong> {{ order.customer.phone_number }}</p>
+            <p><strong>{% trans "E-post" %}:</strong> {{ order.customer.email }}</p>
+        </div>
+        <div style="padding: 20px 30px; flex: 1;">
+            <h2 style="color: #333; margin-bottom: 10px;">{% trans "Ordreinformasjon" %}</h2>
+            <p><strong>{% trans "Dato" %}:</strong> {{ order.date_added|date:"d M Y" }}</p>
+            <p><strong>{% trans "Ordrenummer" %}:</strong> {{ order.order_number }}</p>
+            <p><strong>{% trans "Betalingsmetode" %}:</strong> {{ payment_details.payment_method|title }}</p>
+        </div>
+    </div>
+    <div style="padding-top: 20px; padding: 20px 30px;">
+        <div style="padding-top: 20px;">
+            {% for item in items %}
+                <div style="display: flex; align-items: center; margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+                    <img src="{{ item.item_id|fetch_item_image }}" alt="{{ item.title }}" style="width: 60px; height: 60px; border-radius: 8px; margin-right: 20px; object-fit: cover;">
+                    <div style="flex: 1;">
+                        <p style="font-size: 14px; color: #333; margin-bottom: 5px;">{{ item.title }}</p>
+                        <p style="color: #333; margin-bottom: 5px;">NOK kr {{ item.sale_price }}</p>
+                        <p style="font-size: 14px; color: #666;">{% trans "Antall:" %} {{ item.quantity }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div style="margin-top: 20px;">
+            <p style="display: flex; justify-content: space-between; align-items: center;"><strong>{% trans "Produkttotal" %}:</strong>{{ item_total }} kr</p>
+            {% if order.delivery_price %}
+                <p style="display: flex; justify-content: space-between; align-items: center;"><strong>{% trans "Frakt" %}:</strong>{{ order.delivery_price }} kr</p>
+            {% else %}
+                <p style="display: flex; justify-content: space-between; align-items: center;"><strong>{% trans "Frakt" %}:</strong>GRATIS</p>
+            {% endif %}
+            <p style="display: flex; justify-content: space-between; align-items: center;"><strong>{% trans "Ordre total" %}:</strong>{{ order.price }} kr</p>
+        </div>
+    </div>
+    <div style="text-align: center; padding: 20px 30px; background: #f9f9f9;">
+        <a href="{% url 'hjem' %}" style="background-color: #c8323f; color: #fff; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 4px; text-align: center; font-size: 16px;">{% trans "Til forsiden" %}</a>
+    </div>
+</div>
+{% endblock %}
