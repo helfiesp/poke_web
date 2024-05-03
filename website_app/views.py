@@ -1210,15 +1210,16 @@ def generate_klarna_customer_info(request):
 
 def klarna_checkout(request):
     if request.method == 'POST':
-
         if request.user.is_authenticated:
             try:
                 customer_instance = models.customers.objects.get(user=request.user)
                 form = forms.CustomerForm(instance=customer_instance)
             except models.customers.DoesNotExist:
                 form = forms.CustomerForm()
+
         order_response = create_order(request)
         order_number = order_response['order_number']
+        print(order_number)
         items_ids = request.POST.getlist('item_id[]')
         quantities = request.POST.getlist('item_quantity[]')
         prices = request.POST.getlist('item_price[]')
