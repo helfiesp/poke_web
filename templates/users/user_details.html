@@ -21,11 +21,7 @@
             {% for field in form %}
             <div class="form-group">
                 {{ field.label_tag }}
-                {% if field.name == 'email' %}
-                <!-- Use readonly instead of disabled to ensure the data is sent in POST -->
-                    <input type="email" name="{{ field.name }}" value="{{ field.value }}" readonly class="form-control" id="{{ field.id_for_label }}">
-                {% else %}
-                    {{ field }}
+                {{ field }}
                 {% endif %}
                 {% if field.help_text %}
                     <small class="form-text text-muted">{{ field.help_text }}</small>
