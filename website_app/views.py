@@ -1413,7 +1413,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  # Adjust this to your home URL name
+            return redirect('hjem')  # Adjust this to your home URL name
         else:
             return render(request, 'users/register.html', {'form': form})
     else:
