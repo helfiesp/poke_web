@@ -1219,7 +1219,6 @@ def klarna_checkout(request):
 
         order_response = create_order(request)
         order_number = order_response['order_number']
-        print(order_number)
         items_ids = request.POST.getlist('item_id[]')
         quantities = request.POST.getlist('item_quantity[]')
         prices = request.POST.getlist('item_price[]')
@@ -1382,25 +1381,28 @@ def update_user_info(request):
 def user_home(request):
     user = request.user
     if user.is_authenticated:
-        try:
-            customer = models.customers.objects.get(user=request.user)
-            user_orders = models.orders.objects.filter(customer=customer).order_by('-date_added')
-            # Process orders to add item counts
-            for order in user_orders:
-                items = json.loads(order.items)
+        customer = models.customers.objects.get(user=request.user)
+        if customer:
+            try:
+                user_orders = models.orders.objects.filter(customer=customer).order_by('-date_added')
+                # Process orders to add item counts
+                for order in user_orders:
+                    items = json.loads(order.items)
 
-                item_count = sum(int(item['quantity']) for item in items)  # Summing up the 'amount' field from each item
-                order.item_count = item_count  # Attach the count to the order object
-        except models.customers.DoesNotExist:
-            user_orders = []
-        context = {
-            'orders': user_orders,
-            'full_name': user.get_full_name(),
-            'email': user.email,
-            'last_login': user.last_login,
+                    item_count = sum(int(item['quantity']) for item in items)  # Summing up the 'amount' field from each item
+                    order.item_count = item_count  # Attach the count to the order object
+            except models.customers.DoesNotExist:
+                user_orders = []
+            context = {
+                'orders': user_orders,
+                'full_name': user.get_full_name(),
+                'email': user.email,
+                'last_login': user.last_login,
 
-        }
-        return render(request, 'users/user_orders.html', context)
+            }
+            return render(request, 'users/user_orders.html', context)
+        else:
+            return redirect('hjem')
     else:
         return redirect('login')
 
