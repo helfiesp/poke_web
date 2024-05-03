@@ -13,7 +13,9 @@ import requests
 from django.contrib import messages
 from decimal import Decimal
 
-
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.contrib.auth.forms import UserCreationForm
 from .context_processors import cart_context
 import re
@@ -987,33 +989,43 @@ def checkout(request):
     form = None
 
     if request.user.is_authenticated:
-        try:
-            customer_instance = models.customers.objects.get(user=request.user)
-            form = forms.CustomerForm(instance=customer_instance)
-        except models.customers.DoesNotExist:
-            form = forms.CustomerForm()
+        customer_instance, created = models.customers.objects.get_or_create(user=request.user)
+        form = forms.CustomerForm(request.POST or None, instance=customer_instance)
+    else:
+        # For non-authenticated users, create a new customer instance if form is submitted
+        form = forms.CustomerForm(request.POST or None)
 
     if request.method == 'POST':
-        # Process order creation inside the checkout function
-        order_response = create_order(request)
-        if order_response['status'] == 'success':
-            messages.success(request, 'Order created successfully with number: {}'.format(order_response['order_number']))
-            return redirect('order_success', order_number=order_response['order_number'])
+        if form.is_valid():
+            customer_instance = form.save(commit=False)
+            if not request.user.is_authenticated:
+                # For guest users, do any additional handling as needed
+                customer_instance.save()
+            else:
+                # For authenticated users, link the customer instance with the user
+                customer_instance.user = request.user
+                customer_instance.save()
+
+            # Proceed with order creation
+            order_response = create_order(request, customer_instance)
+            if order_response['status'] == 'success':
+                messages.success(request, 'Order created successfully with number: {}'.format(order_response['order_number']))
+                return redirect('order_success', order_number=order_response['order_number'])
+            else:
+                messages.error(request, order_response['message'])
+                return redirect('checkout')
         else:
-            messages.error(request, order_response['message'])
-            return redirect('checkout')
+            print(request.POST)
+            print(form.errors)
 
     return render(request, 'checkout.html', {
         'shipping_options': options,
-        'form': form,
-        'customer': customer_instance
+        'form': form
     })
 
-def create_order(request):
+def create_order(request, customer_instance):
     data = request.POST
-    customer_id = request.user.customer.id if hasattr(request.user, 'customer') else None
 
-    
     with transaction.atomic():
         item_info = [
             {
@@ -1041,7 +1053,7 @@ def create_order(request):
                 delivery_price = Decimal(shipping_option.price if shipping_option.price is not None else '0.00')
 
         order = models.orders.objects.create(
-            customer_id=customer_id,
+            customer=customer_instance,
             items=json.dumps(item_info),
             delivery_info=json.dumps(delivery_info),
             price=total_price + delivery_price,
@@ -1052,9 +1064,18 @@ def create_order(request):
             }),
             status='processing'
         )
-
+        send_order_confirmation(customer_instance)
         return {'status': 'success', 'message': 'Order created successfully.', 'order_number': order.order_number}
 
+
+def send_order_confirmation(customer_instance):
+    subject = 'Order Confirmation'
+    html_message = render_to_string('emails/order_confirmation.html')
+    plain_message = strip_tags(html_message)
+    from_email = 'From <your-email@pokelageret.no>'
+    to = customer_instance.email
+
+    send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 
 def sort_purchased_items(request):
     item_ids = request.POST.getlist('item_id[]')

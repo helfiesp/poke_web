@@ -77,7 +77,7 @@
 
                         </div>
                         <div class="grid-item single">
-                           <input type="tel" name="phone" placeholder="{% trans 'Telefon' %}" required value="{{ customer.phone_number|default_if_none:'' }}">
+                           <input type="tel" name="phone_number" placeholder="{% trans 'Telefon' %}" required value="{{ customer.phone_number|default_if_none:'' }}">
 
                         </div>
                         <div class="grid-item single">
@@ -143,7 +143,7 @@
                                 </label>
                             </div>
                             <div class="checkout-radio">
-                                <input id="invoice_radio" name="payment_method" type="radio" value="invoice">
+                                <input id="invoice_radio" name="payment_method" type="radio" value="faktura">
                                 <label for="invoice_radio" class="radio-label">
                                     Faktura (etter avtale)
                                     <img src="{{ MEDIA_URL }}icons/contract.png" alt="Logo" class="radio-button-logo">
