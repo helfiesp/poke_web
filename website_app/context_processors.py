@@ -9,6 +9,9 @@ def base_info(request):
     recent_products = models.product.objects.filter(enabled=True).order_by('-date_added')[:8]
     bestsellers = models.product.objects.filter(enabled=True, bestseller=True).order_by('-date_added')[:8]
 
+    # New variable that filters specific categories
+    front_categories = models.category.objects.filter(name__in=['pokemon', 'japansk', 'engelsk'])
+
     return {
         'all_products': products,
         'all_categories': categories,
@@ -17,6 +20,7 @@ def base_info(request):
         'business_information': business_information,
         'recent_products': recent_products,
         'bestsellers': bestsellers,
+        'front_categories': front_categories,  # Add to the return dictionary
     }
 
 
@@ -33,6 +37,7 @@ def cart_context(request):
         first_image = product.images.order_by('order').first()
         image_url = first_image.image.url if first_image else None
         item = {
+            'string_id': product.string_id,
             'id': product.id,
             'title': product.title,
             'subtitle': product.subtitle,

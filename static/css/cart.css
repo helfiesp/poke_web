@@ -14,7 +14,7 @@
 
 /* Cart slide in/out */
 .cart {
-  width: 25%;
+  width: 30%;
   background: #fff;
   padding: 20px;
   position: fixed;
@@ -38,7 +38,7 @@
 
 /* Header Styles */
 .cart-header {
-  font-size: 24px;
+  font-size: 1.0vw; 
   font-weight: bold;
   margin-bottom: 20px;
   display: flex;
@@ -47,7 +47,7 @@
 }
 
 .close-cart-btn {
-  font-size: 24px;
+  font-size: 1.0vw; 
   background: none;
   border: none;
   cursor: pointer;
@@ -63,32 +63,53 @@
   padding-bottom: 20px;
 }
 
-.cart-item:last-child {
-  border: none;
-}
-
 .cart-item img {
-  width: 100px; /* Set image width */
+  width: 5vw; /* Ensuring image size is consistent */
   margin-right: 10px;
+  border-radius: 5px;
 }
 
 .cart-item-details {
-  flex-grow: 1;
+  flex-grow: 1; /* Takes up maximum space */
+  display: flex;
+  flex-direction: column; /* Stacks children vertically */
+  justify-content: center; /* Centers children vertically */
+  align-items: flex-start; /* Aligns children to the start horizontally */
 }
 
+
 .cart-item-title {
-  font-size: 18px;
+  margin: 0 0 5px 0; /* Adds 5px margin to the bottom of the title */
+}
+.cart-item-price {
+  margin: 0; /* Ensures no additional space is added to the price */
+}
+.cart-item-info {
+  display: flex;
+  align-items: center; /* Aligns children of cart-item-info vertically in the center */
+  justify-content: space-between; /* Ensures distance between details and quantity */
+  width: 100%;
+}
+.cart-item-title {
+  font-size: 0.6vw;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ensures text does not push other elements out of view */
 }
 
 .cart-item-quantity {
+  width: 100px; /* Fixed width for quantity controls */
   display: flex;
   align-items: center;
+  justify-content: flex-end; /* Aligns buttons to the right */
 }
-
+.cart-item-price {
+  font-size: 0.6vw;
+}
 .quantity-btn {
-  padding: 0 10px;
-  font-size: 18px;
+  padding: 0 0.5vw;
+  font-size: 0.8vw;
   background: none;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -97,7 +118,9 @@
 .quantity-text {
   margin: 0 10px;
 }
-
+.cart-item-info > :first-child, .cart-item-info > :last-child {
+  flex-basis: 50%;
+}
 /* Subtotal and Checkout Button Styles */
 .cart-footer {
   position: sticky;
@@ -107,7 +130,7 @@
 }
 
 .subtotal {
-  font-size: 20px;
+  font-size: 0.9vw;
   margin: 20px 0;
   display: flex;
   justify-content: space-between;
@@ -117,7 +140,7 @@
   background: #000;
   color: #FFF;
   text-align: center;
-  font-size: 20px;
+  font-size: 0.9vw;
   padding: 10px 20px;
   width: 100%;
   border: none;
@@ -153,4 +176,82 @@
 .normal-price.struck {
     text-decoration: line-through;
     color: #777; /* Grayed out color for original price that is on sale */
+}
+
+.cart-small-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.cart-small-items h3 {
+    width: 100%;
+    text-align: center;
+    font-size: 0.8vw;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+}
+
+.product-item {
+    position: relative;
+    flex: 0 1 calc(20% - 10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+    overflow: hidden;
+}
+
+.product-item .product-image {
+    width: 100%;
+    filter: grayscale(0%);
+    transition: filter 0.5s ease; /* Ensures the transition applies to the filter effect at all times */
+    border-radius: 10px;
+
+}
+
+.product-item:hover .product-image {
+    filter: grayscale(100%);
+}
+
+.product-item .add-to-cart-btn-ajax {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0s 0.5s; /* Adjust visibility transition timing */
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    font-size: 1.2em;
+    cursor: pointer;
+    visibility: hidden;
+    border-radius: 10px;
+}
+
+.product-item:hover .add-to-cart-btn-ajax {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease, visibility 0s; /* Immediate visibility when hovered */
+}
+
+.product-item .product-title {
+    font-size: 0.6vw;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.product-item .product-price {
+    font-size: 0.6vw;
+    color: #333;
+    margin-bottom: 5px;
 }

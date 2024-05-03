@@ -3,7 +3,11 @@ from django.db.models import IntegerField
 import uuid
 from decimal import Decimal
 from django.core.validators import MinValueValidator
+from django.conf import settings
+
 from django.utils.text import slugify
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 
@@ -109,12 +113,13 @@ class supplier(models.Model):
         return self.name
 
 class customers(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='customer', null=True)
     first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255, default=None)
+    last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=255)
-    city = models.CharField(max_length=255, default=None)
-    email = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255)
+    email = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
 
     class Meta:

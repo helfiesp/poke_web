@@ -20,3 +20,23 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+class EmailUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, help_text="Required. Add a valid email address.")
+
+    class Meta:
+        model = User
+        fields = ("email", "password1", "password2")
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(username=email).exists():
+            raise ValidationError("A user with that email already exists.")
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.username = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user

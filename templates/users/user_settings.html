@@ -1,0 +1,42 @@
+{% extends "base/base.html" %}
+
+{% load static  %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/users.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="user-home-container">
+    <div class="sidebar">
+        <a href="{% url 'user_home' %}">Mine bestillinger</a>
+        <a href="{% url 'user_details' %}">Mine detaljer</a>
+        <a href="{% url 'user_security' %}">Sikkerhet</a>
+        <a href="{% url 'logout' %}">Logg ut</a>
+    </div>
+    <div class="content-area">
+        <h1 class="content-title">Oppdater detaljer</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {% if field.name == 'email' %}
+                <!-- Use readonly instead of disabled to ensure the data is sent in POST -->
+                    <input type="email" name="{{ field.name }}" value="{{ field.value }}" readonly class="form-control" id="{{ field.id_for_label }}">
+                {% else %}
+                    {{ field }}
+                {% endif %}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+            <button type="submit" class="btn-update">Update</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

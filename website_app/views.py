@@ -10,10 +10,16 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 import base64
 import requests
+from django.contrib import messages
+from decimal import Decimal
 
+
+from django.contrib.auth.forms import UserCreationForm
 from .context_processors import cart_context
 import re
 from weasyprint import HTML
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
 from django.utils import timezone
 from django.http import HttpResponse
 from datetime import timedelta
@@ -890,7 +896,8 @@ def get_cart_data(request):
     cart_data = cart_context(request)  # Assuming this gathers all cart data
     return JsonResponse({
         'cart_items': [
-            {
+            {    
+                'string_id': item['string_id'],
                 'id': item['id'],
                 'title': item['title'],
                 'price': item['price'],
@@ -907,6 +914,21 @@ def get_cart_total(request):
     cart_data = cart_context(request) 
     total_price = cart_data['total_price']
     return JsonResponse({'total': total_price})
+
+@require_POST
+def add_to_cart_ajax(request, product_id):
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+    
+    # Get the product or return a 404 error if not found
+    product = get_object_or_404(models.product, pk=product_id)
+    
+    # Read quantity from the request, default to 1 if not set
+    cart = request.session.get('cart', {})
+    cart[product_id] = cart.get(product_id, 0) + 1
+
+    request.session['cart'] = cart  # Save the updated cart to the session
+    return JsonResponse({'status': 'ok'})
 
 def add_to_cart(request, product_id):
     if request.method == 'POST':
@@ -961,8 +983,78 @@ def fetch_checkout_data(request):
 
 def checkout(request):
     options = models.shipping_options.objects.all()
-    return render(request, 'checkout.html', {'shipping_options': options})
-   
+    customer_instance = None
+    form = None
+
+    if request.user.is_authenticated:
+        try:
+            customer_instance = models.customers.objects.get(user=request.user)
+            form = forms.CustomerForm(instance=customer_instance)
+        except models.customers.DoesNotExist:
+            form = forms.CustomerForm()
+
+    if request.method == 'POST':
+        # Process order creation inside the checkout function
+        order_response = create_order(request)
+        if order_response['status'] == 'success':
+            messages.success(request, 'Order created successfully with number: {}'.format(order_response['order_number']))
+            return redirect('order_success', order_number=order_response['order_number'])
+        else:
+            messages.error(request, order_response['message'])
+            return redirect('checkout')
+
+    return render(request, 'checkout.html', {
+        'shipping_options': options,
+        'form': form,
+        'customer': customer_instance
+    })
+
+def create_order(request):
+    data = request.POST
+    customer_id = request.user.customer.id if hasattr(request.user, 'customer') else None
+
+    
+    with transaction.atomic():
+        item_info = [
+            {
+                'item_id': item_id,
+                'quantity': quantity,
+                'sale_price': sale_price
+            } for item_id, quantity, sale_price in zip(
+                data.getlist('item_id[]'),
+                data.getlist('item_quantity[]'),
+                data.getlist('item_sale_price[]')
+            )
+        ]
+
+        total_price = sum(Decimal(item['sale_price']) * int(item['quantity']) for item in item_info)
+        delivery_price = Decimal('0.00')  # Set default delivery price, potentially updated based on options
+
+        # Build delivery information based on selected delivery option
+        delivery_info = {
+            'delivery_option': data.get('delivery_option')
+        }
+        if delivery_info['delivery_option'] == 'delivery':
+            shipping_option_id = data.get('shipping_option', '')
+            if shipping_option_id:
+                shipping_option = models.shipping_options.objects.get(id=shipping_option_id)
+                delivery_price = Decimal(shipping_option.price if shipping_option.price is not None else '0.00')
+
+        order = models.orders.objects.create(
+            customer_id=customer_id,
+            items=json.dumps(item_info),
+            delivery_info=json.dumps(delivery_info),
+            price=total_price + delivery_price,
+            remaining=total_price + delivery_price,
+            delivery_price=delivery_price,
+            payment_info=json.dumps({
+                'payment_method': data.get('payment_method')
+            }),
+            status='processing'
+        )
+
+        return {'status': 'success', 'message': 'Order created successfully.', 'order_number': order.order_number}
+
 
 def sort_purchased_items(request):
     item_ids = request.POST.getlist('item_id[]')
@@ -1025,14 +1117,19 @@ def get_or_create_customer(first_name, last_name, phone, email, address, postal_
 
 def order_success(request, order_number):
     try:
-        order = models.orders.objects.get(order_number=order_number) 
+        order = models.orders.objects.get(order_number=order_number)
         items = json.loads(order.items)
+        item_total = 0
+        for item in items:
+            product = models.product.objects.filter(id=item["item_id"]).first()
+            item["title"] = product.title
+            item_total += Decimal(item["sale_price"])
         payment_details = json.loads(order.payment_info)
     except models.orders.DoesNotExist:
         # Handle missing order scenario
         return render(request, 'error.html', {'message': 'Order not found.'})
 
-    return render(request, 'admin/order_confirmation.html', {'payment_details': payment_details, 'items':items, 'order': order})
+    return render(request, 'admin/order_confirmation.html', {'payment_details': payment_details, 'items':items, 'order': order, 'item_total':item_total})
 
 def klarna_push_notification(request):
     if request.method == 'POST':
@@ -1113,7 +1210,15 @@ def generate_klarna_customer_info(request):
 
 def klarna_checkout(request):
     if request.method == 'POST':
-        order_number = fetch_checkout_data(request)
+
+        if request.user.is_authenticated:
+            try:
+                customer_instance = models.customers.objects.get(user=request.user)
+                form = forms.CustomerForm(instance=customer_instance)
+            except models.customers.DoesNotExist:
+                form = forms.CustomerForm()
+        order_response = create_order(request)
+        order_number = order_response['order_number']
         items_ids = request.POST.getlist('item_id[]')
         quantities = request.POST.getlist('item_quantity[]')
         prices = request.POST.getlist('item_price[]')
@@ -1254,3 +1359,95 @@ def manage_shipping_option(request, id=None):
         # Prepare context data for template
         shipping_option = models.shipping_options.objects.filter(pk=id).first() if id else None
         return render(request, 'admin/shipping_options.html', {'shipping_option': shipping_option})
+
+
+@login_required
+def user_settings(request):
+    return render(request, 'settings/user_settings.html')
+
+@login_required
+def user_settings_contact(request):
+    return render(request, 'settings/user_settings_contact.html')
+
+@login_required
+def user_settings_address(request):
+    return render(request, 'settings/user_settings_address.html')
+
+@login_required
+def update_user_info(request):
+    return render(request, 'users/user_settings.html')
+
+@login_required
+def user_home(request):
+    user = request.user
+    if user.is_authenticated:
+        try:
+            customer = models.customers.objects.get(user=request.user)
+            user_orders = models.orders.objects.filter(customer=customer).order_by('-date_added')
+            # Process orders to add item counts
+            for order in user_orders:
+                items = json.loads(order.items)
+
+                item_count = sum(int(item['quantity']) for item in items)  # Summing up the 'amount' field from each item
+                order.item_count = item_count  # Attach the count to the order object
+        except models.customers.DoesNotExist:
+            user_orders = []
+        context = {
+            'orders': user_orders,
+            'full_name': user.get_full_name(),
+            'email': user.email,
+            'last_login': user.last_login,
+
+        }
+        return render(request, 'users/user_orders.html', context)
+    else:
+        return redirect('login')
+
+
+def register(request):
+    if request.method == 'POST':
+        form = forms.CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')  # Adjust this to your home URL name
+        else:
+            return render(request, 'users/register.html', {'form': form})
+    else:
+        form = forms.CustomUserCreationForm()
+        return render(request, 'users/register.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('user_home')
+        else:
+            return render(request, 'users/login.html', {'form': form})
+    else:
+        form = AuthenticationForm()
+        return render(request, 'users/login.html', {'form': form})
+
+@login_required
+def user_details(request):
+    user = request.user
+    try:
+        customer_instance = models.customers.objects.get(user=user)
+    except models.customers.DoesNotExist:
+        customer_instance = models.customers(user=user)  # Create a new instance if not exists
+
+    if request.method == 'POST':
+        print(request.POST)
+        form = forms.CustomerForm(request.POST, instance=customer_instance)
+        if form.is_valid():
+            print("VALID")
+            form.save()
+            return redirect('user_home')  # Redirect to the user home page or confirmation page
+        else:
+            print(form.errors)
+    else:
+        form = forms.CustomerForm(instance=customer_instance)
+
+    return render(request, 'users/user_details.html', {'form': form})

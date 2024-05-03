@@ -17,9 +17,31 @@
             <img src="{{ MEDIA_URL }}pokelageret_logo_text.png" alt="Logo">
         </a>
     </div>
-
 </div>
-<form id="checkoutForm" method="post" action="{% url 'klarna_checkout' %}" class="checkout-wrapper">
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+            const form = document.getElementById('checkoutForm');
+
+            function updateFormAction() {
+                // Check if Klarna is selected
+                const isKlarnaSelected = document.getElementById('klarna_radio').checked;
+
+                // Update form action based on the selected payment method
+                form.action = isKlarnaSelected ? "{% url 'klarna_checkout' %}" : "{% url 'checkout' %}";
+            }
+
+            // Attach the change event listener to each payment method radio button
+            paymentRadios.forEach(radio => {
+                radio.addEventListener('change', updateFormAction);
+            });
+
+            // Initialize form action correctly based on the selected payment method on page load
+            updateFormAction();
+        });
+    </script>
+
+<form id="checkoutForm" method="post" action="{% url 'checkout' %}" class="checkout-wrapper">
 {% csrf_token %}
 <div class="main-column">
         <div class="right-column-content">
@@ -35,25 +57,32 @@
                     <h2 style="margin-bottom:0px">Kundeinformasjon</h2>      
                     <div class="address-fields">
                         <div class="grid-item half-width">
-                            <input type="text" name="first_name" placeholder="{% trans 'Fornavn' %}" required>
+                            <input type="text" name="first_name" placeholder="{% trans 'Fornavn' %}" required value="{{ customer.first_name|default_if_none:'' }}">
+
                         </div>
                         <div class="grid-item half-width">
-                            <input type="text" name="last_name" placeholder="{% trans 'Etternavn' %}" required>
+                            <input type="text" name="last_name" placeholder="{% trans 'Etternavn' %}" required value="{{ customer.last_name|default_if_none:'' }}">
+
                         </div>
                         <div class="grid-item single">
-                            <input type="text" name="address" placeholder="{% trans 'Adresse' %}" required>
+                            <input type="text" name="address" placeholder="{% trans 'Adresse' %}" required value="{{ customer.address|default_if_none:'' }}">
+
                         </div>
                         <div class="grid-item half-width">
-                            <input type="text" name="postal_code" placeholder="{% trans 'Postnummer' %}" required>
+                            <input type="text" name="postal_code" placeholder="{% trans 'Postnummer' %}" required value="{{ customer.postal_code|default_if_none:'' }}">
+
                         </div>
                         <div class="grid-item half-width">
-                            <input type="text" name="city" placeholder="{% trans 'By' %}" required>
+                            <input type="text" name="city" placeholder="{% trans 'By' %}" required value="{{ customer.city|default_if_none:'' }}">
+
                         </div>
                         <div class="grid-item single">
-                           <input type="tel" name="phone" placeholder="{% trans 'Telefon' %}" required>
+                           <input type="tel" name="phone" placeholder="{% trans 'Telefon' %}" required value="{{ customer.phone_number|default_if_none:'' }}">
+
                         </div>
                         <div class="grid-item single">
-                           <input type="text" name="email" placeholder="{% trans 'E-post' %}" required>
+                           <input type="text" name="email" placeholder="{% trans 'E-post' %}" required value="{{ customer.email|default_if_none:'' }}">
+
                         </div>
                     </div>
 

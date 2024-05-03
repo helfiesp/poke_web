@@ -33,10 +33,10 @@
             <!-- Assuming order.items is a JSON field containing product details -->
             {% for item in items %}
                 <div class="product-summary">
-                    <img src="{{ item.id|fetch_item_image }}" alt="{{ item.title }}">
+                    <img src="{{ item.item_id|fetch_item_image }}" alt="{{ item.title }}">
                     <div class="product-details">
-                        <p class="product-title">{{ item.id|fetch_item_name }}</p>
-                        <p class="product-price">NOK kr {{ item.purchase_price }}</p>
+                        <p class="product-title">{{ item.title }}</p>
+                        <p class="product-price">NOK kr {{ item.sale_price }}</p>
                         <p class="product-quantity">{% trans "Antall:" %} {{ item.quantity }}</p>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
         </div>
         
         <div class="totals">
-            <p><strong>{% trans "" %}:</strong> NOK kr {{ order.subtotal }}</p>
+            <p><strong>{% trans "Produkttotal" %}:</strong>{{ item_total }} kr</p>
             {% if order.delivery_price %}
                 <p><strong>{% trans "Frakt" %}:</strong>{{ order.delivery_price }} kr</p>
             {% else %}

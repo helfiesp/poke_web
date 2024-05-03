@@ -1,0 +1,73 @@
+.user-home-container {
+    display: flex;
+    max-width: 1200px;
+    margin: auto;
+    font-family: 'Josefin Sans', sans-serif;
+}
+.sidebar {
+    flex: 1;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-right: 2px solid #ccc;
+}
+.sidebar a {
+    display: block;
+    padding: 10px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+.sidebar a:hover {
+    background-color: #0074D9;
+    color: #fff;
+}
+.content-area {
+    flex: 3;
+    padding: 20px;
+    background-color: #fff;
+    min-height: 500px;
+}
+.content-title {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+}
+input[type="text"], input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+button {
+    padding: 10px 20px;
+    background-color: #0074D9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+button:hover {
+    background-color: #0056b3;
+}
+.error-list {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 10px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f7f7f7;
+}

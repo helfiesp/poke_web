@@ -93,6 +93,7 @@ urlpatterns = [
 
     path('shipping_option/', views.manage_shipping_option, name='new_shipping_option'),
     path('shipping_option/<int:id>/', views.manage_shipping_option, name='edit_shipping_option'),
+    path('add_to_cart_ajax/<int:product_id>/', views.add_to_cart_ajax, name='add_to_cart_ajax'),
 
     # KLARNA
     #path('terms/', views.terms_and_conditions, name='terms'),
@@ -105,6 +106,22 @@ urlpatterns = [
 
     path('about_us', views.about_us, name='about_us'),
     path('contact', views.contact, name='contact'),
+
+    # USER PAGES
+    path('min-side', views.user_home, name='user_home'),
+    path('min-side/detaljer', views.user_details, name='user_details'),
+    path('min-side/sikkerhet', views.user_details, name='user_security'),
+
+    #USERS
+    path('user/settings/', views.user_settings, name='user_settings'),
+    path('user/settings/update', views.update_user_info, name='update_user_info'),
+
+
+    # Login & Register
+    path('login/', views.login_view, name='login'), 
+    path('logout/', auth_views.LogoutView.as_view(next_page='hjem'), name='logout'),
+    path('register/', views.register, name='register'),
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

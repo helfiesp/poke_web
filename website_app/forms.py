@@ -2,6 +2,8 @@ from django import forms
 from .models import product, product_image, category, text_areas, footer_textareas, business_information, supplier, orders, customers
 from django.forms import inlineformset_factory
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 class product_form(forms.ModelForm):
     class Meta:
@@ -119,3 +121,37 @@ class OrderForm(forms.ModelForm):
     # Custom validation methods as needed
     def clean(self):
         cleaned_data = super().clean()
+
+class UserDetailsForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        user_id = self.instance.id
+        if User.objects.filter(email=email).exclude(id=user_id).exists():
+            raise ValidationError("This email is already in use by another account.")
+        return email
+        
+class CustomUserCreationForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True, help_text='Required.')
+    last_name = forms.CharField(max_length=30, required=True, help_text='Required.')
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2', )
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(username=email).exists():
+            raise ValidationError("A user with that email already exists.")
+        return email
+
+    def save(self, commit=True):
+        user = super(CustomUserCreationForm, self).save(commit=False)
+        user.username = self.cleaned_data['email']  # Use email as username
+        if commit:
+            user.save()
+        return user

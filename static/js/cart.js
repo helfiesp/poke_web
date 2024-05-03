@@ -20,19 +20,23 @@ function generateCartItemHtml(item) {
 
     return `
     <div class="cart-item" data-product-id="${item.id}">
+
         <div class="cart-item-image">
+            <a href="/product/${item.string_id}">
             <img src="${item.image_url}" alt="${item.title}">
+            </a>
         </div>
         <div class="cart-item-info">
+         <div class="cart-item-details">
             <p class="cart-item-title">${item.title}</p>
             ${priceHtml} <!-- Insert the price HTML here -->
+        </div>
         </div>
         <div class="cart-item-quantity">
             <button class="quantity-btn remove" data-product-id="${item.id}" data-action="remove">-</button>
             <span class="quantity-text" data-product-id="${item.id}">${item.quantity}</span>
             <button class="quantity-btn add" data-product-id="${item.id}" data-action="add">+</button>
         </div>
-        <button class="remove-item" data-product-id="${item.id}">Fjern</button>
     </div>
     `;
 }
@@ -195,4 +199,35 @@ cartContainer.addEventListener('click', function(event) {
     }
 
     window.addEventListener('click', closeCart);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn-ajax');
+
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const quantity = 1;  // You can modify or dynamically set this
+
+            fetch(`/add_to_cart_ajax/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({quantity: quantity})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    refreshCartDisplay();
+                } else {
+                    console.error('Failed to add item to cart:', data.message);
+                }
+            })
+            .catch(error => console.error('Error adding item to cart:', error));
+        });
+    });
 });

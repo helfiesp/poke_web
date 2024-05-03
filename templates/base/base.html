@@ -60,7 +60,7 @@
   </div>
 
 <div class="nav-icons">
-    <a href="{% url 'login' %}" class="account-icon">
+    <a href="{% url 'user_home' %}" class="account-icon">
         <img class="nav-icon" style="width:18px" src="{{ MEDIA_URL }}icons/avatar.png" alt="Logo">
     </a>
     <a class="account-icon" style="position: relative; cursor: pointer;" id="cart-icon">
@@ -81,7 +81,7 @@
   <!-- Menu Content -->
   <div class="menu-content">
     {% for category in all_categories %}
-      {% if not category.parent and category.name != "hyttemøbler" %}
+      {% if not category.parent %}
         <h4 class="filter-title-m"><a href="{% url 'category_search' category.name %}">{{ category.name|title }}</a></h4>
         {% if category.subcategories.all %}
           <ul class="filter-options-m">
@@ -119,8 +119,27 @@
     <div class="cart-items">
       <!-- DYNAMICALLY INSERTED BY JS -->
     </div>
+<div class="cart-small-items">
+    <h3>ANDRE POPULÆRE PRODUKTER</h3>
+    {% for product in all_products %}
+        <div class="product-item">
+            <img src="{{ product.images.all.0.image.url }}" alt="{{ product.title }}" class="product-image">
+            <span class="product-title">{{ product.title }}</span>
+            {% if product.sale_price %}
+              <span class="product-price">{{ product.sale_price }}.00 kr</span>
+            {% else %}
+              <span class="product-price">{{ product.price }}.00 kr</span>
+            {% endif %}
+
+            <meta name="csrf-token" content="{{ csrf_token }}">
+            <button class="add-to-cart-btn-ajax" data-product-id="{{ product.id }}" data-csrf-token="{{ csrf_token }}">
+                Legg i handlekurv
+            </button>
+        </div>
+    {% endfor %}
+</div>
     <div class="cart-footer">
-      <div class="subtotal">
+      <div class="subtotal"> 
         <span>Totalsum</span>
         <span class="total-price">{{ total_price }} KR</span>
       </div>
@@ -162,6 +181,7 @@
 
 
 <script>
+
 document.addEventListener('DOMContentLoaded', function () {
   var searchIcon = document.querySelector('.search-icon');
   var searchModal = document.getElementById('searchModal');

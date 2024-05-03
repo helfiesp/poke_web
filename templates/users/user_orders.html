@@ -1,0 +1,45 @@
+{% extends "base/base.html" %}
+
+{% load static  %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/users.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="user-home-container">
+    <div class="sidebar">
+        <a href="{% url 'user_home' %}">Mine bestillinger</a>
+        <a href="{% url 'user_details' %}">Mine detaljer</a>
+        <a href="{% url 'hjem' %}">Sikkerhet</a>
+        <a href="{% url 'logout' %}">Logg ut</a>
+    </div>
+    <div class="content-area">
+        <h1 class="content-title">Mine ordre</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order Number</th>
+                    <th>Items</th>
+                    <th>Status</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.item_count }} item(s)</td>
+                    <td>{{ order.status|title }}</td>
+                    <td>{{ order.price }} kr</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No orders found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

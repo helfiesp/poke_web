@@ -235,6 +235,50 @@ nav {
   text-decoration: none;
 }
 
+.product-categories-small {
+  display: flex;
+  justify-content: center; /* Centers the categories */
+  flex-wrap: wrap;
+  margin-top: 0px; /* Adjusted for tighter spacing */
+  padding: 0 10px;
+}
+
+.product-categories-small .category-item {
+  width: calc(20% - 20px); /* Adjusted for 5 items per row */
+  margin: 10px; /* Consistent margin for spacing */
+  text-align: center;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.product-categories-small .category-image {
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.product-categories-small .category-item:hover .category-image {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.product-categories-small .product-count {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+.product-categories-small .category-item h3 {
+  margin-top: 10px;
+  font-size: 1.2em; /* Adjusted font size for smaller items */
+  color: black;
+  text-decoration: none;
+}
+
 /* Recent purchases section */
 
 .recent-products-section h2 {
