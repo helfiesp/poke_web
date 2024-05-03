@@ -1069,12 +1069,20 @@ def create_order(request, customer_instance):
         return {'status': 'success', 'message': 'Order created successfully.', 'order_number': order.order_number}
 
 
-def send_order_confirmation(customer_instance):
+def send_order_confirmation(order):
     subject = 'Order Confirmation'
-    message = "Hello thank you for the order"
+    context = {
+        'order': order,
+        'items': json.loads(order.items),  # Assuming 'items' is a JSON string
+        'payment_details': json.loads(order.payment_info),  # Assuming 'payment_info' is a JSON string
+        'item_total': sum(Decimal(item['sale_price']) for item in json.loads(order.items))
+    }
+    message = render_to_string('admin/order_confirmation.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [customer_instance.email]
-    send_mail(subject, message, email_from, recipient_list)
+    recipient_list = [order.customer.email]
+
+    # Send email using the HTML message body
+    send_mail(subject, message, email_from, recipient_list, html_message=message)
 
 def sort_purchased_items(request):
     item_ids = request.POST.getlist('item_id[]')
