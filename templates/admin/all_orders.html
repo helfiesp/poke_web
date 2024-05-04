@@ -82,7 +82,7 @@ tr:hover {
             {% for order in orders %}
             <tr>
                 <td><a href="{% url 'order_detail' order.order_number %}">{{ order.order_number }}</a></td>
-                <td><a href="{% url 'customer_detail' order.customer.id %}">{{ order.customer.name }}</a></td>
+                <td><a href="">{{ order.customer.name }}</a></td>
                 <td>{{ order.price }}</td> <!-- Corrected position for price -->
                 <td>{{ order.salesman }}</td>
                 <td>{{ order.delivery_info }}</td> <!-- Corrected position for delivery details -->
