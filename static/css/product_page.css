@@ -97,7 +97,9 @@
     font-weight: bold; /* Bold font weight */
     color: #CC0000; /* Red color for the sale price */
 }
-
+.normal-price {
+    color: black;
+}
 .product-page-price-dashed {
     font-size: 18px; /* Smaller font size for the original price */
     text-decoration: line-through; /* Strike-through effect */
