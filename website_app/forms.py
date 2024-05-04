@@ -6,13 +6,14 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 class product_form(forms.ModelForm):
+
     class Meta:
         model = product
         fields = ['title', 'subtitle', 'category', 'description', 'product_url', 'price', 'sale_price', 'purchase_price', 'height', 'width', 'length', 'weight', 'instock', 'more_information', 'supplier', 'enabled', 'bestseller']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 40}),  # You can customize the appearance
         }
-        
+
 product_image_formset = inlineformset_factory(
     product, product_image,
     fields=('image',),

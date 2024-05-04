@@ -5,7 +5,6 @@ from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.utils import timezone
-
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
