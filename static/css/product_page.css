@@ -62,37 +62,44 @@
     z-index: 10; /* Make sure it sits above the thumbnails */
 }
 
-h1 {
+
+.product-page-title {
     font-size: 2rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0px;
+
 }
 
-.star-rating {
-    display: flex;
+.category-header {
+    display: flex; 
     align-items: center;
-    margin-bottom: 1rem;
-}
+    border-bottom: 1px solid #ccc;
+    width: 50%;
 
-.star {
-    color: #f8ce0b;
-    margin-right: 5px;
 }
-
-.reviews-count {
-    font-size: 1rem;
-    color: #333;
-    margin-left: 10px;
-}
-
 .product-description {
     font-size: 1rem;
     margin-bottom: 2rem;
 }
+.additional-details {
+    max-width: 50%;
+}
 
-.product-price {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-    color: #333;
+.product-page-price-section {
+    text-align: left; /* Aligns the text to the left */
+    margin-top: 10px; /* Space above the price section */
+}
+
+.product-page-price {
+    font-size: 24px; /* Larger font size for emphasis */
+    font-weight: bold; /* Bold font weight */
+    color: #CC0000; /* Red color for the sale price */
+}
+
+.product-page-price-dashed {
+    font-size: 18px; /* Smaller font size for the original price */
+    text-decoration: line-through; /* Strike-through effect */
+    color: #777; /* Grey color for less emphasis */
+    margin-left: 10px; /* Space between sale price and original price */
 }
 
 .purchase-options {
@@ -121,29 +128,25 @@ h1 {
     margin: 0 5px;
 }
 
-.add-to-cart-btn, .buy-now-btn {
-    background-color: #000;
+.add-to-cart-btn {
+    background-color: #c8323f;
     color: #fff;
     border: none;
+    border-radius: 8px;
     padding: 10px 20px;
     cursor: pointer;
     margin-right: 5px;
 }
 
+.add-to-cart-btn:hover {
+    transition: background-color 0.3s; /* Smooth transition for color change */
+    background-color: #f03e4e;
+}
 .buy-now-btn {
     background-color: #c59d5f; /* Different color for 'Buy it Now' */
 }
 
-.additional-links {
-    display: flex;
-    justify-content: space-between;
-}
-
-.wishlist-link, .compare-link, .size-guide-link {
-    color: #333;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
+        
 
 /* Add any necessary hover effects and responsive adjustments */
 
@@ -180,6 +183,9 @@ h1 {
     font-size: 1.05rem;
     color: #333;
     margin-bottom: 20px;
+    max-width: 50%;
+    text-align: center;
+    margin: auto;
 }
 
 .product-meta {

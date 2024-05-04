@@ -185,52 +185,58 @@ function openTab(event, tabName) {
     {% endif %}
         
     <div class="product-details-section">
-        <div style="display: flex; align-items: center;">
+        <div class="category-header">
             {% get_category_breadcrumbs product.category as category_breadcrumbs %}
             {% for category in category_breadcrumbs %}
                 <a style="color: black; text-decoration: none" href="{% url 'category_search' category.name %}">
-                    <p>{{ category.name|upper }}</p>
+                    <p>{{ category.name|title }}</p>
                 </a>
                 {% if not forloop.last %}<span style="margin-right:5px; margin-left: 5px">></span>{% endif %}
             {% endfor %}
         </div>
-        <h1>{{ product.title }}</h1>
+        <h1 class="product-page-title">{{ product.title }}</h1>
         
-        <!-- Star rating 
-        <div class="star-rating">
-            <span class="star">&#9733;</span>
-            <span class="star">&#9733;</span>
-            <span class="star">&#9733;</span>
-            <span class="star">&#9733;</span>
-            <span class="star">&#9733;</span>
-            <span class="reviews-count">4 reviews</span>
-        </div>
-        -->
 
         <!-- Product description -->
         <p class="product-description">{{ product.subtitle }}</p>
-        <div class="product-price-section">
-        <!-- Product price -->
-        {% if product.sale_price %}
-            <p class="product-price">{{ product.sale_price }} kr</p>
-            <p class="product-price-dashed">{{ product.price }} kr</p>
-        {% else %}
+        <!-- Additional details section -->
+        <div class="additional-details">
+            <p>{{ product.description|safe }}</p>
+        </div>
 
-            <p class="product-price">{{ product.price }} kr</p>
-        {% endif %} 
-    </div>  
+        <div class="product-page-price-section">
+            {% if product.sale_price %}
+                <p class="product-page-price">{{ product.sale_price }} kr</p>
+                <p class="product-page-price-dashed">{{ product.price }} kr</p>
+            {% else %}
+                <p class="product-page-price">{{ product.price }} kr</p>
+            {% endif %}
+        </div>
 
         <!-- Purchase buttons and options -->
 
 
 
-        <div class="purchase-options">
-            <form action="{% url 'add_to_cart' product.id %}" method="post" class="add-to-cart-form">
-              {% csrf_token %}
-              <button type="submit" class="add-to-cart-btn">{{ text_areas_all.purchase_button_1 }}</button>
-            </form>
-            <button class="buy-now-btn">{{ text_areas_all.purchase_button_2 }}</button>
-        </div>
+<div class="purchase-options">
+    <form action="{% url 'add_to_cart' product.id %}" method="post" class="add-to-cart-form">
+        {% csrf_token %}
+        <!-- Quantity select box -->
+        <label for="quantity">Quantity:</label>
+        <select id="quantity" name="quantity">
+            {% for number in quantity_range %}
+                <option value="{{ number }}">{{ number }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        {% if product.instock %}
+            <p>Vi har {{ product.instock }}stk på lager</p>
+            <button type="submit" class="add-to-cart-btn">{{ text_areas_all.purchase_button_1 }}</button>
+        {% else %}
+            <p>Produktet er dessverre utsolgt.</p>
+        {% endif %}
+        
+    </form>
+</div>
 
 
     </div>

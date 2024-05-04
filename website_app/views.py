@@ -269,11 +269,11 @@ def fetch_product_image(string_id):
 
 def product_page(request, string_id):
     product = get_object_or_404(models.product, string_id=string_id)
-
+    quantity_range = list(range(1, product.instock + 1))
     # Filter out images with empty values
     product_images = product.images.exclude(image__isnull=True).exclude(image__exact='')
 
-    context = {'product': product, 'product_images': product_images}
+    context = {'product': product, 'product_images': product_images, 'quantity_range':quantity_range}
     return render(request, 'product_page.html', context)
 
 
