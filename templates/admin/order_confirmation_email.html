@@ -35,17 +35,25 @@
                 <!-- Product and totals information -->
                 {% for item in items %}
                 <tr>
-                    <td colspan="2" style="padding: 20px; background: #ffffff;">
-                        <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+                    <td colspan="2" style="background: #ffffff;">
+                        <!-- Top border for separation -->
+                        <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border-top: 1px solid #eee;">
                             <tr>
-                                <td style="width: 80px; padding-right: 20px; text-align: center; vertical-align: top;">
+                                <td colspan="2" style="padding: 10px;"></td>
+                            </tr>
+                            <tr>
+                                <td style="width: 80px; padding: 0 20px; text-align: center; vertical-align: top;">
                                     <img src="https://testing.pokelageret.no/{{ item.item_id|fetch_item_image }}" alt="{{ item.title }}" style="width: 60px; height: 60px; border-radius: 8px;">
                                 </td>
                                 <td style="vertical-align: top;">
-                                    <p style="margin: 0; font-size: 16px; color: #333;"><strong>{{ item.title }}</strong></p>
-                                    <p style="margin: 0; font-size: 14px; color: #666;">NOK kr {{ item.sale_price }}</p>
-                                    <p style="margin: 0; font-size: 14px; color: #666;">Antall: {{ item.quantity }}</p>
+                                    <p style="margin: 0; font-size: 14px; color: #333;"><strong>{{ item.title }}</strong></p>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">{{ item.sale_price }} kr</p>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">Antall: {{ item.quantity }}</p>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">Produkttotal: {{ item.product_total }}</p>
                                 </td>
+                            <!-- Bottom border for separation -->
+                            <tr>
+                                <td colspan="2" style="padding: 10px;"></td>
                             </tr>
                         </table>
                     </td>

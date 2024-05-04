@@ -1075,7 +1075,7 @@ def send_order_confirmation(order):
     for item in items:
         product = models.product.objects.filter(id=item["item_id"]).first()
         item["title"] = product.title
-
+        item["product_total"] = int(item["sale_price"]) * int(item["quantity"])
     context = {
         'order': order,
         'items': items,
