@@ -79,10 +79,11 @@
     width: 50%;
 
 }
-.product-description {
+.product-subtitle {
     font-size: 1rem;
     margin-bottom: 2rem;
 }
+
 .additional-details {
     max-width: 50%;
 }
@@ -189,8 +190,8 @@
     color: #333;
     margin-bottom: 20px;
     max-width: 50%;
-    text-align: center;
     margin: auto;
+    text-align: left;
 }
 
 .product-meta {
