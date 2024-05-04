@@ -1070,19 +1070,17 @@ def create_order(request, customer_instance):
 
 
 def send_order_confirmation(order):
-    subject = 'Ordrebekreftelse fra Pokelageret - Ordrenummer: {}'.format(order.order_number)
+    subject = 'Ordrebekreftelse fra Pokelageret - Ordrenummer {}'.format(order.order_number)
     items = json.loads(order.items)
-    item_total = 0
     for item in items:
         product = models.product.objects.filter(id=item["item_id"]).first()
         item["title"] = product.title
-        item_total += Decimal(item["sale_price"])
 
     context = {
         'order': order,
         'items': items,
         'payment_details': json.loads(order.payment_info),  # Assuming 'payment_info' is a JSON string
-        'item_total': item_total
+        'item_total': sum(Decimal(item['sale_price']) for item in json.loads(order.items))
     }
     message = render_to_string('admin/order_confirmation_email.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
