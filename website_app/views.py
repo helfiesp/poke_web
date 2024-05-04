@@ -1085,7 +1085,7 @@ def send_order_confirmation(order):
         'item_total': item_total
     }
     message = render_to_string('admin/order_confirmation_email.html', context)
-    email_from = settings.DEFAULT_FROM_EMAIL
+    email_from = "Pokelageret.no"
     recipient_list = [order.customer.email]
 
     # Send email using the HTML message body
