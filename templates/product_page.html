@@ -250,7 +250,7 @@ function openTab(event, tabName) {
             {% endif %}
         </div>
         <div id="Beskrivelse" class="tab-content">
-            <p>{{ product.description|safe }}</p>
+            <p>{{ product.description|linebreaksbr }}</p>
         </div>
         <div id="Detaljer" class="tab-content" style="display: none;">
             <div class="description-section">
