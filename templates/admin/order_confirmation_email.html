@@ -34,19 +34,24 @@
                 </tr>
                 <!-- Product and totals information -->
                 {% for item in items %}
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td colspan="2" style="padding: 20px 30px; display: block; margin-top: 10px;">
-                        <div style="display: flex; align-items: center;">
-                            <img src="https://testing.pokelageret.no/{{ item.item_id|fetch_item_image }}" alt="{{ item.title }}" style="width: 60px; height: 60px; border-radius: 8px; margin-right: 20px; object-fit: cover;">
-                            <div style="flex: 1;">
-                                <p style="font-size: 14px; color: #333; margin-bottom: 5px;">{{ item.title }}</p>
-                                <p style="color: #333; margin-bottom: 5px;">NOK kr {{ item.sale_price }}</p>
-                                <p style="font-size: 14px; color: #666;">Antall: {{ item.quantity }}</p>
-                            </div>
-                        </div>
+                <tr>
+                    <td colspan="2" style="padding: 20px; background: #ffffff;">
+                        <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 80px; padding-right: 20px; text-align: center; vertical-align: top;">
+                                    <img src="https://testing.pokelageret.no/{{ item.item_id|fetch_item_image }}" alt="{{ item.title }}" style="width: 60px; height: 60px; border-radius: 8px;">
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <p style="margin: 0; font-size: 16px; color: #333;"><strong>{{ item.title }}</strong></p>
+                                    <p style="margin: 0; font-size: 14px; color: #666;">NOK kr {{ item.sale_price }}</p>
+                                    <p style="margin: 0; font-size: 14px; color: #666;">Antall: {{ item.quantity }}</p>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 {% endfor %}
+
                 <tr>
                     <td colspan="2" style="padding: 20px 30px;">
                         <p style="display: flex; justify-content: space-between; align-items: center;"><strong>Produkttotal:</strong> {{ item_total }} kr</p>
