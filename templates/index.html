@@ -18,36 +18,7 @@
 {% endblock %}
 
 {% block content %}
-<style>
 
-.main-header {
-  position: relative;
-  z-index: 1;
-  overflow: hidden; /* This will hide any overflow such as pseudo elements that are bigger than the container */
-}
-
-.main-header::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  transform: translate(-50%, -50%);
-  background: url('{{ MEDIA_URL }}header.jpg'); no-repeat center center; /* Change to the correct path */
-  background-size: cover;
-  opacity: 0.7; /* Set the opacity of the background image */
-
-  z-index: -1; /* Ensure the background image is behind the content */
-  transform-origin: center; 
-}
-
-.header-content {
-  position: relative;
-  z-index: 2; /* Ensure the content is above the pseudo-element */
-}
-
-</style>
 
 <link rel="stylesheet" href="{% static 'css/products.css' %}">
 <header class="main-header">

@@ -13,7 +13,7 @@
 .main-header {
   background-size: cover;
   background-position: center;
-  height: 800px; /* Adjust the height as needed */
+  height: 400px; /* Adjust the height as needed */
   display: flex;
   align-items: center;
   position: relative;
@@ -43,16 +43,16 @@
 .explore-button {
   display: inline-block;
   padding: 10px 20px;
-  border: 2px solid #000; /* Assuming the button has a black border */
+  border: 2px solid #fff; /* Assuming the button has a black border */
   text-decoration: none;
-  color: #000; /* Button text color */
   text-transform: uppercase;
+  color: #fff;
   font-weight: bold;
   transition: all 0.3s ease; /* For a smooth transition on hover */
 }
 
 .explore-button:hover {
-  background-color: #000;
+  background-color: #c8323f;
   color: #fff;
 }
 
@@ -67,8 +67,34 @@ header {
   background-size: cover;
   background-position: center;
   padding: 20px;
+}
+.main-header {
+  position: relative;
+  z-index: 1;
+  overflow: hidden; /* This will hide any overflow such as pseudo elements that are bigger than the container */
+}
+
+.main-header::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background-size: cover;
+  background-color: #101216;
+  z-index: -1; /* Ensure the background image is behind the content */
+  transform-origin: center; 
+}
+
+.header-content {
+  position: relative;
+  z-index: 2; /* Ensure the content is above the pseudo-element */
   color: #fff;
 }
+
+
 .mobile-menu {
   display: none;
 }

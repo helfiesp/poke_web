@@ -4,6 +4,7 @@ import uuid
 from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.conf import settings
+from django.utils import timezone
 
 from django.utils.text import slugify
 from django.contrib.auth.models import User
@@ -20,6 +21,7 @@ class product(models.Model):
     product_url = models.TextField(null=True, blank=True)
     price = models.IntegerField(null=True, blank=True)
     sale_price = models.IntegerField(null=True, blank=True)
+    purchase_price = models.IntegerField(null=True, blank=True)
     height = models.CharField(max_length=200, null=True, blank=True)
     width = models.CharField(max_length=200, null=True, blank=True)
     length = models.CharField(max_length=200, null=True, blank=True)
@@ -51,6 +53,40 @@ class product_image(models.Model):
     product = models.ForeignKey(product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
     order = models.IntegerField(default=0) 
+
+## THESE NEED IMPLEMENTATION TO KEEP TRACK OF STOCK AND PRICE CHANGES
+class Inventory(models.Model):
+    product = models.ForeignKey(product, on_delete=models.CASCADE, related_name='inventory_records')
+    purchase_price = models.IntegerField()
+    stock_quantity = models.IntegerField()
+    date_updated = models.DateTimeField(default=timezone.now)
+
+
+    def __str__(self):
+        return f"{self.product.title} - Stock: {self.stock_quantity}"
+
+## THESE NEED IMPLEMENTATION TO KEEP TRACK OF STOCK AND PRICE CHANGES
+
+class PriceHistory(models.Model):
+    product = models.ForeignKey(product, on_delete=models.CASCADE, related_name='price_history')
+    purchase_price = models.IntegerField()
+    date_recorded = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"{self.product.title} - {self.purchase_price} (Recorded: {self.date_recorded})"
+
+## THESE NEED IMPLEMENTATION TO KEEP TRACK OF STOCK AND PRICE CHANGES
+
+class StockHistory(models.Model):
+    product = models.ForeignKey(product, on_delete=models.CASCADE, related_name='stock_history')
+    stock_quantity = models.IntegerField()
+    date_recorded = models.DateTimeField(auto_now_add=True)
+    reason = models.TextField(blank=True, null=True)
+
+
+    def __str__(self):
+        return f"{self.product.title} - Stock: {self.stock_quantity} (Recorded: {self.date_recorded})"
 
 class category(models.Model):
     name = models.CharField(max_length=255, unique=True)

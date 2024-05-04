@@ -331,7 +331,6 @@ def add_product(request):
             if existing_products.exists():
                 existing_product_id = existing_products.first().id
                 # If the product exists, return a JSON response indicating failure
-                print("EXISTS")
                 return JsonResponse({"success": False, "errors":'ERRORS', "redirect_url": reverse('edit_product', kwargs={'product_id': existing_product_id})})
 
             product_instance = form.save(commit=False) 
@@ -343,8 +342,23 @@ def add_product(request):
                 product_instance.bestseller = True
             product_instance.product_url = "https://testing.pokelageret.no/product/{}".format(product_instance.string_id)
             product_instance.save()
-            product_instance.save()
 
+
+            # Update inventory records
+            purchase_price = int(request.POST.get('stock_price', 0))
+            stock_quantity = int(request.POST.get('instock', 0))
+
+            # Create Inventory instance
+            inventory_instance = models.Inventory(product=product_instance, purchase_price=purchase_price, stock_quantity=stock_quantity)
+            inventory_instance.save()
+
+            # Record Price History
+            price_history_instance = models.PriceHistory(product=product_instance, purchase_price=purchase_price)
+            price_history_instance.save()
+
+            # Record Stock History
+            stock_history_instance = models.StockHistory(product=product_instance, stock_quantity=stock_quantity, reason='Initial stock entry')
+            stock_history_instance.save()
 
             image_order_combined_json = request.POST.get('image_order_combined')
             if image_order_combined_json:
@@ -374,7 +388,6 @@ def add_product(request):
 def edit_product(request, product_id):
     product_instance = get_object_or_404(models.product, id=product_id)
     categories = models.category.objects.all()
-    print(fetch_product_image(product_instance.string_id))
     suppliers = models.supplier.objects.all()
     if request.method == 'POST':
         form = forms.product_form(request.POST, request.FILES, instance=product_instance)
@@ -394,6 +407,24 @@ def edit_product(request, product_id):
 
                 # Update the remaining images
                 formset.save()
+
+                # Handle inventory updates
+                current_inventory = models.Inventory.objects.get(product=product_instance)
+                new_stock_quantity = int(request.POST.get('instock', current_inventory.stock_quantity))
+                new_purchase_price = int(request.POST.get('stock_price', current_inventory.purchase_price))
+
+                # Check and update inventory if changes are made
+                if new_stock_quantity != current_inventory.stock_quantity:
+                    current_inventory.stock_quantity = new_stock_quantity
+                    models.StockHistory.objects.create(product=product_instance, stock_quantity=new_stock_quantity, reason='Stock updated via edit')
+
+                if new_purchase_price != current_inventory.purchase_price:
+                    current_inventory.purchase_price = new_purchase_price
+                    models.PriceHistory.objects.create(product=product_instance, purchase_price=new_purchase_price)
+
+                current_inventory.save()
+
+
 
                 image_order_combined_json = request.POST.get('image_order_combined')
                 if image_order_combined_json:
@@ -736,10 +767,11 @@ def pdf_exists_for_order(order_number):
 
 def order_detail(request, order_number):
     order = get_object_or_404(models.orders, order_number=order_number)
-    items = json.loads(order.items)  # Assuming items is stored as a JSON string
+    items = prep_items(json.loads(order.items))
     delivery_info = json.loads(order.delivery_info)
     # Call the helper function to check if the PDF exists for this order
     pdf_file_exists = pdf_exists_for_order(order_number)
+    payment_method = json.loads(order.payment_info)["payment_method"]
 
     # Pass the result to the template context
     return render(request, 'admin/order_detail.html', {
@@ -747,6 +779,7 @@ def order_detail(request, order_number):
         'items': items,
         'pdf_exists': pdf_file_exists,
         'delivery_info': delivery_info,
+        'payment_method': payment_method
     })
 
 def update_order(request, order_number):
@@ -1068,10 +1101,7 @@ def create_order(request, customer_instance):
         send_order_confirmation(order)
         return {'status': 'success', 'message': 'Order created successfully.', 'order_number': order.order_number}
 
-
-def send_order_confirmation(order):
-    subject = 'Ordrebekreftelse fra Pokelageret - Ordrenummer {}'.format(order.order_number)
-    items = json.loads(order.items)
+def prep_items(items):
     for item in items:
         product = models.product.objects.filter(id=item["item_id"]).first()
         item["title"] = product.title
@@ -1079,6 +1109,12 @@ def send_order_confirmation(order):
         item["price_pre_discount"] = product.price
         item["price_pre_discount_total"] = int(product.price) * int(item["quantity"])
         item["money_saved"] = int(item["price_pre_discount_total"]) - int(item["product_total"])
+    return items
+
+def send_order_confirmation(order):
+    subject = 'Ordrebekreftelse fra Pokelageret - Ordrenummer {}'.format(order.order_number)
+    items = prep_items(json.loads(order.items))
+
     context = {
         'order': order,
         'items': items,

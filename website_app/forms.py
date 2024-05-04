@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 class product_form(forms.ModelForm):
     class Meta:
         model = product
-        fields = ['title', 'subtitle', 'category', 'description', 'product_url', 'price', 'sale_price', 'height', 'width', 'length', 'weight', 'instock', 'more_information', 'supplier', 'enabled', 'bestseller']
+        fields = ['title', 'subtitle', 'category', 'description', 'product_url', 'price', 'sale_price', 'purchase_price', 'height', 'width', 'length', 'weight', 'instock', 'more_information', 'supplier', 'enabled', 'bestseller']
 
 product_image_formset = inlineformset_factory(
     product, product_image,
