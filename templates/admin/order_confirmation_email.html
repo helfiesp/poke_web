@@ -17,7 +17,7 @@
                 </tr>
                 <tr>
                     <!-- Kundeinformasjon -->
-                    <td style="padding: 20px 30px; width: 50%;">
+                    <td style="padding: 20px 30px; width: 50%; vertical-align: top;">
                         <h2 style="color: #333; margin-bottom: 10px;">Kundeinformasjon</h2>
                         <p><strong>Navn:</strong> {{ order.customer }}</p>
                         <p><strong>Adresse:</strong> {{ order.customer.address }}</p>
@@ -25,7 +25,7 @@
                         <p><strong>E-post:</strong> {{ order.customer.email }}</p>
                     </td>
                     <!-- Ordreinformasjon -->
-                    <td style="padding: 20px 30px; width: 50%;">
+                    <td style="padding: 20px 30px; width: 50%; vertical-align: top;">
                         <h2 style="color: #333; margin-bottom: 10px;">Ordreinformasjon</h2>
                         <p><strong>Dato:</strong> {{ order.date_added|date:"d M Y" }}</p>
                         <p><strong>Ordrenummer:</strong> {{ order.order_number }}</p>
