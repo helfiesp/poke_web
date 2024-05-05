@@ -1150,30 +1150,28 @@ def create_order(request, customer_instance):
 
 @require_POST
 def order_detail_send_order(request, order_number, action):
-    order = models.orders.objects.get(order_number=order_number)
-    data = json.loads(request.body)
-    items_to_update = {item['item_id'] for item in data.get('items', [])}  # Create a set of item_ids
-    # Assume order.items is already deserialized into a list of dictionaries
-    updated_items = []
-    items_updated = False
-
-    for item in json.loads(order.items):
-        if item['item_id'] in items_to_update:
-            item['sent'] = True
-            items_updated = True
-        updated_items.append(item)
-
-    if items_updated:
+    try:
+        data = json.loads(request.body)
+        items_to_update = data.get('items', [])
+        order = models.orders.objects.get(order_number=order_number)
+        
         with transaction.atomic():
-            order.items = json.dumps(updated_items)  # Assuming the field can be directly assigned like this
-            order.save()
+            for item_data in items_to_update:
+                item_id = item_data.get('item_id')
+                # Assume there's a method to find and update the item; create it if it doesn't exist
+                item = order.items.filter(item_id=item_id).first()
+                if item:
+                    item.sent = True  # Assuming 'sent' is a field in your item model
+                    item.save()
+                
+        if action == 'send':
+            return JsonResponse({'status': 'Order sent'})
+        elif action == 'pickup':
+            return JsonResponse({'status': 'Order picked up'})
+    except Exception as e:
+        return JsonResponse({'error': 'Failed to process request', 'details': str(e)}, status=500)
 
-    if action == 'send' or action == 'pickup':
-        send_order_sent(order)
-        return redirect('order_detail', order_number=order_number)
-    else:
-        return JsonResponse({'status': 'Invalid action'}, status=400)
-
+    return JsonResponse({'error': 'Invalid action'}, status=400)
 def send_order_sent(order):
     subject = 'Din ordre {} er sendt fra oss'.format(order.order_number)
     items = prep_items(json.loads(order.items))

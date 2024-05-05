@@ -301,10 +301,10 @@ function sendOrderRequest(orderNumber, action) {
     checkboxes.forEach(function(checkbox, index) {
         var row = checkbox.closest('tr');
         var item = {
-            item_id: row.cells[0].textContent,
-            title: row.cells[1].textContent,
-            quantity: row.cells[2].textContent,
-            sale_price: row.cells[3].textContent
+            item_id: row.cells[0].textContent.trim(), // Ensure we trim any extra whitespace
+            title: row.cells[1].textContent.trim(),
+            quantity: row.cells[2].textContent.trim(),
+            sale_price: row.cells[3].textContent.trim()
         };
         itemData.push(item);
     });
@@ -314,6 +314,16 @@ function sendOrderRequest(orderNumber, action) {
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) { // Use DONE for readability
+            if (xhr.status === 200) {
+                window.location.reload(true); // Force a reload from the server
+            } else {
+                alert('Request failed: ' + xhr.status + ' ' + xhr.statusText);
+            }
+        }
+    };
 
     var postData = JSON.stringify({
         action: action,
