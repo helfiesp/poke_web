@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-
+import random
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
