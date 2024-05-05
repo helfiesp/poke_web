@@ -896,6 +896,9 @@ def show_order_pdf(request, order_number):
         raise Http404("PDF file does not exist")
 
 def order_confirmation(request, order_number):
+    #WHERE IS THIS IN USE????
+    # MAYBE OLD PGMOBLER?
+
     # Fetch the order and customer from the database using order ID
     order = get_object_or_404(models.orders, pk=order_number)
     customer = get_object_or_404(models.customers, id=order.customer.id)
@@ -1220,7 +1223,7 @@ def send_order_confirmation(order):
         'shipping': fetch_shipping_option(json.loads(order.delivery_info)),
 
     }
-    message = render_to_string('admin/order_confirmation.html', context)
+    message = render_to_string('emails/order_confirmation.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
     recipient_list = [order.customer.email]
 
