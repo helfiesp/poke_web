@@ -1112,7 +1112,7 @@ def create_order(request, customer_instance):
                 data.getlist('item_sale_price[]')
             )
         ]
-
+        print(item_info)
         total_price = sum(float(item['sale_price']) * int(item['quantity']) for item in item_info)
         delivery_price = Decimal('0.00')  # Set default delivery price, potentially updated based on options
 
