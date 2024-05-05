@@ -44,9 +44,9 @@
                         <select name="category">
                             {% for category in all_categories %}
                                 {% if category.id == product.category.id %}
-                                    <option value="{{ category.id }}" selected>{{ category.name }}</option>
+                                    <option value="{{ category.id }}" selected>{{ category.string_id }}</option>
                                 {% else %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    <option value="{{ category.id }}">{{ category.string_id }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
