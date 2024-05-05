@@ -82,6 +82,92 @@
     .footer button:hover {
         background-color: #0056b3;
     }
+
+    /* SEND ORDER MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    width: 40%; /* Adjust width based on design preference */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header, .modal-footer {
+    padding: 10px;
+    background-color: #f9f9f9;
+    color: black;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.dimension-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.dimension-group {
+    display: flex;
+    flex-direction: column;
+    width: 48%; /* Adjust based on preference */
+}
+
+.dimension-group input[type="number"] {
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #ddd;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-footer button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-footer button:hover {
+    background-color: #0056b3;
+}
+
+.close-modal {
+    background-color: #6c757d;
+}
+
+.close-modal:hover {
+    background-color: #5a6268;
+}
 </style>
 
 
@@ -91,8 +177,8 @@
             <div class="left-header">
                 <h1>Ordre #{{ order.order_number }}</h1>
                 <p>Fakturanummer: <span>#10538</span></p>
-                <p>Betalingsmåte: <span>{{ payment_method }}</span></p>
-                <p>Ordrestatus: <span>{{ order.status }}</span></p>
+                <p>Betalingsmåte: <span>{{ payment_method|title }}</span></p>
+                <p>Ordrestatus: <span>{{ order.status|title }}</span></p>
             </div>
             <div class="right-header">
                 <h2>{{ order.customer.name }}</h2>
@@ -117,13 +203,18 @@
                 </thead>
                 <tbody>
                     {% for item in items %}
-                    <tr>
-
+                    <tr>                        
+                        <td style="display: none">{{ item.id }}</td>
                         <td>{{ item.title }}</td>
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.sale_price }}</td>
                         <td>1,498,00</td>
-                        <td><input type="checkbox"></td>
+                        <td>
+                        {% if item.sent %}
+                            <input type="checkbox" checked></td>
+                        {% else %}
+                            <input type="checkbox"></td>
+                        {% endif %}
                         <td>Mottatt</td>
                     </tr>
                     {% endfor %}
@@ -133,8 +224,110 @@
         <div class="footer">
             <button>Edit Order</button>
             <button>Cancel Order</button>
-            <button>Send Order</button>
+            <button id="sendOrderBtn">Send Order</button>
         </div>
     </div>
 
+    <!-- Send orderModal Structure -->
+<div id="SendOrderModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+            <h2>Send ordre</h2>
+        </div>
+        <div class="modal-body">
+            <div class="dimension-row">
+                <div class="dimension-group">
+                    <label for="height">Høyde (cm)</label>
+                    <input type="number" id="height" value="8">
+                </div>
+                <div class="dimension-group">
+                    <label for="length">Lengde (cm)</label>
+                    <input type="number" id="length" value="1250">
+                </div>
+            </div>
+            <div class="dimension-row">
+                <div class="dimension-group">
+                    <label for="width">Bredde (cm)</label>
+                    <input type="number" id="width" value="25">
+                </div>
+                <div class="dimension-group">
+                    <label for="weight">Vekt (gram)</label>
+                    <input type="number" id="weight" value="5">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="send-modal" id="sendOrderBtnModal">Send ordre</button>
+            <button class="send-modal" id="pickupOrderBtn">Ordre hentet</button>
+        </div>
+    </div>
+
+<script>
+var orderNumber = "{{ order.order_number }}"; 
+document.getElementById('sendOrderBtn').onclick = function() {
+    document.getElementById('SendOrderModal').style.display = "block";
+}
+
+document.getElementsByClassName('close')[0].onclick = function() {
+    document.getElementById('SendOrderModal').style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('SendOrderModal')) {
+        document.getElementById('SendOrderModal').style.display = "none";
+    }
+}
+
+
+document.getElementById('sendOrderBtnModal').addEventListener('click', function() {
+    sendOrderRequest(orderNumber, "send");
+});
+
+document.getElementById('pickupOrderBtn').addEventListener('click', function() {
+    sendOrderRequest(orderNumber, "pickup");
+});
+
+function sendOrderRequest(orderNumber, action) {
+    // Collect item data
+    var itemData = [];
+    var checkboxes = document.querySelectorAll('.content table tbody input[type="checkbox"]:checked');
+    
+    if (checkboxes.length === 0) {
+        alert('Please select at least one item to send.');
+        return; // Stop the function if no items are selected
+    }
+
+    checkboxes.forEach(function(checkbox, index) {
+        var row = checkbox.closest('tr');
+        var item = {
+            item_id: row.cells[0].textContent,
+            title: row.cells[1].textContent,
+            quantity: row.cells[2].textContent,
+            sale_price: row.cells[3].textContent
+        };
+        itemData.push(item);
+    });
+
+    var xhr = new XMLHttpRequest();
+    var url = '/order-detail/' + orderNumber + '/' + action + '/send_order';
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            alert('Request successful: ' + xhr.responseText);
+        }
+    };
+
+    var postData = JSON.stringify({
+        action: action,
+        items: itemData
+    });
+    xhr.send(postData);
+}
+
+
+</script>
 {% endblock %}

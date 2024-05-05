@@ -183,7 +183,7 @@ class customers(models.Model):
 class orders(models.Model):
     order_number = models.AutoField(primary_key=True, verbose_name="Order Number")
     customer = models.ForeignKey(customers, on_delete=models.CASCADE, null=True, blank=True)
-    items = models.JSONField()  # This will contain item_info, fabric, legs, amount, and productprice
+    items = models.JSONField()
     delivery_info = models.JSONField(null=True, blank=True)
     extra_info = models.CharField(max_length=255, blank=True)
     # Changed fields to DecimalField for financial precision

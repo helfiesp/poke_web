@@ -1148,10 +1148,39 @@ def create_order(request, customer_instance):
             send_order_confirmation(order)
         return {'status': 'success', 'message': 'Order created successfully.', 'order_number': order.order_number}
 
+@require_POST
+def order_detail_send_order(request, order_number, action):
+    order = models.orders.objects.get(order_number=order_number)
+    data = json.loads(request.body)
+    items_to_update = {item['item_id'] for item in data.get('items', [])}  # Create a set of item_ids
+    # Assume order.items is already deserialized into a list of dictionaries
+    updated_items = []
+    items_updated = False
+
+    for item in json.loads(order.items):
+        if item['item_id'] in items_to_update:
+            item['sent'] = True
+            items_updated = True
+        updated_items.append(item)
+
+    if items_updated:
+        print(updated_items)
+        with transaction.atomic():
+            order.items = json.dumps(updated_items)  # Assuming the field can be directly assigned like this
+            order.save()
+
+    if action == 'send':
+        return JsonResponse({'status': 'Order sent', 'updated_items': len(items_to_update)})
+    elif action == 'pickup':
+        return JsonResponse({'status': 'Order picked up', 'updated_items': len(items_to_update)})
+    else:
+        return JsonResponse({'status': 'Invalid action'}, status=400)
+
 def prep_items(items):
     for item in items:
         product = models.product.objects.filter(id=item["item_id"]).first()
         item["title"] = product.title
+        item["id"] = product.id
         item["product_total"] = int(item["sale_price"]) * int(item["quantity"])
         item["price_pre_discount"] = product.price
         item["price_pre_discount_total"] = int(product.price) * int(item["quantity"])
