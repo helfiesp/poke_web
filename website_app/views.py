@@ -1113,7 +1113,7 @@ def create_order(request, customer_instance):
             )
         ]
 
-        total_price = sum(Decimal(item['sale_price']) * int(item['quantity']) for item in item_info)
+        total_price = sum(item['sale_price'] * int(item['quantity']) for item in item_info)
         delivery_price = Decimal('0.00')  # Set default delivery price, potentially updated based on options
 
         # Build delivery information based on selected delivery option
