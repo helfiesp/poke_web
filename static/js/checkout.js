@@ -1,16 +1,19 @@
 // Reuse the generateCartItemHtml function for both cart and checkout displays
 function generateCartItemHtml(item) {
     let priceHtml = '';
-    let itemNormalPrice = item.normal_price;
-    let itemSalePrice = item.sale_price;
+    let itemNormalPrice = item.normal_price * item.quantity;
+    let itemSalePrice = item.sale_price * item.quantity;
+
+    let itemTotalNormalPrice = item.normal_price * item.quantity;
+    let itemTotalSalePrice = item.sale_price ? item.sale_price * item.quantity : null;
 
     if (item.sale_price && item.sale_price < item.normal_price) {
         priceHtml = `<p class="cart-item-price">
-                        <span class="sale-price">${itemSalePrice.toFixed(2)} kr</span>
-                        <span class="normal-price struck">${itemNormalPrice.toFixed(2)} kr</span>
+                        <span class="sale-price">${itemTotalSalePrice.toFixed(2)} kr</span>
+                        <span class="normal-price struck">${itemTotalNormalPrice.toFixed(2)} kr</span>
                      </p>`;
     } else {
-        priceHtml = `<p class="cart-item-price">${itemNormalPrice.toFixed(2)} kr</p>`;
+        priceHtml = `<p class="cart-item-price">${itemTotalNormalPrice.toFixed(2)} kr</p>`;
     }
 
     return `
