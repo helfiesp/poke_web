@@ -1283,6 +1283,13 @@ def get_or_create_customer(first_name, last_name, phone, email, address, postal_
     
     return customer
 
+def fetch_shipping_option(delivery_info):
+    if delivery_info["delivery_option"] == "delivery":
+        return models.shipping_options.objects.filter(pk=delivery_info["shipping_option"]).first()
+    else:
+        return "Hentes i butikk"
+
+
 def order_success(request, order_number):
     try:
         order = models.orders.objects.get(order_number=order_number)
@@ -1297,7 +1304,12 @@ def order_success(request, order_number):
         # Handle missing order scenario
         return render(request, 'error.html', {'message': 'Order not found.'})
 
-    return render(request, 'admin/order_confirmation.html', {'payment_details': payment_details, 'items':items, 'order': order, 'item_total':item_total})
+    return render(request, 'admin/order_confirmation.html', {
+        'payment_details': payment_details, 
+        'items':items, 'order': order, 
+        'item_total':item_total,
+        'shipping': fetch_shipping_option(json.loads(order.delivery_info)),
+        })
 
 def klarna_push_notification(request):
     if request.method == 'POST':
