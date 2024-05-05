@@ -467,7 +467,7 @@ def add_category(request):
             if request.FILES:
                 category.image = request.FILES['category_image']
             category.save()
-            return redirect('home')  # Make sure 'home' is the correct named URL for redirection
+            return redirect('update_categories')  # Make sure 'home' is the correct named URL for redirection
         else:
             return HttpResponse(json.dumps(form.errors), content_type="application/json")
     else:

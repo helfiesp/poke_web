@@ -21,7 +21,7 @@
             <select name="parent" id="id_parent">
                 <option value="">None</option>  <!-- Allows for top-level categories -->
                 {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    <option value="{{ category.id }}">{{ category.string_id }}</option>
                 {% endfor %}
             </select>
         </div>
