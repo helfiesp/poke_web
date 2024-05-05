@@ -460,6 +460,10 @@ def add_category(request):
         form = forms.category_form(request.POST, request.FILES)
         if form.is_valid():
             category = form.save(commit=False)
+            string_id = str(category.get_full_path()).replace(" > ", "/").replace(" ", "_").lower()
+            category.string_id = string_id
+            category.save()
+
             if request.FILES:
                 category.image = request.FILES['category_image']
             category.save()
