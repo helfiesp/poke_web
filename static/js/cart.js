@@ -8,13 +8,13 @@ function generateCartItemHtml(item) {
     if (item.sale_price && item.sale_price < item.normal_price) {
         // Sale price exists and is less than normal price, so display both with normal price struck through
         priceHtml = `<p class="cart-item-price">
-                        <span class="sale-price">${itemTotalSalePrice.toFixed(2)} kr</span>
-                        <span class="normal-price struck">${itemTotalNormalPrice.toFixed(2)}</span>
+                        <span class="sale-price">${itemTotalSalePrice} kr</span>
+                        <span class="normal-price struck">${itemTotalNormalPrice}</span>
                      </p>`;
     } else {
         // No sale price, so just display normal price
         priceHtml = `<p class="cart-item-price">
-                        ${itemTotalNormalPrice.toFixed(2)} kr
+                        ${itemTotalNormalPrice)} kr
                      </p>`;
     }
 
