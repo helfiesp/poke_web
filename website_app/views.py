@@ -1171,7 +1171,6 @@ def order_detail_send_order(request, order_number, action):
     if action == 'send' or action == 'pickup':
         send_order_sent(order)
         return redirect('order_detail', order_number=order_number)
-
     else:
         return JsonResponse({'status': 'Invalid action'}, status=400)
 

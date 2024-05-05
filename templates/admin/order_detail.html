@@ -315,12 +315,6 @@ function sendOrderRequest(orderNumber, action) {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
 
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            alert('Request successful: ' + xhr.responseText);
-        }
-    };
-
     var postData = JSON.stringify({
         action: action,
         items: itemData
