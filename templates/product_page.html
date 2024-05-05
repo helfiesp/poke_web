@@ -208,7 +208,7 @@ function decreaseQuantity() {
         <div class="category-header">
             {% get_category_breadcrumbs product.category as category_breadcrumbs %}
             {% for category in category_breadcrumbs %}
-                <a style="color: black; text-decoration: none" href="{% url 'category_search' category.name %}">
+                <a style="color: black; text-decoration: none" href="{% url 'category_search' category.string_id %}">
                     <p>{{ category.name|title }}</p>
                 </a>
                 {% if not forloop.last %}<span style="margin-right:5px; margin-left: 5px">></span>{% endif %}

@@ -3,19 +3,40 @@ from django.forms.widgets import Widget
 from django.urls import reverse
 from website_app.models import product, category
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q, Count
 
 
 register = template.Library()
 
 @register.filter
-def get_category_count(category_name):
-    if not category_name:
+def get_category_count(string_id):
+    if not string_id:
         return 0
+    
+    # Normalize the string_id to ensure consistency
+    string_id = string_id.replace(" > ", "/").lower()
+    
     try:
-        category_obj = category.objects.get(name__iexact=category_name)  # Case-insensitive match
-        return product.objects.filter(category=category_obj, enabled=True).count()
+        # Fetch the root category based on string_id
+        category_obj = category.objects.get(string_id__iexact=string_id)
+        
+        # Prepare a query to fetch all subcategories including the category itself
+        all_subcategories = get_all_subcategories(category_obj)
+        
+        # Use the list of all subcategory IDs to filter products
+        all_subcategory_ids = [cat.id for cat in all_subcategories]
+        product_count = product.objects.filter(category_id__in=all_subcategory_ids, enabled=True).count()
+        
+        return product_count
     except category.DoesNotExist:
         return 0
+
+def get_all_subcategories(category):
+    """ Recursively fetch all subcategories of a given category """
+    categories = [category]
+    for subcategory in category.subcategories.all():
+        categories.extend(get_all_subcategories(subcategory))
+    return categories
 
 @register.filter
 def fetch_category_id(category_name):

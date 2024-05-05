@@ -19,36 +19,38 @@
   <aside class="sidebar-container-products">
     <!-- Filter Groups -->
          <div class="filter-group">
-    {% for category in all_categories %}
-        {% if not category.parent %}
-            <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
-            <h4 class="filter-title">{{ category.name|title }}</h4></a>
-            {% if category.subcategories.all %}
-                <ul class="filter-options">
-                    {% for subcategory in category.subcategories.all %}
-                        <li>
-                            <a href="{% url 'category_search' subcategory.name %}">{{ subcategory.name|title }}
-                            <!-- Check if subcategory itself has subcategories -->
-                            {% if subcategory.subcategories.all %}
-                                <span class="item-count">{{ subcategory.subcategories.count }}</span>
-                                <!-- Display sub-subcategories -->
-                                <ul>
-                                    {% for subsubcategory in subcategory.subcategories.all %}
-                                        <li>
-                                            <a href="{% url 'category_search' subsubcategory.name %}">{{ subsubcategory.name|title }}<span class="item-count">{{ subsubcategory.name|get_category_count }}</span></a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <span class="item-count">{{ subcategory.name|get_category_count }}</span>
-                            {% endif %}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endif %}
-    {% endfor %}
+     {% for category in all_categories %}
+                {% if not category.parent %}
+                    <!-- Top-level categories treated as their own parent in the URL -->
+                    <a style="text-decoration: none" href="{% url 'category_search' category.string_id %}">
+                        <h4 class="filter-title">{{ category.name|title }}</h4>
+                    </a>
+                    {% if category.subcategories.all %}
+                        <ul class="filter-options">
+                            {% for subcategory in category.subcategories.all %}
+                                <li>
+                                    <!-- Generate URL for subcategories considering their parent -->
+                                    <a href="{% url 'category_search' subcategory.string_id %}">
+                                        {{ subcategory.name|title }}
+                                        <span class="item-count">{{ subcategory.string_id|get_category_count }}</span>
+                                    </a>
+                                    <!-- Display sub-subcategories -->
+                                    <ul>
+                                        {% for subsubcategory in subcategory.subcategories.all %}
+                                            <li>
+                                                <!-- Generate URL for sub-subcategories considering their parent -->
+                                                <a href="{% url 'category_search' subsubcategory.string_id %}">
+                                                    {{ subsubcategory.name|title }}
+                                                    <span class="item-count">{{ subsubcategory.string_id|get_category_count }}</span></a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
     </div>
     <!-- Additional filter groups for Bathroom, Kitchen, etc. -->
 
@@ -63,12 +65,13 @@
                   <img src="{{ product.images.all.0.image.url }}" alt="{{ product.title }}" class="recent-product-image"></a>
 
                   <div class="recent-product-details">
-                    <h5 class="recent-product-title">{{ product.title }}</h5>
+                    <a style="text-decoration: none; color: black" href="{% url 'product_page' product.string_id %}"><h5 class="recent-product-title">{{ product.title }}</h5>
                     {% if product.sale_price %}
                         <p class="product-price">{{ product.sale_price }} kr</p>
                     {% else %}
                         <p class="product-price">{{ product.price }} kr</p>
                     {% endif %} 
+                    </a>
                   </div>
                 </div>
               {% endif %}

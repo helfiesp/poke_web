@@ -30,9 +30,8 @@ urlpatterns = [
     path('', views.index, name='hjem'),
     path('categories', views.categories, name='categories'),
     path('sale_catalogue', views.sale_catalogue, name='sale_catalogue'),
-    path('categories/<str:category_name>', views.category_search, name='category_search'),
+    path('category/<path:category_string_id>', views.category_search, name='category_search'),
     path('products/supplier/<str:supplier_name>', views.supplier_search, name='supplier_search'),
-    path('categories/<str:parent_category_name>/<str:category_name>/', views.category_search, name='category_search_with_parent'),  
     path('products', views.general_search, name='products'),
 
 
@@ -42,30 +41,30 @@ urlpatterns = [
     path('product/<int:product_id>/edit/delete/', views.delete_product, name='delete_product'),
 
     # ADMIN STUFF
-    path('administration', views.administration, name='administration'),
+    path('administration/', views.administration, name='administration'),
 
-    path('products/add', views.add_product, name='add_product'),
-    path('products/edit/', views.product_list_and_update, name='update_products'),
-    path('products/edit/<int:product_id>/', views.product_list_and_update, name='update_products_id'),
+    path('administration/products/add', views.add_product, name='add_product'),
+    path('administration/products/edit/', views.product_list_and_update, name='update_products'),
+    path('administration/products/edit/<int:product_id>/', views.product_list_and_update, name='update_products_id'),
 
-    path('category/add/', views.add_category, name='add_category'),
-    path('category/edit/', views.category_list_and_update, name='update_categories'),
-    path('category/edit/<int:category_id>/', views.category_list_and_update, name='update_categories_id'),
+    path('administration/category/add/', views.add_category, name='add_category'),
+    path('administration/category/edit/', views.category_list_and_update, name='update_categories'),
+    path('administration/category/edit/<int:category_id>/', views.category_list_and_update, name='update_categories_id'),
 
-    path('text_areas/edit/', views.text_areas_list_and_update, name='update_text_areas'),
-    path('text_areas/edit/<int:text_area_id>/', views.text_areas_list_and_update, name='update_text_areas_id'),
-    path('text_areas/create/', views.text_areas_list_and_update, name='create_text_area'),
+    path('administration/text_areas/edit/', views.text_areas_list_and_update, name='update_text_areas'),
+    path('administration/text_areas/edit/<int:text_area_id>/', views.text_areas_list_and_update, name='update_text_areas_id'),
+    path('administration/text_areas/create/', views.text_areas_list_and_update, name='create_text_area'),
 
-    path('footer_textareas/edit/', views.text_areas_list_and_update, name='update_footer_text_areas'),
-    path('footer_textareas/edit/<int:footer_text_area_id>/', views.text_areas_list_and_update, name='update_footer_textareas_id'),
-    path('footer_textareas/create/', views.text_areas_list_and_update, name='create_footer_text_area'),
+    path('administration/footer_textareas/edit/', views.text_areas_list_and_update, name='update_footer_text_areas'),
+    path('administration/footer_textareas/edit/<int:footer_text_area_id>/', views.text_areas_list_and_update, name='update_footer_textareas_id'),
+    path('administration/footer_textareas/create/', views.text_areas_list_and_update, name='create_footer_text_area'),
 
-    path('business_information/', views.text_areas_list_and_update, name='business_information'),
-    path('business_information/create/', views.text_areas_list_and_update, name='create_business_information'),
-    path('business_information/edit/<int:business_info_id>/', views.text_areas_list_and_update, name='update_business_information'),
+    path('administration/business_information/', views.text_areas_list_and_update, name='business_information'),
+    path('administration/business_information/create/', views.text_areas_list_and_update, name='create_business_information'),
+    path('administration/business_information/edit/<int:business_info_id>/', views.text_areas_list_and_update, name='update_business_information'),
 
 
-    path('suppliers/add/', views.add_supplier, name='add_supplier'),
+    path('administration/suppliers/add/', views.add_supplier, name='add_supplier'),
 
     path('order/<int:customer_id>/', views.add_order, name='add_order'),
 

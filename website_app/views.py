@@ -13,7 +13,6 @@ import requests
 from django.contrib import messages
 from decimal import Decimal
 from django.core.exceptions import ValidationError
-
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -164,16 +163,15 @@ def get_all_subcategories(main_category):
         subcategories.extend(get_all_subcategories(subcategory))
     return subcategories
 
-def category_search(request, category_name, parent_category_name=None):
-    if parent_category_name:
-        # Category with parent
-        main_category = get_object_or_404(models.category, name__iexact=category_name, parent__name__iexact=parent_category_name)
-    else:
-        # Category without parent (top-level category)
-        main_category = get_object_or_404(models.category, name__iexact=category_name, parent__isnull=True)
+def category_search(request, category_string_id):
+    # Using string_id to directly fetch the category
+    main_category = get_object_or_404(models.category, string_id__iexact=category_string_id.replace(" > ", "/").lower())
 
+    # Assuming the function get_all_subcategories is defined to fetch all subcategories
     subcategories = get_all_subcategories(main_category)
-    products = models.Product.objects.filter(category__in=subcategories, enabled=True)
+    # Fetch products linked to these subcategories and are enabled
+    products = models.product.objects.filter(category__in=subcategories, enabled=True)
+    # Assuming apply_sort_and_pagination is defined and used here to handle sorting and pagination
     products_page, sort, per_page = apply_sort_and_pagination(request, products)
 
     context = {
@@ -529,6 +527,9 @@ def category_list_and_update(request, category_id=None):
 
         if form.is_valid():
             category_instance = form.save(commit=False)
+            string_id = str(category_instance.get_full_path()).replace(" > ", "/").replace(" ", "_").lower()
+            category.string_id = string_id
+            category.save()
             category_instance.save()
             return redirect('update_categories')  # Assuming 'update_categories' is the correct redirect URL
         else:

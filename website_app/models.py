@@ -5,6 +5,8 @@ from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
@@ -88,9 +90,11 @@ class StockHistory(models.Model):
         return f"{self.product.title} - Stock: {self.stock_quantity} (Recorded: {self.date_recorded})"
 
 class category(models.Model):
+    string_id = models.CharField(max_length=200, unique=True, blank=True, null=True)
     name = models.CharField(max_length=255)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subcategories')
     image = models.ImageField(upload_to='category_images/', null=True, blank=True)
+
 
     def __str__(self):
         return self.name if not self.parent else f'{self.parent} > {self.name}'
@@ -98,9 +102,14 @@ class category(models.Model):
     class Meta:
         unique_together = ('name', 'parent')  # Ensures name is unique under the same parent
 
-    def clean(self):
-        if category.objects.filter(name=self.name, parent=self.parent).exists():
-            raise ValidationError("A category with this name already exists under the selected parent.")
+    def get_full_path(self):
+        """Recursively get the full category path."""
+        parts = [self.name]
+        parent = self.parent
+        while parent:
+            parts.insert(0, parent.name)
+            parent = parent.parent
+        return " > ".join(parts)
 
  
 class text_areas(models.Model):
