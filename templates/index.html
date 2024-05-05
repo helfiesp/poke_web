@@ -33,7 +33,12 @@
     <div class="product-categories">
       {% for category in front_categories %}
           <div class="category-item">
-            <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
+            {% if category.name == "pokemon" %}
+
+              <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
+            {% else %}
+              <a href="{% url 'category_search_with_parent' category.name subcategory.name %}">
+            {% endif %}
             <img src="{{ MEDIA_URL }}{{ category.image }}" alt="{{ category.name }}" class="category-image">
             <h3>{{ category.name|title }}</h3></a>
           </div>

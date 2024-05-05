@@ -4,21 +4,20 @@
 {% block content %}
 
 <div class="add-item-container">
-    <p><b>Current categories<b></p>
     <form action="{% url 'add_category' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <!-- Category Name Section -->
         <div class="form-section">
-            <h2>New Category</h2>
-            <label for="id_name">Category Name</label>
+            <h2>Add New Category</h2>
+            <label for="id_name">Category Name:</label>
             <input type="text" id="id_name" name="name" placeholder="Category Name" required>
         </div>
 
         <!-- Parent Category Section -->
         {% if categories %}
         <div class="form-section">
-            <label for="id_parent">Main Category (Optional)</label>
+            <label for="id_parent">Main Category (Optional):</label>
             <select name="parent" id="id_parent">
                 <option value="">None</option>  <!-- Allows for top-level categories -->
                 {% for category in categories %}
@@ -26,16 +25,18 @@
                 {% endfor %}
             </select>
         </div>
+        {% else %}
+        <p>No existing categories to set as a parent.</p>
         {% endif %}
 
-            <!-- Category Image Section -->
+        <!-- Category Image Section -->
         <div class="form-section">
-            <label for="category_image">Category Image</label>
+            <label for="category_image">Category Image:</label>
             <input type="file" id="category_image" name="category_image" accept="image/*">
         </div>
+
         <!-- Submit Button -->
         <button type="submit" class="submit-btn">Add Category</button>
     </form>
 </div>
-
 {% endblock %}

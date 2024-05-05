@@ -87,7 +87,7 @@
           <ul class="filter-options-m">
             {% for subcategory in category.subcategories.all %}
               <li>
-                <a href="{% url 'category_search' subcategory.name %}">{{ subcategory.name|title }}<span class="item-count">{{ subcategory.name|get_category_count }}</span></a>
+                <a href="{% url 'category_search_with_parent' category.name subcategory.name %}">{{ subcategory.name|title }}<span class="item-count">{{ subcategory.name|get_category_count }}</span></a>
               </li>
             {% endfor %}
           </ul>

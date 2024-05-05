@@ -32,7 +32,7 @@ urlpatterns = [
     path('sale_catalogue', views.sale_catalogue, name='sale_catalogue'),
     path('categories/<str:category_name>', views.category_search, name='category_search'),
     path('products/supplier/<str:supplier_name>', views.supplier_search, name='supplier_search'),
-
+    path('categories/<str:parent_category_name>/<str:category_name>/', views.category_search, name='category_search_with_parent'),  
     path('products', views.general_search, name='products'),
 
 
@@ -48,9 +48,9 @@ urlpatterns = [
     path('products/edit/', views.product_list_and_update, name='update_products'),
     path('products/edit/<int:product_id>/', views.product_list_and_update, name='update_products_id'),
 
-    path('categories/add/', views.add_category, name='add_category'),
-    path('categories/edit/', views.category_list_and_update, name='update_categories'),
-    path('categories/edit/<int:category_id>/', views.category_list_and_update, name='update_categories_id'),
+    path('category/add/', views.add_category, name='add_category'),
+    path('category/edit/', views.category_list_and_update, name='update_categories'),
+    path('category/edit/<int:category_id>/', views.category_list_and_update, name='update_categories_id'),
 
     path('text_areas/edit/', views.text_areas_list_and_update, name='update_text_areas'),
     path('text_areas/edit/<int:text_area_id>/', views.text_areas_list_and_update, name='update_text_areas_id'),
@@ -122,7 +122,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='hjem'), name='logout'),
     path('register/', views.register, name='register'),
 
-    
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

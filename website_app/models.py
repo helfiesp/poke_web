@@ -88,12 +88,19 @@ class StockHistory(models.Model):
         return f"{self.product.title} - Stock: {self.stock_quantity} (Recorded: {self.date_recorded})"
 
 class category(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subcategories')
     image = models.ImageField(upload_to='category_images/', null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.name if not self.parent else f'{self.parent} > {self.name}'
+
+    class Meta:
+        unique_together = ('name', 'parent')  # Ensures name is unique under the same parent
+
+    def clean(self):
+        if category.objects.filter(name=self.name, parent=self.parent).exists():
+            raise ValidationError("A category with this name already exists under the selected parent.")
 
  
 class text_areas(models.Model):

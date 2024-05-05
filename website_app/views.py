@@ -12,6 +12,7 @@ import base64
 import requests
 from django.contrib import messages
 from decimal import Decimal
+from django.core.exceptions import ValidationError
 
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -163,29 +164,26 @@ def get_all_subcategories(main_category):
         subcategories.extend(get_all_subcategories(subcategory))
     return subcategories
 
-def category_search(request, category_name):
-    # Fetch the main category
-    main_category = get_object_or_404(models.category, name__iexact=category_name)
+def category_search(request, category_name, parent_category_name=None):
+    if parent_category_name:
+        # Category with parent
+        main_category = get_object_or_404(models.category, name__iexact=category_name, parent__name__iexact=parent_category_name)
+    else:
+        # Category without parent (top-level category)
+        main_category = get_object_or_404(models.category, name__iexact=category_name, parent__isnull=True)
 
-    # Fetch all subcategories of the main category recursively, including the main category itself
     subcategories = get_all_subcategories(main_category)
-
-    # Fetch products that belong to the main category or any of its subcategories
-    products = models.product.objects.filter(category__in=subcategories, enabled=True)
-
-    # Apply sorting and pagination
-    # (Ensure that 'apply_sort_and_pagination' function is implemented)
+    products = models.Product.objects.filter(category__in=subcategories, enabled=True)
     products_page, sort, per_page = apply_sort_and_pagination(request, products)
 
     context = {
         'category': main_category,
         'products': products_page,
-        'current_sort': sort,      
-        'per_page': per_page,      
+        'current_sort': sort,
+        'per_page': per_page,
         'query': True,
     }
 
-    # Render the template with the products for the category and its subcategories
     return render(request, 'products.html', context)
 
 def supplier_search(request, supplier_name):
@@ -459,6 +457,7 @@ def delete_product(request, product_id):
 
 @login_required(login_url='/admin')
 def add_category(request):
+    all_categories = models.category.objects.all()
     if request.method == 'POST':
         form = forms.category_form(request.POST, request.FILES)
         if form.is_valid():
@@ -466,14 +465,14 @@ def add_category(request):
             if request.FILES:
                 category.image = request.FILES['category_image']
             category.save()
-            return redirect('hjem')  # Redirect to the index page or wherever you want
+            return redirect('home')  # Make sure 'home' is the correct named URL for redirection
         else:
-            print("Form Errors:", form.errors)
             return HttpResponse(json.dumps(form.errors), content_type="application/json")
     else:
+
         form = forms.category_form()
 
-    return render(request, 'admin/add_category.html', {'category_form': form})
+    return render(request, 'admin/add_category.html', {'category_form': form, 'categories':all_categories})
 
 
 @login_required(login_url='/admin')
@@ -524,15 +523,30 @@ def product_list_and_update(request, product_id=None):
 @login_required(login_url='/admin')
 def category_list_and_update(request, category_id=None):
     if request.method == 'POST':
-        category = get_object_or_404(models.category, pk=category_id)
+        # If a category_id is provided, fetch the existing instance; otherwise, create a new one
+        category = get_object_or_404(models.category, pk=category_id) if category_id else None
         form = forms.category_form(request.POST, request.FILES, instance=category)
+
         if form.is_valid():
             category_instance = form.save(commit=False)
             category_instance.save()
-            return redirect('update_categories')
+            return redirect('update_categories')  # Assuming 'update_categories' is the correct redirect URL
+        else:
+            # If the form is not valid, render the page again with the form errors
+            categories = models.category.objects.all()
+            return render(request, 'admin/update_categories.html', {
+                'categories': categories,
+                'form': form,
+                'admin': True
+            })
     else:
         categories = models.category.objects.all()
-        return render(request, 'admin/update_categories.html', {'categories': categories, 'admin':True })
+        form = forms.category_form()  # Provide a blank form for creating new categories
+        return render(request, 'admin/update_categories.html', {
+            'categories': categories,
+            'form': form,
+            'admin': True
+        })
 
 @login_required(login_url='/admin')
 def text_areas_list_and_update(request, text_area_id=None, footer_text_area_id=None, business_info_id=None):
