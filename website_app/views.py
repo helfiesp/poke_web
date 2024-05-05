@@ -1220,7 +1220,7 @@ def send_order_confirmation(order):
         'shipping': fetch_shipping_option(json.loads(order.delivery_info)),
 
     }
-    message = render_to_string('emails/order_confirmation.html', context)
+    message = render_to_string('admin/order_confirmation.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
     recipient_list = [order.customer.email]
 
@@ -1288,7 +1288,7 @@ def get_or_create_customer(first_name, last_name, phone, email, address, postal_
 
 def fetch_shipping_option(delivery_info):
     if delivery_info["delivery_option"] == "delivery":
-        return models.shipping_options.objects.filter(pk=delivery_info["shipping_option"]).first()
+        return models.shipping_options.objects.filter(pk=delivery_info["shipping_option"]).first().title
     else:
         return "Hentes i butikk"
 
