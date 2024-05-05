@@ -37,6 +37,9 @@
     }
 }
 </script>
+<script>
+    var productInStock = {{ product.instock }}; // Directly from the server-side template
+</script>
 
 <script>
 // Wait for the DOM to load
@@ -133,6 +136,22 @@ function openTab(event, tabName) {
     event.currentTarget.className += " active";
 }
 
+function increaseQuantity() {
+    var quantityInput = document.getElementById('quantity');
+    var currentQuantity = parseInt(quantityInput.value, 10);
+    if (currentQuantity < productInStock) { // Ensures quantity does not exceed stock
+        quantityInput.value = currentQuantity + 1;
+    }
+}
+
+function decreaseQuantity() {
+    var quantityInput = document.getElementById('quantity');
+    var currentQuantity = parseInt(quantityInput.value, 10);
+    if (currentQuantity > 1) { // Prevents quantity from going below 1
+        quantityInput.value = currentQuantity - 1;
+    }
+}
+
 </script>
 <style>
 .featured-product-item {
@@ -219,12 +238,11 @@ function openTab(event, tabName) {
     <form action="{% url 'add_to_cart' product.id %}" method="post" class="add-to-cart-form">
         {% csrf_token %}
         <!-- Quantity select box -->
-        <label for="quantity">Quantity:</label>
-        <select id="quantity" name="quantity">
-            {% for number in quantity_range %}
-                <option value="{{ number }}">{{ number }}</option>
-            {% endfor %}
-        </select>
+<div class="quantity-selector">
+    <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+    <input type="text" id="quantity" name="quantity" value="1" readonly>
+    <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+</div>
         <br>
         {% if product.instock %}
             <p>Vi har {{ product.instock }}stk på lager</p>

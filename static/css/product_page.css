@@ -91,23 +91,26 @@
 .product-page-price-section {
     text-align: left; /* Aligns the text to the left */
     margin-top: 10px; /* Space above the price section */
+    display: flex; /* Enables flexbox layout */
+    align-items: center; /* Vertically centers the content */
 }
 
 .product-page-price {
-    font-size: 24px; /* Larger font size for emphasis */
+    font-size: 30px; /* Larger font size for emphasis */
     font-weight: bold; /* Bold font weight */
     color: #CC0000; /* Red color for the sale price */
+    margin-right: 10px; /* Adds space between the sale price and the original price */
 }
+
+.product-page-price-dashed {
+    font-size: 24px; /* Smaller font size for the original price */
+    text-decoration: line-through; /* Strike-through effect */
+    color: #777; /* Grey color for less emphasis */
+}
+
 .normal-price {
     color: black;
 }
-.product-page-price-dashed {
-    font-size: 18px; /* Smaller font size for the original price */
-    text-decoration: line-through; /* Strike-through effect */
-    color: #777; /* Grey color for less emphasis */
-    margin-left: 10px; /* Space between sale price and original price */
-}
-
 .purchase-options {
     margin-top:10px;
     display: flex;
@@ -117,23 +120,30 @@
 
 .quantity-selector {
     display: flex;
+    border: 1px solid #ccc; /* Light grey border */
+    width: 80px;
     align-items: center;
-    margin-right: 1rem;
 }
 
-.quantity-minus, .quantity-plus {
-    border: 1px solid #ccc;
-    background: none;
-    padding: 5px 10px;
+.quantity-btn {
+    background-color: white;
+    border: 1px solid #ccc; /* Light grey border */
+    color: black;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.quantity-input {
-    width: 50px;
+#quantity {
+    border: none;
     text-align: center;
-    border: 1px solid #ccc;
-    margin: 0 5px;
+    width: 20px;
+    pointer-events: none; /* Makes the input field not selectable */
 }
-
 .add-to-cart-btn {
     background-color: #c8323f;
     color: #fff;

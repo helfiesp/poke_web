@@ -954,10 +954,8 @@ def get_cart_total(request):
 def add_to_cart_ajax(request, product_id):
     if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
-    
     # Get the product or return a 404 error if not found
     product = get_object_or_404(models.product, pk=product_id)
-    
     # Read quantity from the request, default to 1 if not set
     cart = request.session.get('cart', {})
     cart[product_id] = cart.get(product_id, 0) + 1
@@ -967,23 +965,48 @@ def add_to_cart_ajax(request, product_id):
 
 def add_to_cart(request, product_id):
     if request.method == 'POST':
+        # Fetch the product or return a 404 error if not found
         product = get_object_or_404(models.product, pk=product_id)
+
+        # Try to get the quantity from POST data and convert it to an integer
+        try:
+            quantity = int(request.POST.get('quantity', 0))
+        except ValueError:
+            # Handle the case where the quantity is not an integer
+            return JsonResponse({'status': 'error', 'message': 'Invalid quantity'}, status=400)
+
+        # Validate quantity (must be at least 1 and not exceed product.instock)
+        if quantity < 1 or quantity > product.instock:
+            return JsonResponse({'status': 'error', 'message': 'Invalid quantity'}, status=400)
+
+        # Get the cart from the session, or initialize a new one if none exists
         cart = request.session.get('cart', {})
-        cart[product_id] = cart.get(product_id, 0) + 1
+
+        # Add the quantity of the product to the cart or update it
+        if product_id in cart:
+            # Update existing quantity in the cart, but do not exceed the stock
+            cart[product_id] = min(cart[product_id] + quantity, product.instock)
+        else:
+            # Add new product with the specified quantity
+            cart[product_id] = quantity
+        
+        # Save the updated cart in the session
         request.session['cart'] = cart
         
+        # Return appropriate response based on the type of request
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'status': 'ok'})
         else:
-            return redirect('hjem')  # Name of the URL to view the cart
+            return redirect('hjem')  # Redirect to a cart view or homepage
 
 @require_POST
 def update_cart(request, product_id):
     data = json.loads(request.body)
     cart = request.session.get('cart', {})
-
     if data['action'] == 'add':
-        cart[product_id] = cart.get(product_id, 0) + 1
+        instock = get_object_or_404(models.product, pk=product_id).instock
+        if not cart.get(product_id, 0) >= instock:
+            cart[product_id] = cart.get(product_id, 0) + 1
     elif data['action'] == 'remove':
         if 'remove_all' in data and data['remove_all']:
             cart.pop(product_id, None)  # Remove the item completely if flagged
