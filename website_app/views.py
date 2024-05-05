@@ -424,8 +424,6 @@ def edit_product(request, product_id):
 
                 current_inventory.save()
 
-
-
                 image_order_combined_json = request.POST.get('image_order_combined')
                 if image_order_combined_json:
                     handle_custom_image_order(image_order_combined_json, product_instance, request.FILES.getlist('images'))

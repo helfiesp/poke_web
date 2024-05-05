@@ -41,11 +41,13 @@
     </div>
   <div class="product-categories-small">
       {% for category in all_categories %}
-          <div class="category-item">
-            <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
-            <img src="{{ MEDIA_URL }}{{ category.image }}" alt="{{ category.name }}" class="category-image">
-            <h3>{{ category.name|title }}</h3></a>
-          </div>
+          {% if category not in front_categories %}
+            <div class="category-item">
+              <a style="text-decoration: none" href="{% url 'category_search' category.name %}">
+              <img src="{{ MEDIA_URL }}{{ category.image }}" alt="{{ category.name }}" class="category-image">
+              <h3>{{ category.name|title }}</h3></a>
+            </div>
+          {% endif %}
       {% endfor %}
     </div>
 
