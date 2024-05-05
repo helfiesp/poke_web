@@ -212,10 +212,12 @@
                         <td>
                         {% if item.sent %}
                             <input type="checkbox" checked></td>
+                            <td>Sendt</td>
                         {% else %}
                             <input type="checkbox"></td>
+                            <td>Til behandling</td>
                         {% endif %}
-                        <td>Mottatt</td>
+                        
                     </tr>
                     {% endfor %}
                 </tbody>
