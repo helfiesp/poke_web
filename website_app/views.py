@@ -1144,7 +1144,8 @@ def create_order(request, customer_instance):
             }),
             status='processing'
         )
-        send_order_confirmation(order)
+        if data.get("payment_method") == "faktura":
+            send_order_confirmation(order)
         return {'status': 'success', 'message': 'Order created successfully.', 'order_number': order.order_number}
 
 def prep_items(items):
