@@ -132,6 +132,16 @@
                     </label>
                 </div>
 
+                <!-- Custom styled checkbox for Cart item -->
+                <div class="checkbox-section" style="margin-top: 10px;">
+                    <p>Skal produktet vises i kassen?</p>
+                    <label class="switch">
+                        {{ form.cart_item }}
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                
+
                 {% if suppliers %}
                 <div class="form-section">
                     <label for="name">Velg leverandør</label>

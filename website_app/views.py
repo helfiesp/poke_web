@@ -1117,7 +1117,7 @@ def create_order(request, customer_instance):
                 data.getlist('item_sale_price[]')
             )
         ]
-        total_price = sum(float(item['sale_price']) * int(item['quantity']) for item in item_info)
+        total_price = sum(float(item['sale_price']) for item in item_info)
         delivery_price = Decimal('0.00')  # Set default delivery price, potentially updated based on options
 
         # Build delivery information based on selected delivery option
@@ -1144,9 +1144,9 @@ def create_order(request, customer_instance):
             customer=customer_instance,
             items=json.dumps(item_info),
             delivery_info=json.dumps(delivery_info),
-            price=total_price + delivery_price,  # Both are Decimals now
+            price=float(total_price + delivery_price),  # Both are Decimals now
             remaining=total_price + delivery_price,  # Both are Decimals now
-            delivery_price=delivery_price,
+            delivery_price=float(delivery_price),
             payment_info=json.dumps({
                 'payment_method': data.get('payment_method')
             }),

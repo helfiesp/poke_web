@@ -9,7 +9,7 @@ class product_form(forms.ModelForm):
 
     class Meta:
         model = product
-        fields = ['title', 'subtitle', 'category', 'description', 'product_url', 'price', 'price_eks_mva', 'sale_price', 'purchase_price', 'height', 'width', 'length', 'weight', 'instock', 'more_information', 'supplier', 'enabled', 'bestseller']
+        fields = ['title', 'subtitle', 'category', 'description', 'product_url', 'price', 'price_eks_mva', 'sale_price', 'purchase_price', 'height', 'width', 'length', 'weight', 'instock', 'more_information', 'supplier', 'enabled', 'bestseller', 'cart_item']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 40}),  # You can customize the appearance
         }

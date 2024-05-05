@@ -130,18 +130,18 @@
     </div>
 <div class="cart-small-items">
     <h3>ANDRE POPULÆRE PRODUKTER</h3>
-    {% for product in all_products %}
+    {% for cart_product in cart_product_items %}
         <div class="product-item">
-            <img src="{{ product.images.all.0.image.url }}" alt="{{ product.title }}" class="product-image">
-            <span class="product-title">{{ product.title }}</span>
-            {% if product.sale_price %}
-              <span class="product-price">{{ product.sale_price }} kr</span>
+            <img src="{{ cart_product.images.all.0.image.url }}" alt="{{ cart_product.title }}" class="product-image">
+            <span class="product-title">{{ cart_product.title }}</span>
+            {% if cart_product.sale_price %}
+              <span class="product-price">{{ cart_product.sale_price }} kr</span>
             {% else %}
-              <span class="product-price">{{ product.price }} kr</span>
+              <span class="product-price">{{ cart_product.price }} kr</span>
             {% endif %}
 
             <meta name="csrf-token" content="{{ csrf_token }}">
-            <button class="add-to-cart-btn-ajax" data-product-id="{{ product.id }}" data-csrf-token="{{ csrf_token }}">
+            <button class="add-to-cart-btn-ajax" data-product-id="{{ cart_product.id }}" data-csrf-token="{{ csrf_token }}">
                 Legg i handlekurv
             </button>
         </div>

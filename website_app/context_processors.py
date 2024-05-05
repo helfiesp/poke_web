@@ -8,10 +8,9 @@ def base_info(request):
     business_information = models.business_information.objects.first()
     recent_products = models.product.objects.filter(enabled=True).order_by('-date_added')[:8]
     bestsellers = models.product.objects.filter(enabled=True, bestseller=True).order_by('-date_added')[:8]
-
+    cart_product_items = models.product.objects.filter(enabled=True, cart_item=True).order_by('-date_added')[:4]
     # New variable that filters specific categories
     front_categories = models.category.objects.filter(name__in=['pokemon', 'japansk', 'engelsk'])
-
     return {
         'all_products': products,
         'all_categories': categories,
@@ -20,7 +19,8 @@ def base_info(request):
         'business_information': business_information,
         'recent_products': recent_products,
         'bestsellers': bestsellers,
-        'front_categories': front_categories,  # Add to the return dictionary
+        'front_categories': front_categories,
+        'cart_product_items':cart_product_items,
     }
 
 

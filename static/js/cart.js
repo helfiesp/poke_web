@@ -14,7 +14,7 @@ function generateCartItemHtml(item) {
     } else {
         // No sale price, so just display normal price
         priceHtml = `<p class="cart-item-price">
-                        ${itemTotalNormalPrice)} kr
+                        ${itemTotalNormalPrice} kr
                      </p>`;
     }
 

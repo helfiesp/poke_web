@@ -32,6 +32,7 @@ class product(models.Model):
     instock = models.IntegerField(default=1)
     enabled = models.BooleanField(default=True)
     bestseller = models.BooleanField(default=False)
+    cart_item = models.BooleanField(default=False)
     more_information = models.TextField(null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(null=True, blank=True)  
