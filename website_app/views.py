@@ -920,7 +920,7 @@ def order_confirmation(request, order_number):
     }
 
     # Render the HTML template to a string
-    html_string = render_to_string('admin/order_confirmation.html', context)
+    html_string = render_to_string('emails/order_confirmation.html', context)
 
     # Generate PDF from the rendered HTML string
     html = HTML(string=html_string)
@@ -1307,7 +1307,7 @@ def order_success(request, order_number):
         # Handle missing order scenario
         return render(request, 'error.html', {'message': 'Order not found.'})
 
-    return render(request, 'emails/order_confirmation.html', {
+    return render(request, 'admin/order_confirmation.html', {
         'payment_details': payment_details, 
         'items':items, 'order': order, 
         'item_total':item_total,
