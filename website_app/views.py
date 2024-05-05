@@ -1321,120 +1321,135 @@ def generate_klarna_customer_info(request):
     pass
 
 def klarna_checkout(request):
+    customer_instance = None
+    form = None
+
+    if request.user.is_authenticated:
+        customer_instance, created = models.customers.objects.get_or_create(user=request.user)
+        form = forms.CustomerForm(request.POST or None, instance=customer_instance)
+    else:
+        # For non-authenticated users, create a new customer instance if form is submitted
+        form = forms.CustomerForm(request.POST or None)
+
     if request.method == 'POST':
-        if request.user.is_authenticated:
-            try:
-                customer_instance = models.customers.objects.get(user=request.user)
-                form = forms.CustomerForm(instance=customer_instance)
-            except models.customers.DoesNotExist:
-                form = forms.CustomerForm()
+        if form.is_valid():
+            customer_instance = form.save(commit=False)
+            if not request.user.is_authenticated:
+                # For guest users, do any additional handling as needed
+                customer_instance.save()
+            else:
+                # For authenticated users, link the customer instance with the user
+                customer_instance.user = request.user
+                customer_instance.save()
 
-        order_response = create_order(request)
-        order_number = order_response['order_number']
-        items_ids = request.POST.getlist('item_id[]')
-        quantities = request.POST.getlist('item_quantity[]')
-        prices = request.POST.getlist('item_price[]')
-        sale_prices = request.POST.getlist('item_sale_price[]')
-        delivery_method = request.POST.get('delivery_option')
-        shipping_option = request.POST.get('shipping_option')
-        selected_shipping_option = None
-        if shipping_option:
-            selected_shipping_option = models.shipping_options.objects.filter(pk=shipping_option).first()
+            # Proceed with order creation
+            order_response = create_order(request, customer_instance)
 
-        order_lines = []
-        total_amount = 0
-        total_tax_amount = 0
+            order_number = order_response['order_number']
+            items_ids = request.POST.getlist('item_id[]')
+            quantities = request.POST.getlist('item_quantity[]')
+            prices = request.POST.getlist('item_price[]')
+            sale_prices = request.POST.getlist('item_sale_price[]')
+            delivery_method = request.POST.get('delivery_option')
+            shipping_option = request.POST.get('shipping_option')
+            selected_shipping_option = None
+            if shipping_option:
+                selected_shipping_option = models.shipping_options.objects.filter(pk=shipping_option).first()
 
-        for i, item_id in enumerate(items_ids):
-            price = float(sale_prices[i]) if sale_prices[i] else float(prices[i])
-            quantity = int(quantities[i])
+            order_lines = []
+            total_amount = 0
+            total_tax_amount = 0
 
-            # Convert price to minor units (assuming input prices are in major units)
-            price_in_cents = round(price * 100)
+            for i, item_id in enumerate(items_ids):
+                price = float(sale_prices[i]) if sale_prices[i] else float(prices[i])
+                quantity = int(quantities[i])
+
+                # Convert price to minor units (assuming input prices are in major units)
+                price_in_cents = round(price * 100)
+                
+                # Price is assumed to be excluding tax already, calculate tax based on this
+                unit_price_excl_tax = int(price_in_cents / 1.25)
+                tax_amount_per_unit = int(price_in_cents * 0.25)  # 25% of the exclusive price
+                total_tax_amount_for_item = (price_in_cents - unit_price_excl_tax) * quantity
+                total_price_excl_tax = unit_price_excl_tax * quantity
+                total_amount_incl_tax = total_price_excl_tax + total_tax_amount_for_item
+                product_name = None
+                product = models.product.objects.filter(pk=item_id).first()
+                if product:
+                    product_name = product.title
+                order_lines.append({
+                    "type": "physical",
+                    "name": product_name,
+                    "quantity": quantity,
+                    "unit_price": price_in_cents,
+                    "product_url": product.product_url,
+                    "image_url": "https://testing.pokelageret.no/media/{}".format(fetch_product_image(product.string_id)),
+                    "tax_rate": 2500,
+                    "total_amount": total_amount_incl_tax, 
+                    "total_tax_amount": total_tax_amount_for_item,
+                })
+
+                total_amount += total_amount_incl_tax
+                total_tax_amount += total_tax_amount_for_item
+
+            if delivery_method == 'delivery' and selected_shipping_option:
+                # Assuming the shipping price from the database is inclusive of tax
+                shipping_cost_in_cents = round(float(selected_shipping_option.price) * 100)
+                shipping_cost_excl_tax = int(shipping_cost_in_cents / 1.25)  # Calculate price exclusive of tax
+                shipping_tax_amount = shipping_cost_in_cents - shipping_cost_excl_tax
+
+                order_lines.append({
+                    "type": "shipping_fee",
+                    "name": selected_shipping_option.title,
+                    "quantity": 1,
+                    "unit_price": shipping_cost_in_cents,
+                    "tax_rate": 2500,  # 25%
+                    #"image_url": fetch_product_image(product_instance.string_id),
+                    "total_amount": shipping_cost_in_cents,
+                    "total_tax_amount": shipping_tax_amount,
+                })
+                total_amount += shipping_cost_in_cents
+                total_tax_amount += shipping_tax_amount
+
+            url = "https://api.playground.klarna.com/checkout/v3/orders"
+            credentials = f"{settings.KLARNA_API_USERNAME}:{settings.KLARNA_API_PASSWORD}"
+            encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+            headers = {
+                'Authorization': f'Basic {encoded_credentials}',
+                'Content-Type': 'application/json'
+            }
             
-            # Price is assumed to be excluding tax already, calculate tax based on this
-            unit_price_excl_tax = int(price_in_cents / 1.25)
-            tax_amount_per_unit = int(price_in_cents * 0.25)  # 25% of the exclusive price
-            total_tax_amount_for_item = (price_in_cents - unit_price_excl_tax) * quantity
-            total_price_excl_tax = unit_price_excl_tax * quantity
-            total_amount_incl_tax = total_price_excl_tax + total_tax_amount_for_item
-            product_name = None
-            product = models.product.objects.filter(pk=item_id).first()
-            if product:
-                product_name = product.title
-            order_lines.append({
-                "type": "physical",
-                "name": product_name,
-                "quantity": quantity,
-                "unit_price": price_in_cents,
-                "product_url": product.product_url,
-                "image_url": "https://testing.pokelageret.no/media/{}".format(fetch_product_image(product.string_id)),
-                "tax_rate": 2500,
-                "total_amount": total_amount_incl_tax, 
-                "total_tax_amount": total_tax_amount_for_item,
-            })
-
-            total_amount += total_amount_incl_tax
-            total_tax_amount += total_tax_amount_for_item
-
-        if delivery_method == 'delivery' and selected_shipping_option:
-            # Assuming the shipping price from the database is inclusive of tax
-            shipping_cost_in_cents = round(float(selected_shipping_option.price) * 100)
-            shipping_cost_excl_tax = int(shipping_cost_in_cents / 1.25)  # Calculate price exclusive of tax
-            shipping_tax_amount = shipping_cost_in_cents - shipping_cost_excl_tax
-
-            order_lines.append({
-                "type": "shipping_fee",
-                "name": selected_shipping_option.title,
-                "quantity": 1,
-                "unit_price": shipping_cost_in_cents,
-                "tax_rate": 2500,  # 25%
-                #"image_url": fetch_product_image(product_instance.string_id),
-                "total_amount": shipping_cost_in_cents,
-                "total_tax_amount": shipping_tax_amount,
-            })
-            total_amount += shipping_cost_in_cents
-            total_tax_amount += shipping_tax_amount
-
-        url = "https://api.playground.klarna.com/checkout/v3/orders"
-        credentials = f"{settings.KLARNA_API_USERNAME}:{settings.KLARNA_API_PASSWORD}"
-        encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
-        headers = {
-            'Authorization': f'Basic {encoded_credentials}',
-            'Content-Type': 'application/json'
-        }
-        
-        data = {
-            "purchase_country": "NO",
-            "purchase_currency": "NOK",
-            "locale": "nb",
-            "order_amount": total_amount,
-            "order_tax_amount": total_tax_amount,
-            "order_lines": order_lines,
-            "merchant_urls": {
-                "terms": "https://testing.pokelageret.no",
-                "checkout": "https://testing.pokelageret.no/checkout",
-                "confirmation": f"https://testing.pokelageret.no/confirmation/{order_number}/",
-                "push": "https://testing.pokelageret.no/klarna/push/"
-            }, 
-            "billing_address": {
-                "email": request.POST.get('email'),  # Replace with your customer's email
-                "postal_code": request.POST.get('postal_code'),  # Replace with your customer's postal code
-                "given_name": request.POST.get('first_name'),  # Replace with your customer's first name
-                "family_name": request.POST.get('last_name'),  # Replace with your customer's last name
-                "street_address": request.POST.get('address'),  # Replace with your customer's street address
-                "city": request.POST.get('city'),  # Replace with your customer's city
-                "phone": request.POST.get('phone'),  # Replace with your customer's phone number
-                "country": "NO",  # Replace with your customer's country code if different
-            },
-        }
-        response = requests.post(url, headers=headers, data=json.dumps(data))
-        if response.status_code == 201:
-            klarna_order = response.json()
-            order_id = klarna_order["order_id"]
-            return render(request, "klarna_checkout.html", {'html_snippet': klarna_order['html_snippet']})
-        else:
-            return render(request, "error/checkout_error.html", {"post_data":request.POST, "error": response.text})
+            data = {
+                "purchase_country": "NO",
+                "purchase_currency": "NOK",
+                "locale": "nb",
+                "order_amount": total_amount,
+                "order_tax_amount": total_tax_amount,
+                "order_lines": order_lines,
+                "merchant_urls": {
+                    "terms": "https://testing.pokelageret.no",
+                    "checkout": "https://testing.pokelageret.no/checkout",
+                    "confirmation": f"https://testing.pokelageret.no/confirmation/{order_number}/",
+                    "push": "https://testing.pokelageret.no/klarna/push/"
+                }, 
+                "billing_address": {
+                    "email": request.POST.get('email'),  # Replace with your customer's email
+                    "postal_code": request.POST.get('postal_code'),  # Replace with your customer's postal code
+                    "given_name": request.POST.get('first_name'),  # Replace with your customer's first name
+                    "family_name": request.POST.get('last_name'),  # Replace with your customer's last name
+                    "street_address": request.POST.get('address'),  # Replace with your customer's street address
+                    "city": request.POST.get('city'),  # Replace with your customer's city
+                    "phone": request.POST.get('phone'),  # Replace with your customer's phone number
+                    "country": "NO",  # Replace with your customer's country code if different
+                },
+            }
+            response = requests.post(url, headers=headers, data=json.dumps(data))
+            if response.status_code == 201:
+                klarna_order = response.json()
+                order_id = klarna_order["order_id"]
+                return render(request, "klarna_checkout.html", {'html_snippet': klarna_order['html_snippet']})
+            else:
+                return render(request, "error/checkout_error.html", {"post_data":request.POST, "error": response.text})
 
     return render(request, "checkout.html")
 
