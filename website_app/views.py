@@ -1166,7 +1166,7 @@ def send_order_confirmation(order):
         'order': order,
         'items': items,
         'payment_details': json.loads(order.payment_info),  # Assuming 'payment_info' is a JSON string
-        'item_total': sum(Decimal(item['sale_price']) for item in json.loads(order.items))
+        'item_total': sum(item['product_total'] for item in items)
     }
     message = render_to_string('admin/order_confirmation_email.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
