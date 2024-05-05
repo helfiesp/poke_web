@@ -32,7 +32,11 @@ def cart_context(request):
     total_price = 0
 
     for product in products:
-        current_price = product.sale_price if product.sale_price is not None else product.price
+        if product.sale_price:
+            current_price = product.sale_price
+        else:
+            current_price = product.price
+        print(current_price)
         # Fetch the first image based on the order or just the first available
         first_image = product.images.order_by('order').first()
         image_url = first_image.image.url if first_image else None
@@ -48,7 +52,6 @@ def cart_context(request):
             'total_item_price': float(current_price * cart[str(product.id)]),
             'image_url': image_url,
         }
-        print(item)
         cart_items.append(item)
         total_price += item['total_item_price']
 
