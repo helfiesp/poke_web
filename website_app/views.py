@@ -719,7 +719,7 @@ def add_order(request, customer_id):
     customer = get_object_or_404(models.customers, id=customer_id)
     products = models.product.objects.all().order_by('-date_added')
 
-# Manually construct a list of dictionaries for each product
+    # Manually construct a list of dictionaries for each product
     products_list = [{
         'id': product.id,
         'name': product.title,
@@ -786,6 +786,7 @@ def order_detail(request, order_number):
     order = get_object_or_404(models.orders, order_number=order_number)
     items = prep_items(json.loads(order.items))
     delivery_info = json.loads(order.delivery_info)
+    print(delivery_info)
     # Call the helper function to check if the PDF exists for this order
     pdf_file_exists = pdf_exists_for_order(order_number)
     payment_method = json.loads(order.payment_info)["payment_method"]
@@ -1120,10 +1121,13 @@ def create_order(request, customer_instance):
             'delivery_option': data.get('delivery_option')
         }
         if delivery_info['delivery_option'] == 'delivery':
+            delivery_info['shipping_option'] = data.get('delivery_option')
             shipping_option_id = data.get('shipping_option', '')
+
             if shipping_option_id:
                 shipping_option = models.shipping_options.objects.get(id=shipping_option_id)
                 delivery_price = Decimal(shipping_option.price if shipping_option.price is not None else '0.00')
+                delivery_info['shipping_option'] = shipping_option_id
             else:
                 delivery_price = Decimal('0.00')
         else:
