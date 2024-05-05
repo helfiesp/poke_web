@@ -1099,20 +1099,19 @@ def checkout(request):
 
 def create_order(request, customer_instance):
     data = request.POST
-
     with transaction.atomic():
         item_info = [
             {
                 'item_id': item_id,
                 'quantity': quantity,
-                'sale_price': sale_price
-            } for item_id, quantity, sale_price in zip(
+                'sale_price': sale_price if sale_price else price
+            } for item_id, quantity, price, sale_price in zip(
                 data.getlist('item_id[]'),
                 data.getlist('item_quantity[]'),
+                data.getlist('item_price[]'),
                 data.getlist('item_sale_price[]')
             )
         ]
-        print(item_info)
         total_price = sum(float(item['sale_price']) * int(item['quantity']) for item in item_info)
         delivery_price = Decimal('0.00')  # Set default delivery price, potentially updated based on options
 
@@ -1125,13 +1124,20 @@ def create_order(request, customer_instance):
             if shipping_option_id:
                 shipping_option = models.shipping_options.objects.get(id=shipping_option_id)
                 delivery_price = Decimal(shipping_option.price if shipping_option.price is not None else '0.00')
+            else:
+                delivery_price = Decimal('0.00')
+        else:
+            delivery_price = Decimal('0.00')
+
+        # Assuming total_price is originally a float, convert it to Decimal
+        total_price = Decimal(str(total_price))
 
         order = models.orders.objects.create(
             customer=customer_instance,
             items=json.dumps(item_info),
             delivery_info=json.dumps(delivery_info),
-            price=total_price + delivery_price,
-            remaining=total_price + delivery_price,
+            price=total_price + delivery_price,  # Both are Decimals now
+            remaining=total_price + delivery_price,  # Both are Decimals now
             delivery_price=delivery_price,
             payment_info=json.dumps({
                 'payment_method': data.get('payment_method')
