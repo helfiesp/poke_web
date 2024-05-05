@@ -1164,17 +1164,31 @@ def order_detail_send_order(request, order_number, action):
         updated_items.append(item)
 
     if items_updated:
-        print(updated_items)
         with transaction.atomic():
             order.items = json.dumps(updated_items)  # Assuming the field can be directly assigned like this
             order.save()
 
-    if action == 'send':
-        return JsonResponse({'status': 'Order sent', 'updated_items': len(items_to_update)})
-    elif action == 'pickup':
-        return JsonResponse({'status': 'Order picked up', 'updated_items': len(items_to_update)})
+    if action == 'send' or action == 'pickup':
+        send_order_sent(order)
+        return redirect('order_detail', order_number=order_number)
+
     else:
         return JsonResponse({'status': 'Invalid action'}, status=400)
+
+def send_order_sent(order):
+    subject = 'Din ordre {} er sendt fra oss'.format(order.order_number)
+    items = prep_items(json.loads(order.items))
+
+    context = {
+        'order': order,
+        'items': items,
+    }
+    message = render_to_string('email/order_sent.html', context)
+    email_from = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [order.customer.email]
+
+    # Send email using the HTML message body
+    send_mail(subject, message, email_from, recipient_list, html_message=message)
 
 def prep_items(items):
     for item in items:

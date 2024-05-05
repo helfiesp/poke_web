@@ -1,0 +1,66 @@
+{% load static i18n %}
+{% load form_tags %}
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet" type="text/css">
+</head>
+
+<table width="100%" cellspacing="0" cellpadding="0" style="background-color: #f2f2f2; border-collapse: collapse; font-family: 'Josefin Sans', sans-serif;">
+    <tr>
+        <td align="center">
+            <table width="700" cellspacing="0" cellpadding="0" style="margin: 50px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background-color: #ffffff; border-collapse: collapse;">
+                <tr style="background: #f9f9f9; padding: 30px; text-align: center;">
+                    <td colspan="2">
+                        <h1 style="color: #c8323f; margin-bottom: 10px;">Takk for bestillingen!</h1>
+                        <p>Din ordre med ordrenummer {{ order.order_number }} er sendt fra oss. Følg sporingslenken i e-posten for oppdatering på pakken.</p>
+                    </td>
+                </tr>
+
+                <!-- Product and totals information -->
+                {% for item in items %}
+                    {% if item.sent %}
+                    <tr>
+                        <td colspan="2" style="background: #ffffff;">
+                            <!-- Top border for separation -->
+                            <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border-top: 1px solid #eee;">
+                                <tr>
+                                    <td colspan="2" style="padding: 10px;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 80px; padding: 0 20px; text-align: center; vertical-align: top;">
+                                        <img src="https://testing.pokelageret.no/{{ item.item_id|fetch_item_image }}" alt="{{ item.title }}" style="width: 60px; height: 60px; border-radius: 8px;">
+                                    </td>
+                                    <td style="vertical-align: top;">
+                                        <p style="margin: 0; font-size: 14px; color: #333;"><strong>{{ item.title }}</strong></p>
+                                        <p style="margin: 0; font-size: 12px; color: #666;">Pris: {{ item.sale_price }} kr</p>
+                                        <p style="margin: 0; font-size: 12px; color: #666;">Antall: {{ item.quantity }} stk</p>
+                                        <p style="margin: 0; font-size: 12px; color: #666;">Totalpris: {{ item.product_total }} kr</p>
+                                    </td>
+                                <!-- Bottom border for separation -->
+                                <tr>
+                                    <td colspan="2" style="padding: 10px;"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                 <tr>
+                    <td colspan="2" style="padding: 30px; text-align: center; border-top: 1px solid #eee;">
+                        <h2>Har du spørsmål?</h2>
+                        <p>Ta kontakt med oss på e-post ved å svare på denne e-posten, eller ta kontakt med oss på telefon på nummeret +47 908 44 936.</p>
+                    </td>
+                </tr>
+
+                <!-- Corporate Information -->
+                <tr>
+                    <td colspan="2" style="text-align: center; padding: 20px; font-size: 12px; color: #666;">
+                        Pokelageret, H. Halvorsens vei 5, 1734 Hafslundsøy, 931510371 MVA<br>
+                        <a href="#" style="color: #c8323f; text-decoration: none;">Generelle vilkår</a>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>

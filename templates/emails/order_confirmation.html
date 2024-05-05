@@ -1,5 +1,88 @@
-<html>
-<body>
-    <p>Hi</p>
-</body>
-</html>
+{% load static i18n %}
+{% load form_tags %}
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet" type="text/css">
+</head>
+
+<table width="100%" cellspacing="0" cellpadding="0" style="background-color: #f2f2f2; border-collapse: collapse; font-family: 'Josefin Sans', sans-serif;">
+    <tr>
+        <td align="center">
+            <table width="700" cellspacing="0" cellpadding="0" style="margin: 50px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background-color: #ffffff; border-collapse: collapse;">
+                <tr style="background: #f9f9f9; padding: 30px; text-align: center;">
+                    <td colspan="2">
+                        <h1 style="color: #c8323f; margin-bottom: 10px;">Takk for bestillingen!</h1>
+                        <p>Ordren din vil bli sendt i løpet av én arbeidsdag. Du vil få en bekreftelse på e-post når varen din er sendt.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <!-- Kundeinformasjon -->
+                    <td style="padding: 20px 30px; width: 50%; vertical-align: top;">
+                        <h2 style="color: #333; margin-bottom: 10px;">Kundeinformasjon</h2>
+                        <p><strong>Navn:</strong> {{ order.customer }}</p>
+                        <p><strong>Adresse:</strong> {{ order.customer.address }}</p>
+                        <p><strong>Telefon:</strong> {{ order.customer.phone_number }}</p>
+                        <p><strong>E-post:</strong> {{ order.customer.email }}</p>
+                    </td>
+                    <!-- Ordreinformasjon -->
+                    <td style="padding: 20px 30px; width: 50%; vertical-align: top;">
+                        <h2 style="color: #333; margin-bottom: 10px;">Ordreinformasjon</h2>
+                        <p><strong>Dato:</strong> {{ order.date_added|date:"d M Y" }}</p>
+                        <p><strong>Ordrenummer:</strong> {{ order.order_number }}</p>
+                        <p><strong>Betalingsmetode:</strong> {{ payment_details.payment_method|title }}</p>
+                    </td>
+                </tr>
+                <!-- Product and totals information -->
+                {% for item in items %}
+                <tr>
+                    <td colspan="2" style="background: #ffffff;">
+                        <!-- Top border for separation -->
+                        <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border-top: 1px solid #eee;">
+                            <tr>
+                                <td colspan="2" style="padding: 10px;"></td>
+                            </tr>
+                            <tr>
+                                <td style="width: 80px; padding: 0 20px; text-align: center; vertical-align: top;">
+                                    <img src="https://testing.pokelageret.no/{{ item.item_id|fetch_item_image }}" alt="{{ item.title }}" style="width: 60px; height: 60px; border-radius: 8px;">
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <p style="margin: 0; font-size: 14px; color: #333;"><strong>{{ item.title }}</strong></p>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">Pris: {{ item.sale_price }} kr</p>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">Antall: {{ item.quantity }} stk</p>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">Totalpris: {{ item.product_total }} kr</p>
+                                </td>
+                            <!-- Bottom border for separation -->
+                            <tr>
+                                <td colspan="2" style="padding: 10px;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <tr>
+                    <td colspan="2" style="padding: 20px 30px;">
+                        <p style="display: flex; justify-content: space-between; align-items: center;"><strong>Produkttotal:</strong> {{ item_total }} kr</p>
+                        <p style="display: flex; justify-content: space-between; align-items: center;"><strong>Frakt:</strong> {% if order.delivery_price %}{{ order.delivery_price }} kr{% else %}GRATIS{% endif %}</p>
+                        <p style="display: flex; justify-content: space-between; align-items: center;"><strong>Ordre total:</strong> {{ order.price }} kr</p>
+                    </td>
+                </tr>
+                 <tr>
+                    <td colspan="2" style="padding: 30px; text-align: center; border-top: 1px solid #eee;">
+                        <h2>Har du spørsmål?</h2>
+                        <p>Ta kontakt med oss på e-post ved å svare på denne e-posten, eller ta kontakt med oss på telefon på nummeret +47 908 44 936.</p>
+                    </td>
+                </tr>
+
+                <!-- Corporate Information -->
+                <tr>
+                    <td colspan="2" style="text-align: center; padding: 20px; font-size: 12px; color: #666;">
+                        Pokelageret, H. Halvorsens vei 5, 1734 Hafslundsøy, 931510371 MVA<br>
+                        <a href="#" style="color: #c8323f; text-decoration: none;">Generelle vilkår</a>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
