@@ -181,7 +181,7 @@ class customers(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 class orders(models.Model):
-    order_number = models.AutoField(primary_key=True, verbose_name="Order Number")
+    order_number = models.IntegerField(primary_key=True, verbose_name="Order Number", unique=True)
     customer = models.ForeignKey(customers, on_delete=models.CASCADE, null=True, blank=True)
     items = models.JSONField()
     delivery_info = models.JSONField(null=True, blank=True)
@@ -205,11 +205,11 @@ class orders(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the record is being created, i.e., it doesn't have a primary key yet
-            last_order_number = orders.objects.all().order_by('order_number').last()
-            if last_order_number:
-                self.order_number = last_order_number.order_number + 1
-            else:
-                self.order_number = 1000  # Start from 1000 if there are no orders
+            while True:
+                random_number = random.randint(100000, 999999)  # Generate a random 6-digit number
+                if not orders.objects.filter(order_number=random_number).exists():
+                    self.order_number = random_number
+                    break
         super(orders, self).save(*args, **kwargs)
 
     def __str__(self):
