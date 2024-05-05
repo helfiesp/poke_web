@@ -3,28 +3,62 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<!-- CKEditor script -->
-<script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
-<script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/image_preview.css' %}">
-<script type="text/javascript">
-    // This script will add the 'multiple' attribute to all image input fields
+<script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Select all file input elements that contain 'image' in their name attribute
+        var priceEksMvaInput = document.querySelector('[name="price_eks_mva"]');
+        var priceInput = document.querySelector('[name="price"]');
+
+        // Function to calculate 25% markup
+        function updatePrice(inputValue) {
+            return (inputValue * 1.25).toFixed(2); // Rounds to two decimal places
+        }
+
+        // Function to calculate reverse of 25% markup
+        function updatePriceEksMva(inputValue) {
+            return (inputValue / 1.25).toFixed(2); // Rounds to two decimal places
+        }
+
+        // Event listener for price exclusive of VAT
+        priceEksMvaInput.addEventListener('input', function() {
+            var newPrice = updatePrice(this.value);
+            if (priceInput.value !== newPrice) {
+                priceInput.value = newPrice;
+            }
+        });
+
+        // Event listener for price inclusive of VAT
+        priceInput.addEventListener('input', function() {
+            var newPriceEksMva = updatePriceEksMva(this.value);
+            if (priceEksMvaInput.value !== newPriceEksMva) {
+                priceEksMvaInput.value = newPriceEksMva;
+            }
+        });
+
+        // Add the 'multiple' attribute to all image input fields
         var imageInputs = document.querySelectorAll('input[type="file"][name^="image"]');
         imageInputs.forEach(function(input) {
             input.setAttribute('multiple', 'multiple');
         });
     });
-
-
 </script>
 
 <script src="{% static 'js/image_preview.js' %}"></script>
-
+<style>
+    .price-section {
+        display: flex;
+        justify-content: space-between;
+    }
+    .price-column {
+        display: flex;
+        flex-direction: column;
+        width: 48%; /* Adjust width as necessary */
+    }
+</style>
 <div class="add-item-container">
     <form id="product-form" action="{% url 'add_product' %}" method="POST" enctype="multipart/form-data" class="form-style">
             {% csrf_token %}
@@ -56,12 +90,16 @@
                 </div>
                 {% endif %}
 
-                <p>Pris</p>
-                {{ form.price }}
-                <p>Salgspris</p>
-                {{ form.sale_price }}
-                <p>Innkjøpspris</p>         
-                <input id="stock_price" name="stock_price" type="number" value="0"/>
+                <div class="price-section">
+                    <div class="price-column">
+                        <p>Pris m. mva (25%)</p>{{ form.price }}
+                        <p>Salgspris</p>{{ form.sale_price }}
+                    </div>
+                    <div class="price-column">
+                        <p>Pris eks. mva</p>{{ form.price_eks_mva }}
+                        <p>Innkjøpspris eks. mva</p>{{ form.purchase_price }}
+                    </div>
+                </div>
                 <p>Høyde</p>
                 {{ form.height }}
                 <p>Bredde</p>

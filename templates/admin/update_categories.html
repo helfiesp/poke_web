@@ -21,7 +21,7 @@
                 <form method="post" action="{% url 'update_categories_id' category.id %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <td><input type="text" name="name" value="{{ category.name }}"></td>
-                    <td>{{ category.string_id }}"></td>
+                    <td>{{ category.string_id }}</td>
 
                     <td>
                         <select name="parent">
