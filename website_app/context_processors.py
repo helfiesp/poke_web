@@ -41,13 +41,14 @@ def cart_context(request):
             'id': product.id,
             'title': product.title,
             'subtitle': product.subtitle,
-            'normal_price': product.price,
-            'sale_price': product.sale_price,
-            'price': current_price,
+            'normal_price': float(product.price),
+            'sale_price': float(product.sale_price),
+            'price': float(current_price),
             'quantity': cart[str(product.id)],
-            'total_item_price': current_price * cart[str(product.id)],
+            'total_item_price': float(current_price * cart[str(product.id)]),
             'image_url': image_url,
         }
+        print(item)
         cart_items.append(item)
         total_price += item['total_item_price']
 

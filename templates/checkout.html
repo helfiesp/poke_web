@@ -1,4 +1,4 @@
-
+{% extends 'base/base.html'%}
 
 {% load static i18n %}
 
@@ -11,13 +11,6 @@
 
 {% block content %}
 
-<div class="checkout-header">
-    <div class="nav-logo">
-        <a href="{% url 'hjem' %}">
-            <img src="{{ MEDIA_URL }}pokelageret_logo_text.png" alt="Logo">
-        </a>
-    </div>
-</div>
   <script>
         document.addEventListener('DOMContentLoaded', function() {
             const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
