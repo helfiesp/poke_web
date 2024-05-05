@@ -11,8 +11,15 @@
             <table width="700" cellspacing="0" cellpadding="0" style="margin: 50px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background-color: #ffffff; border-collapse: collapse;">
                 <tr style="background: #f9f9f9; padding: 30px; text-align: center;">
                     <td colspan="2">
-                        <h1 style="color: #c8323f; margin-bottom: 10px;">Takk for bestillingen!</h1>
-                        <p>Din ordre med ordrenummer {{ order.order_number }} er sendt fra oss. Følg sporingslenken i e-posten for oppdatering på pakken.</p>
+                        <h1 style="color: #c8323f; margin-bottom: 10px;">Din ordre er sendt!</h1>
+                        <p>
+                            {% if shipping_method == "deivery" %}
+                                Din ordre er nå sendt fra oss! <br>
+                                Du kan følge sendingen med sporingslenke: <a href="https://beta.sporing.posten.no/sporing/">https://beta.sporing.posten.no/sporing/</a>
+                            {% else %}
+                                Din ordre er fullført etter å ha blitt hentet i butikk.
+                            {% endif %}
+                        </p>
                     </td>
                 </tr>
 

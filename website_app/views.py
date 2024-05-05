@@ -1166,6 +1166,7 @@ def order_detail_send_order(request, order_number, action):
     if items_updated:
         with transaction.atomic():
             order.items = json.dumps(updated_items)  # Assuming the field can be directly assigned like this
+            order.status
             order.save()
 
     if action == 'send' or action == 'pickup':
@@ -1177,10 +1178,12 @@ def order_detail_send_order(request, order_number, action):
 def send_order_sent(order):
     subject = 'Din ordre {} er sendt fra oss'.format(order.order_number)
     items = prep_items(json.loads(order.items))
-
+    shipping_method = json.loads(order.delivery_info)["delivery_option"]
+    
     context = {
         'order': order,
         'items': items,
+        'shipping_method': shipping_method,
     }
     message = render_to_string('emails/order_sent.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
