@@ -1216,7 +1216,7 @@ def send_order_confirmation(order):
         'order': order,
         'items': items,
         'payment_details': json.loads(order.payment_info),  # Assuming 'payment_info' is a JSON string
-        'item_total': sum(item['product_total'] for item in items)
+        'item_total': sum(item['product_total'] for item in items),
         'shipping': fetch_shipping_option(json.loads(order.delivery_info)),
 
     }
