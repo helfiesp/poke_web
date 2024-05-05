@@ -916,6 +916,7 @@ def order_confirmation(request, order_number):
         'item_details': item_details,
         'product_total': product_total,
         'business_information': business_info,
+        'shipping': fetch_shipping_option(json.loads(order.delivery_info)),
     }
 
     # Render the HTML template to a string
@@ -1216,6 +1217,8 @@ def send_order_confirmation(order):
         'items': items,
         'payment_details': json.loads(order.payment_info),  # Assuming 'payment_info' is a JSON string
         'item_total': sum(item['product_total'] for item in items)
+        'shipping': fetch_shipping_option(json.loads(order.delivery_info)),
+
     }
     message = render_to_string('emails/order_confirmation.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
@@ -1304,7 +1307,7 @@ def order_success(request, order_number):
         # Handle missing order scenario
         return render(request, 'error.html', {'message': 'Order not found.'})
 
-    return render(request, 'admin/order_confirmation.html', {
+    return render(request, 'emails/order_confirmation.html', {
         'payment_details': payment_details, 
         'items':items, 'order': order, 
         'item_total':item_total,
