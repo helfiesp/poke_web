@@ -1183,7 +1183,7 @@ def send_order_sent(order):
         'order': order,
         'items': items,
     }
-    message = render_to_string('email/order_sent.html', context)
+    message = render_to_string('emails/order_sent.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
     recipient_list = [order.customer.email]
 
@@ -1211,7 +1211,7 @@ def send_order_confirmation(order):
         'payment_details': json.loads(order.payment_info),  # Assuming 'payment_info' is a JSON string
         'item_total': sum(item['product_total'] for item in items)
     }
-    message = render_to_string('admin/order_confirmation_email.html', context)
+    message = render_to_string('emails/order_confirmation.html', context)
     email_from = settings.DEFAULT_FROM_EMAIL
     recipient_list = [order.customer.email]
 
