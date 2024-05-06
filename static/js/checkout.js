@@ -9,11 +9,11 @@ function generateCartItemHtml(item) {
 
     if (item.sale_price && item.sale_price < item.normal_price) {
         priceHtml = `<p class="cart-item-price">
-                        <span class="sale-price">${itemTotalSalePrice} kr</span>
-                        <span class="normal-price struck">${itemTotalNormalPrice} kr</span>
+                        <span class="sale-price">${itemTotalSalePrice.toFixed(2)} kr</span>
+                        <span class="normal-price struck">${itemTotalNormalPrice.toFixed(2)} kr</span>
                      </p>`;
     } else {
-        priceHtml = `<p class="cart-item-price">${itemTotalNormalPrice} kr</p>`;
+        priceHtml = `<p class="cart-item-price">${itemTotalNormalPrice.toFixed(2)} kr</p>`;
     }
 
     return `

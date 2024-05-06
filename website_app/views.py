@@ -460,7 +460,7 @@ def add_category(request):
         form = forms.category_form(request.POST, request.FILES)
         if form.is_valid():
             category = form.save(commit=False)
-            string_id = str(category.get_full_path()).replace(" > ", "/").replace(" ", "_").replace(",", "").lower()
+            string_id = str(category.get_full_path()).replace(" > ", "/").replace(" ", "_").replace(",", "").replace("(", "").replace(")", "").lower()
             category.string_id = string_id
             category.save()
 
@@ -531,7 +531,7 @@ def category_list_and_update(request, category_id=None):
 
         if form.is_valid():
             category_instance = form.save(commit=False)
-            string_id = str(category_instance.get_full_path()).replace(" > ", "/").replace(" ", "_").replace(",", "").lower()
+            string_id = str(category_instance.get_full_path()).replace(" > ", "/").replace(" ", "_").replace(",", "").replace("(", "").replace(")", "").lower()
             category.string_id = string_id
             category.save()
             category_instance.save()
